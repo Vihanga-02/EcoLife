@@ -8,7 +8,7 @@ import authRoutes from './routes/authRoutes.js';
 import energyRoutes from './routes/energyRoutes.js';
 // import marketplaceRoutes from './routes/marketplaceRoutes.js';
 // import wasteRoutes from './routes/wasteRoutes.js';
-// import recyclingRoutes from './routes/recyclingRoutes.js';
+import recyclingRoutes from './routes/recyclingRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 
 // Load env vars
@@ -36,7 +36,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/energy', energyRoutes);
 // app.use('/api/marketplace', marketplaceRoutes);
 // app.use('/api/waste', wasteRoutes);
-// app.use('/api/recycling', recyclingRoutes);
+app.use('/api/recycling', recyclingRoutes);
 app.use('/api/admin', adminRoutes);
 
 // ===== 404 Handler =====
