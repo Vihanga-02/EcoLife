@@ -118,33 +118,6 @@ const getWasteLogById = async (req, res) => {
   }
 };
 
-// Delete waste log
-const deleteWasteLog = async (req, res) => {
-  try {
-    const log = await WasteLog.findOneAndDelete({ _id: req.params.id, userId: req.user._id });
-
-    if (!log) {
-      return res.status(404).json({ success: false, message: 'Waste log not found' });
-    }
-
-    res.status(200).json({ success: true, message: 'Waste log deleted' });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message || 'Failed to delete waste log' });
-  }
-};
-
-// Admin: Get all waste logs
-const adminGetAllWasteLogs = async (req, res) => {
-  try {
-    const logs = await WasteLog.find()
-      .populate('userId', 'name email')
-      .sort({ date: -1 });
-    res.status(200).json({ success: true, count: logs.length, logs });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message || 'Failed to get waste logs' });
-  }
-};
-
 // Update waste log
 const updateWasteLog = async (req, res) => {
   try {
@@ -194,6 +167,32 @@ const updateWasteLog = async (req, res) => {
   }
 };
 
+// Delete waste log
+const deleteWasteLog = async (req, res) => {
+  try {
+    const log = await WasteLog.findOneAndDelete({ _id: req.params.id, userId: req.user._id });
+
+    if (!log) {
+      return res.status(404).json({ success: false, message: 'Waste log not found' });
+    }
+
+    res.status(200).json({ success: true, message: 'Waste log deleted' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message || 'Failed to delete waste log' });
+  }
+};
+
+// Admin: Get all waste logs
+const adminGetAllWasteLogs = async (req, res) => {
+  try {
+    const logs = await WasteLog.find()
+      .populate('userId', 'name email')
+      .sort({ date: -1 });
+    res.status(200).json({ success: true, count: logs.length, logs });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message || 'Failed to get waste logs' });
+  }
+};
 
 export {
   logWaste,
