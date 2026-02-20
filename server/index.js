@@ -6,7 +6,7 @@ import { initializeFirebase } from './config/firebase.js';
 import { errorHandler } from './middleware/errorMiddleware.js';
 import authRoutes from './routes/authRoutes.js';
 import energyRoutes from './routes/energyRoutes.js';
-// import marketplaceRoutes from './routes/marketplaceRoutes.js';
+import marketplaceRoutes from './routes/marketplaceRoutes.js';
 // import wasteRoutes from './routes/wasteRoutes.js';
 import recyclingRoutes from './routes/recyclingRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
@@ -34,7 +34,7 @@ app.use(express.urlencoded({ extended: true }));
 // ===== API Routes =====
 app.use('/api/auth', authRoutes);
 app.use('/api/energy', energyRoutes);
-// app.use('/api/marketplace', marketplaceRoutes);
+app.use('/api/marketplace', marketplaceRoutes);
 // app.use('/api/waste', wasteRoutes);
 app.use('/api/recycling', recyclingRoutes);
 app.use('/api/admin', adminRoutes);
