@@ -103,7 +103,7 @@ const getWasteAnalytics = async (req, res) => {
   }
 };
 
-// Get single waste log
+// Get single waste log for users
 const getWasteLogById = async (req, res) => {
   try {
     const log = await WasteLog.findOne({ _id: req.params.id, userId: req.user._id });
