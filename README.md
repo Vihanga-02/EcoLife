@@ -221,3 +221,66 @@ If you encounter connection errors:
 - Check MongoDB logs for errors
 
 ---
+
+## Environment Variables
+
+### Backend (.env in `server/` directory)
+
+| Variable | Description | Required | Example |
+|----------|-------------|----------|---------|
+| `PORT` | Server port | No | `5000` |
+| `NODE_ENV` | Environment mode | No | `development` |
+| `MONGO_URI` | MongoDB connection string | **Yes** | `mongodb://localhost:27017/ecolife` |
+| `JWT_SECRET` | Secret key for JWT tokens | **Yes** | `your_secret_key_here` |
+| `FIREBASE_PROJECT_ID` | Firebase project ID | No* | `your-project-id` |
+| `FIREBASE_PRIVATE_KEY` | Firebase private key | No* | `-----BEGIN PRIVATE KEY-----\n...` |
+| `FIREBASE_CLIENT_EMAIL` | Firebase service account email | No* | `service@project.iam.gserviceaccount.com` |
+| `FIREBASE_STORAGE_BUCKET` | Firebase storage bucket | No* | `project.appspot.com` |
+| `CLIENT_URL` | Frontend URL for CORS | No | `http://localhost:5173` |
+
+*Firebase variables are optional but required for file upload functionality.
+
+### Frontend (.env in `client/` directory - Optional)
+
+| Variable | Description | Required | Example |
+|----------|-------------|----------|---------|
+| `VITE_API_URL` | Backend API URL | No | `http://localhost:5000` |
+
+---
+
+## Running the Application
+
+### Development Mode
+
+#### Terminal 1 - Backend Server:
+```bash
+cd server
+npm run dev
+```
+
+The server will start with nodemon (auto-reload on changes) and run on `http://localhost:5000`
+
+#### Terminal 2 - Frontend Client:
+```bash
+cd client
+npm run dev
+```
+
+The frontend will start and be accessible at `http://localhost:5173`
+
+### Production Mode
+
+#### Backend:
+```bash
+cd server
+npm start
+```
+
+#### Frontend:
+```bash
+cd client
+npm run build
+npm run preview
+```
+
+---
