@@ -54,14 +54,6 @@ Before you begin, ensure you have the following installed:
 
 ```
 EcoLife/
-├── client/                 # React frontend application
-│   ├── src/
-│   │   ├── api/           # API service functions
-│   │   ├── components/    # React components
-│   │   ├── context/       # React context providers
-│   │   └── pages/         # Page components
-│   ├── package.json
-│   └── vite.config.js
 │
 ├── server/                 # Node.js backend application
 │   ├── config/            # Configuration files (DB, Firebase)
