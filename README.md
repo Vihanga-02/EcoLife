@@ -481,45 +481,50 @@ Update the authenticated user's profile.
     }
 }
 ```
-
 ---
 
-## Energy API
+## Waste Management API
 
-**Base URL:** `/api/energy`
+**Base URL:** `/api/waste`
 
-### Add Appliance
+### Log Waste
 
-**POST** `/appliances`
+**POST** `/`
 
 **Authentication:** Required
 
-Add a new appliance to track energy consumption.
+Create a new waste log entry.
 
 **Request Body:**
 ```json
 {
-  "name": "Refrigerator",
-  "wattage": 150,
-  "category": "Kitchen"
+  "wasteType": "Plastic",
+  "quantity": 5,
+  "unit": "kg",
+  "notes": "Plastic bottles",
+  "imageUrl": "https://example.com/image.jpg"
 }
 ```
+
+**Waste Types:** `Plastic`, `Paper`, `Glass`, `Organic`, `E-waste`
 
 **Response (201 Created):**
 ```json
 {
     "success": true,
-    "message": "Appliance added",
-    "appliance": {
+    "message": "Waste logged successfully",
+    "log": {
         "userId": "699d66f012dd846e485942cd",
-        "name": "Refrigerator",
-        "wattage": 150,
-        "category": "Kitchen",
-        "status": "off",
-        "totalKwhThisMonth": 0,
-        "_id": "699d6b4e12dd846e485942d8",
-        "usageSessions": [],
-        "createdAt": "2026-02-24T09:11:42.598Z",
+        "wasteType": "Plastic",
+        "quantity": 5,
+        "unit": "kg",
+        "imageUrl": "https://example.com/image.jpg",
+        "isBiodegradable": false,
+        "isRecyclable": true,
+        "carbonEquivalent": 10,
+        "notes": "Plastic bottles",
+        "_id": "699d812912dd846e48594353",
+        "date": "2026-02-24T10:44:57.381Z",
         "__v": 0
     }
 }
@@ -527,30 +532,41 @@ Add a new appliance to track energy consumption.
 
 ---
 
-### Get My Appliances
+### Get My Waste Logs
 
-**GET** `/appliances`
+**GET** `/`
 
 **Authentication:** Required
 
-Get all appliances for the authenticated user.
+Get all waste logs for the authenticated user with optional filters.
+
+**Query Parameters:**
+- `wasteType` - Filter by waste type
+- `startDate` - Start date (YYYY-MM-DD)
+- `endDate` - End date (YYYY-MM-DD)
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 20)
+
+**Example:** `/waste?wasteType=Plastic&startDate=2024-01-01&endDate=2024-12-31&page=1&limit=20`
 
 **Response (200 OK):**
 ```json
 {
     "success": true,
-    "count": 1,
-    "appliances": [
+    "total": 1,
+    "logs": [
         {
-            "_id": "699d6b4e12dd846e485942d8",
+            "_id": "699d812912dd846e48594353",
             "userId": "699d66f012dd846e485942cd",
-            "name": "Refrigerator",
-            "wattage": 150,
-            "category": "Kitchen",
-            "status": "off",
-            "totalKwhThisMonth": 0,
-            "usageSessions": [],
-            "createdAt": "2026-02-24T09:11:42.598Z",
+            "wasteType": "Plastic",
+            "quantity": 5,
+            "unit": "kg",
+            "imageUrl": "https://example.com/image.jpg",
+            "isBiodegradable": false,
+            "isRecyclable": true,
+            "carbonEquivalent": 10,
+            "notes": "Plastic bottles",
+            "date": "2026-02-24T10:44:57.381Z",
             "__v": 0
         }
     ]
@@ -559,38 +575,54 @@ Get all appliances for the authenticated user.
 
 ---
 
-### Update Appliance
+### Get Waste Analytics
 
-**PUT** `/appliances/:id`
+**GET** `/analytics`
 
 **Authentication:** Required
 
-Update an existing appliance.
-
-**Request Body:**
-```json
-{
-  "name": "TV",
-  "wattage": 200,
-  "category": "Living"
-}
-```
+Get waste analytics and statistics for the authenticated user.
 
 **Response (200 OK):**
 ```json
 {
     "success": true,
-    "message": "Appliance updated",
-    "appliance": {
-        "_id": "699d6b4e12dd846e485942d8",
+    "totalLogs": 1,
+    "totalByType": {
+        "Plastic": 5
+    },
+    "totalCarbonEquivalent": 10,
+    "recyclableItems": 1,
+    "biodegradableItems": 0
+}
+```
+
+---
+
+### Get Waste Log by ID
+
+**GET** `/:id`
+
+**Authentication:** Required
+
+Get a specific waste log by ID.
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "log": {
+        "_id": "699d812912dd846e48594353",
         "userId": "699d66f012dd846e485942cd",
-        "name": "TV",
-        "wattage": 200,
-        "category": "Living",
-        "status": "off",
-        "totalKwhThisMonth": 0,
-        "usageSessions": [],
-        "createdAt": "2026-02-24T09:11:42.598Z",
+        "wasteType": "Plastic",
+        "quantity": 5,
+        "unit": "kg",
+        "imageUrl": "https://example.com/image.jpg",
+        "isBiodegradable": false,
+        "isRecyclable": true,
+        "carbonEquivalent": 10,
+        "notes": "Plastic bottles",
+        "date": "2026-02-24T10:44:57.381Z",
         "__v": 0
     }
 }
@@ -598,206 +630,47 @@ Update an existing appliance.
 
 ---
 
-### Delete Appliance
+### Delete Waste Log
 
-**DELETE** `/appliances/:id`
-
-**Authentication:** Required
-
-Delete an appliance.
-
-**Response (200 OK):**
-```json
-{
-    "success": true,
-    "message": "Appliance deleted"
-}
-```
-
----
-
-### Toggle Appliance ON/OFF
-
-**PATCH** `/appliances/:id/toggle`
+**DELETE** `/:id`
 
 **Authentication:** Required
 
-Toggle appliance power state.
+Delete a waste log entry.
 
 **Response (200 OK):**
 ```json
 {
-    "success": true,
-    "message": "Appliance turned on",
-    "appliance": {
-        "_id": "699d6dc412dd846e485942ee",
-        "userId": "699d66f012dd846e485942cd",
-        "name": "Refrigerator",
-        "wattage": 150,
-        "category": "Kitchen",
-        "status": "on",
-        "totalKwhThisMonth": 0.0004,
-        "usageSessions": [
-            {
-                "startTime": "2026-02-24T09:23:03.021Z",
-                "endTime": "2026-02-24T09:23:13.151Z",
-                "kwhUsed": 0.0004,
-                "_id": "699d6e0112dd846e485942f5"
-            }
-        ],
-        "createdAt": "2026-02-24T09:22:12.638Z",
-        "__v": 1,
-        "lastStartTime": "2026-02-24T09:23:23.705Z"
-    }
+  "success": true,
+  "message": "Waste log deleted successfully"
 }
 ```
 
 ---
 
-### Estimate Bill
+### Get All Waste Logs (Admin Only)
 
-**GET** `/estimate-bill`
-
-**Authentication:** Required
-
-Get estimated energy bill based on appliances and tariffs.
-
-**Response (200 OK):**
-```json
-{
-    "success": true,
-    "totalKwh": 0,
-    "estimatedBill": 0,
-    "appliances": 2,
-    "tariffApplied": "No matching tariff"
-}
-```
-
----
-
-### Create Tariff (Admin Only)
-
-**POST** `/tariffs`
+**GET** `/admin/all`
 
 **Authentication:** Required (Admin)
 
-Create a new energy tariff block.
+Get all waste logs from all users (admin view).
 
-**Request Body:**
+**Response (200 OK):**
 ```json
 {
-  "blockName": "Block 1",
-  "minUnits": 0,
-  "maxUnits": 100,
-  "unitRate": 5.50,
-  "fixedCharge": 100,
-  "isActive": true
-}
-```
-
-**Response (201 Created):**
-```json
-{
-    "success": true,
-    "message": "Tariff created",
-    "tariff": {
-        "blockName": "Block 1",
-        "minUnits": 0,
-        "maxUnits": 100,
-        "unitRate": 5.5,
-        "fixedCharge": 100,
-        "isActive": true,
-        "_id": "699d700512dd846e48594302",
-        "updatedAt": "2026-02-24T09:31:49.356Z",
-        "__v": 0
+  "success": true,
+  "wasteLogs": [
+    {
+      "_id": "507f1f77bcf86cd799439011",
+      "wasteType": "Plastic",
+      "quantity": 5,
+      "user": {
+        "_id": "507f1f77bcf86cd799439012",
+        "name": "Nadee perera"
+      },
+      "createdAt": "2024-01-01T00:00:00.000Z"
     }
+  ]
 }
 ```
-
----
-
-### Get All Tariffs
-
-**GET** `/tariffs`
-
-**Authentication:** Not Required
-
-Get all active tariffs.
-
-**Response (200 OK):**
-```json
-{
-    "success": true,
-    "tariffs": [
-        {
-            "_id": "699d700512dd846e48594302",
-            "blockName": "Block 1",
-            "minUnits": 0,
-            "maxUnits": 100,
-            "unitRate": 5.5,
-            "fixedCharge": 100,
-            "isActive": true,
-            "updatedAt": "2026-02-24T09:31:49.356Z",
-            "__v": 0
-        }
-    ]
-}
-```
-
----
-
-### Update Tariff (Admin Only)
-
-**PUT** `/tariffs/:id`
-
-**Authentication:** Required (Admin)
-
-Update an existing tariff.
-
-**Request Body:**
-```json
-{
-  "blockName": "Updated Block",
-  "unitRate": 6.00,
-  "fixedCharge": 120
-}
-```
-
-**Response (200 OK):**
-```json
-{
-    "success": true,
-    "message": "Tariff updated",
-    "tariff": {
-        "_id": "699d700512dd846e48594302",
-        "blockName": "Updated Block",
-        "minUnits": 0,
-        "maxUnits": 100,
-        "unitRate": 6,
-        "fixedCharge": 120,
-        "isActive": true,
-        "updatedAt": "2026-02-24T09:33:26.946Z",
-        "__v": 0
-    }
-}
-```
-
----
-
-### Delete Tariff (Admin Only)
-
-**DELETE** `/tariffs/:id`
-
-**Authentication:** Required (Admin)
-
-Delete a tariff.
-
-**Response (200 OK):**
-```json
-{
-    "success": true,
-    "message": "Tariff deleted"
-}
-```
-
----
