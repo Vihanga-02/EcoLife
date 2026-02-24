@@ -284,3 +284,520 @@ npm run preview
 ```
 
 ---
+
+## API Endpoint Documentation
+
+**Base URL:** `http://localhost:5000/api`
+
+All authenticated endpoints require a JWT token in the Authorization header:
+```
+Authorization: Bearer <your_jwt_token>
+```
+
+---
+
+## Authentication API
+
+**Base URL:** `/api/auth`
+
+### Register User
+
+**POST** `/register`
+
+Register a new regular user account.
+
+**Request Body:**
+```json
+{
+  "name": "Vihanga Perera",
+  "email": "vihanga@example.com",
+  "password": "12345678"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+    "success": true,
+    "message": "Registration successful",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWQ2NmYwMTJkZDg0NmU0ODU5NDJjZCIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzcxOTIzMTg1LCJleHAiOjE3NzQ1MTUxODV9.evOJ2fl6JemqQpt35nmiBdmtwcZstKvdbW0dLy_iScU",
+    "user": {
+        "_id": "699d66f012dd846e485942cd",
+        "name": "Vihanga Perera",
+        "email": "vihanga@example.com",
+        "role": "user",
+        "greenScore": 0,
+        "profileImage": ""
+    }
+}
+```
+
+**Error Response (400):**
+```json
+{
+  "success": false,
+  "message": "User already exists"
+}
+```
+
+---
+
+### Register Admin
+
+**POST** `/register-admin`
+
+Register a new admin account.
+
+**Request Body:**
+```json
+{
+  "name": "Admin User",
+  "email": "admin@ecolife.com",
+  "password": "admin123456"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+    "success": true,
+    "message": "Admin registration successful",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWQ2OWIwMTJkZDg0NmU0ODU5NDJkMCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MTkyMzg4OCwiZXhwIjoxNzc0NTE1ODg4fQ.WmfM5D1P233W6BhWbnnw7UT4Y6moBWkjGdL3okUXXBI",
+    "user": {
+        "_id": "699d69b012dd846e485942d0",
+        "name": "Admin User",
+        "email": "admin@ecolife.com",
+        "role": "admin",
+        "greenScore": 0,
+        "profileImage": ""
+    }
+}
+```
+
+---
+
+### Login
+
+**POST** `/login`
+
+Authenticate user and receive JWT token.
+
+**Request Body:**
+```json
+{
+  "email": "vihanga@example.com",
+  "password": "12345678"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "message": "Login successful",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWQ2NmYwMTJkZDg0NmU0ODU5NDJjZCIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzcxOTIzOTg1LCJleHAiOjE3NzQ1MTU5ODV9.dD6YNgIrWNzEByFM5Vj3XGNtmxBemapmDgskaYzzptM",
+    "user": {
+        "_id": "699d66f012dd846e485942cd",
+        "name": "Vihanga Perera",
+        "email": "vihanga@example.com",
+        "role": "user",
+        "greenScore": 0,
+        "profileImage": ""
+    }
+}
+```
+
+**Error Response (401):**
+```json
+{
+  "success": false,
+  "message": "Invalid credentials"
+}
+```
+
+---
+
+### Get My Profile
+
+**GET** `/me`
+
+**Authentication:** Required
+
+Get the authenticated user's profile.
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "user": {
+        "_id": "699d66f012dd846e485942cd",
+        "name": "Vihanga Perera",
+        "email": "vihanga@example.com",
+        "role": "user",
+        "greenScore": 0,
+        "totalTransactions": 0,
+        "profileImage": "",
+        "isActive": true,
+        "createdAt": "2026-02-24T08:53:04.795Z",
+        "__v": 0
+    }
+}
+```
+
+---
+
+### Update Profile
+
+**PUT** `/me`
+
+**Authentication:** Required
+
+Update the authenticated user's profile.
+
+**Request Body:**
+```json
+{
+  "name": "Updated Name",
+  "profileImage": "https://example.com/image.jpg"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "message": "Profile updated",
+    "user": {
+        "_id": "699d66f012dd846e485942cd",
+        "name": "Updated Name",
+        "email": "vihanga@example.com",
+        "role": "user",
+        "greenScore": 0,
+        "totalTransactions": 0,
+        "profileImage": "https://example.com/image.jpg",
+        "isActive": true,
+        "createdAt": "2026-02-24T08:53:04.795Z",
+        "__v": 0
+    }
+}
+```
+
+---
+
+## Energy API
+
+**Base URL:** `/api/energy`
+
+### Add Appliance
+
+**POST** `/appliances`
+
+**Authentication:** Required
+
+Add a new appliance to track energy consumption.
+
+**Request Body:**
+```json
+{
+  "name": "Refrigerator",
+  "wattage": 150,
+  "category": "Kitchen"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+    "success": true,
+    "message": "Appliance added",
+    "appliance": {
+        "userId": "699d66f012dd846e485942cd",
+        "name": "Refrigerator",
+        "wattage": 150,
+        "category": "Kitchen",
+        "status": "off",
+        "totalKwhThisMonth": 0,
+        "_id": "699d6b4e12dd846e485942d8",
+        "usageSessions": [],
+        "createdAt": "2026-02-24T09:11:42.598Z",
+        "__v": 0
+    }
+}
+```
+
+---
+
+### Get My Appliances
+
+**GET** `/appliances`
+
+**Authentication:** Required
+
+Get all appliances for the authenticated user.
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "count": 1,
+    "appliances": [
+        {
+            "_id": "699d6b4e12dd846e485942d8",
+            "userId": "699d66f012dd846e485942cd",
+            "name": "Refrigerator",
+            "wattage": 150,
+            "category": "Kitchen",
+            "status": "off",
+            "totalKwhThisMonth": 0,
+            "usageSessions": [],
+            "createdAt": "2026-02-24T09:11:42.598Z",
+            "__v": 0
+        }
+    ]
+}
+```
+
+---
+
+### Update Appliance
+
+**PUT** `/appliances/:id`
+
+**Authentication:** Required
+
+Update an existing appliance.
+
+**Request Body:**
+```json
+{
+  "name": "TV",
+  "wattage": 200,
+  "category": "Living"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "message": "Appliance updated",
+    "appliance": {
+        "_id": "699d6b4e12dd846e485942d8",
+        "userId": "699d66f012dd846e485942cd",
+        "name": "TV",
+        "wattage": 200,
+        "category": "Living",
+        "status": "off",
+        "totalKwhThisMonth": 0,
+        "usageSessions": [],
+        "createdAt": "2026-02-24T09:11:42.598Z",
+        "__v": 0
+    }
+}
+```
+
+---
+
+### Delete Appliance
+
+**DELETE** `/appliances/:id`
+
+**Authentication:** Required
+
+Delete an appliance.
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "message": "Appliance deleted"
+}
+```
+
+---
+
+### Toggle Appliance ON/OFF
+
+**PATCH** `/appliances/:id/toggle`
+
+**Authentication:** Required
+
+Toggle appliance power state.
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "message": "Appliance turned on",
+    "appliance": {
+        "_id": "699d6dc412dd846e485942ee",
+        "userId": "699d66f012dd846e485942cd",
+        "name": "Refrigerator",
+        "wattage": 150,
+        "category": "Kitchen",
+        "status": "on",
+        "totalKwhThisMonth": 0.0004,
+        "usageSessions": [
+            {
+                "startTime": "2026-02-24T09:23:03.021Z",
+                "endTime": "2026-02-24T09:23:13.151Z",
+                "kwhUsed": 0.0004,
+                "_id": "699d6e0112dd846e485942f5"
+            }
+        ],
+        "createdAt": "2026-02-24T09:22:12.638Z",
+        "__v": 1,
+        "lastStartTime": "2026-02-24T09:23:23.705Z"
+    }
+}
+```
+
+---
+
+### Estimate Bill
+
+**GET** `/estimate-bill`
+
+**Authentication:** Required
+
+Get estimated energy bill based on appliances and tariffs.
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "totalKwh": 0,
+    "estimatedBill": 0,
+    "appliances": 2,
+    "tariffApplied": "No matching tariff"
+}
+```
+
+---
+
+### Create Tariff (Admin Only)
+
+**POST** `/tariffs`
+
+**Authentication:** Required (Admin)
+
+Create a new energy tariff block.
+
+**Request Body:**
+```json
+{
+  "blockName": "Block 1",
+  "minUnits": 0,
+  "maxUnits": 100,
+  "unitRate": 5.50,
+  "fixedCharge": 100,
+  "isActive": true
+}
+```
+
+**Response (201 Created):**
+```json
+{
+    "success": true,
+    "message": "Tariff created",
+    "tariff": {
+        "blockName": "Block 1",
+        "minUnits": 0,
+        "maxUnits": 100,
+        "unitRate": 5.5,
+        "fixedCharge": 100,
+        "isActive": true,
+        "_id": "699d700512dd846e48594302",
+        "updatedAt": "2026-02-24T09:31:49.356Z",
+        "__v": 0
+    }
+}
+```
+
+---
+
+### Get All Tariffs
+
+**GET** `/tariffs`
+
+**Authentication:** Not Required
+
+Get all active tariffs.
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "tariffs": [
+        {
+            "_id": "699d700512dd846e48594302",
+            "blockName": "Block 1",
+            "minUnits": 0,
+            "maxUnits": 100,
+            "unitRate": 5.5,
+            "fixedCharge": 100,
+            "isActive": true,
+            "updatedAt": "2026-02-24T09:31:49.356Z",
+            "__v": 0
+        }
+    ]
+}
+```
+
+---
+
+### Update Tariff (Admin Only)
+
+**PUT** `/tariffs/:id`
+
+**Authentication:** Required (Admin)
+
+Update an existing tariff.
+
+**Request Body:**
+```json
+{
+  "blockName": "Updated Block",
+  "unitRate": 6.00,
+  "fixedCharge": 120
+}
+```
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "message": "Tariff updated",
+    "tariff": {
+        "_id": "699d700512dd846e48594302",
+        "blockName": "Updated Block",
+        "minUnits": 0,
+        "maxUnits": 100,
+        "unitRate": 6,
+        "fixedCharge": 120,
+        "isActive": true,
+        "updatedAt": "2026-02-24T09:33:26.946Z",
+        "__v": 0
+    }
+}
+```
+
+---
+
+### Delete Tariff (Admin Only)
+
+**DELETE** `/tariffs/:id`
+
+**Authentication:** Required (Admin)
+
+Delete a tariff.
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "message": "Tariff deleted"
+}
+```
+
+---
