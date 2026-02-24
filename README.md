@@ -284,3 +284,393 @@ npm run preview
 ```
 
 ---
+
+## API Endpoint Documentation
+
+**Base URL:** `http://localhost:5000/api`
+
+All authenticated endpoints require a JWT token in the Authorization header:
+```
+Authorization: Bearer <your_jwt_token>
+```
+
+---
+
+## Authentication API
+
+**Base URL:** `/api/auth`
+
+### Register User
+
+**POST** `/register`
+
+Register a new regular user account.
+
+**Request Body:**
+```json
+{
+  "name": "Vihanga Perera",
+  "email": "vihanga@example.com",
+  "password": "12345678"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+    "success": true,
+    "message": "Registration successful",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWQ2NmYwMTJkZDg0NmU0ODU5NDJjZCIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzcxOTIzMTg1LCJleHAiOjE3NzQ1MTUxODV9.evOJ2fl6JemqQpt35nmiBdmtwcZstKvdbW0dLy_iScU",
+    "user": {
+        "_id": "699d66f012dd846e485942cd",
+        "name": "Vihanga Perera",
+        "email": "vihanga@example.com",
+        "role": "user",
+        "greenScore": 0,
+        "profileImage": ""
+    }
+}
+```
+
+**Error Response (400):**
+```json
+{
+  "success": false,
+  "message": "User already exists"
+}
+```
+
+---
+
+### Register Admin
+
+**POST** `/register-admin`
+
+Register a new admin account.
+
+**Request Body:**
+```json
+{
+  "name": "Admin User",
+  "email": "admin@ecolife.com",
+  "password": "admin123456"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+    "success": true,
+    "message": "Admin registration successful",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWQ2OWIwMTJkZDg0NmU0ODU5NDJkMCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MTkyMzg4OCwiZXhwIjoxNzc0NTE1ODg4fQ.WmfM5D1P233W6BhWbnnw7UT4Y6moBWkjGdL3okUXXBI",
+    "user": {
+        "_id": "699d69b012dd846e485942d0",
+        "name": "Admin User",
+        "email": "admin@ecolife.com",
+        "role": "admin",
+        "greenScore": 0,
+        "profileImage": ""
+    }
+}
+```
+
+---
+
+### Login
+
+**POST** `/login`
+
+Authenticate user and receive JWT token.
+
+**Request Body:**
+```json
+{
+  "email": "vihanga@example.com",
+  "password": "12345678"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "message": "Login successful",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWQ2NmYwMTJkZDg0NmU0ODU5NDJjZCIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzcxOTIzOTg1LCJleHAiOjE3NzQ1MTU5ODV9.dD6YNgIrWNzEByFM5Vj3XGNtmxBemapmDgskaYzzptM",
+    "user": {
+        "_id": "699d66f012dd846e485942cd",
+        "name": "Vihanga Perera",
+        "email": "vihanga@example.com",
+        "role": "user",
+        "greenScore": 0,
+        "profileImage": ""
+    }
+}
+```
+
+**Error Response (401):**
+```json
+{
+  "success": false,
+  "message": "Invalid credentials"
+}
+```
+
+---
+
+### Get My Profile
+
+**GET** `/me`
+
+**Authentication:** Required
+
+Get the authenticated user's profile.
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "user": {
+        "_id": "699d66f012dd846e485942cd",
+        "name": "Vihanga Perera",
+        "email": "vihanga@example.com",
+        "role": "user",
+        "greenScore": 0,
+        "totalTransactions": 0,
+        "profileImage": "",
+        "isActive": true,
+        "createdAt": "2026-02-24T08:53:04.795Z",
+        "__v": 0
+    }
+}
+```
+
+---
+
+### Update Profile
+
+**PUT** `/me`
+
+**Authentication:** Required
+
+Update the authenticated user's profile.
+
+**Request Body:**
+```json
+{
+  "name": "Updated Name",
+  "profileImage": "https://example.com/image.jpg"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "message": "Profile updated",
+    "user": {
+        "_id": "699d66f012dd846e485942cd",
+        "name": "Updated Name",
+        "email": "vihanga@example.com",
+        "role": "user",
+        "greenScore": 0,
+        "totalTransactions": 0,
+        "profileImage": "https://example.com/image.jpg",
+        "isActive": true,
+        "createdAt": "2026-02-24T08:53:04.795Z",
+        "__v": 0
+    }
+}
+```
+---
+
+## Waste Management API
+
+**Base URL:** `/api/waste`
+
+### Log Waste
+
+**POST** `/`
+
+**Authentication:** Required
+
+Create a new waste log entry.
+
+**Request Body:**
+```json
+{
+  "wasteType": "Plastic",
+  "quantity": 5,
+  "unit": "kg",
+  "notes": "Plastic bottles",
+  "imageUrl": "https://example.com/image.jpg"
+}
+```
+
+**Waste Types:** `Plastic`, `Paper`, `Glass`, `Organic`, `E-waste`
+
+**Response (201 Created):**
+```json
+{
+    "success": true,
+    "message": "Waste logged successfully",
+    "log": {
+        "userId": "699d66f012dd846e485942cd",
+        "wasteType": "Plastic",
+        "quantity": 5,
+        "unit": "kg",
+        "imageUrl": "https://example.com/image.jpg",
+        "isBiodegradable": false,
+        "isRecyclable": true,
+        "carbonEquivalent": 10,
+        "notes": "Plastic bottles",
+        "_id": "699d812912dd846e48594353",
+        "date": "2026-02-24T10:44:57.381Z",
+        "__v": 0
+    }
+}
+```
+
+---
+
+### Get My Waste Logs
+
+**GET** `/`
+
+**Authentication:** Required
+
+Get all waste logs for the authenticated user with optional filters.
+
+**Query Parameters:**
+- `wasteType` - Filter by waste type
+- `startDate` - Start date (YYYY-MM-DD)
+- `endDate` - End date (YYYY-MM-DD)
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 20)
+
+**Example:** `/waste?wasteType=Plastic&startDate=2024-01-01&endDate=2024-12-31&page=1&limit=20`
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "total": 1,
+    "logs": [
+        {
+            "_id": "699d812912dd846e48594353",
+            "userId": "699d66f012dd846e485942cd",
+            "wasteType": "Plastic",
+            "quantity": 5,
+            "unit": "kg",
+            "imageUrl": "https://example.com/image.jpg",
+            "isBiodegradable": false,
+            "isRecyclable": true,
+            "carbonEquivalent": 10,
+            "notes": "Plastic bottles",
+            "date": "2026-02-24T10:44:57.381Z",
+            "__v": 0
+        }
+    ]
+}
+```
+
+---
+
+### Get Waste Analytics
+
+**GET** `/analytics`
+
+**Authentication:** Required
+
+Get waste analytics and statistics for the authenticated user.
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "totalLogs": 1,
+    "totalByType": {
+        "Plastic": 5
+    },
+    "totalCarbonEquivalent": 10,
+    "recyclableItems": 1,
+    "biodegradableItems": 0
+}
+```
+
+---
+
+### Get Waste Log by ID
+
+**GET** `/:id`
+
+**Authentication:** Required
+
+Get a specific waste log by ID.
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "log": {
+        "_id": "699d812912dd846e48594353",
+        "userId": "699d66f012dd846e485942cd",
+        "wasteType": "Plastic",
+        "quantity": 5,
+        "unit": "kg",
+        "imageUrl": "https://example.com/image.jpg",
+        "isBiodegradable": false,
+        "isRecyclable": true,
+        "carbonEquivalent": 10,
+        "notes": "Plastic bottles",
+        "date": "2026-02-24T10:44:57.381Z",
+        "__v": 0
+    }
+}
+```
+
+---
+
+### Delete Waste Log
+
+**DELETE** `/:id`
+
+**Authentication:** Required
+
+Delete a waste log entry.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Waste log deleted successfully"
+}
+```
+
+---
+
+### Get All Waste Logs (Admin Only)
+
+**GET** `/admin/all`
+
+**Authentication:** Required (Admin)
+
+Get all waste logs from all users (admin view).
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "wasteLogs": [
+    {
+      "_id": "507f1f77bcf86cd799439011",
+      "wasteType": "Plastic",
+      "quantity": 5,
+      "user": {
+        "_id": "507f1f77bcf86cd799439012",
+        "name": "Nadee perera"
+      },
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ]
+}
+```
