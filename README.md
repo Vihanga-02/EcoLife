@@ -481,7 +481,351 @@ Update the authenticated user's profile.
     }
 }
 ```
+## Energy API
+
+**Base URL:** `/api/energy`
+
+### Add Appliance
+
+**POST** `/appliances`
+
+**Authentication:** Required
+
+Add a new appliance to track energy consumption and estimate monthly usage.
+
+**Request Body:**
+```json
+{
+  "name": "Refrigerator",
+  "wattage": 150,
+  "category": "Kitchen",
+  "noOfHoursForDay": 8,
+  "noOfDaysForMonth": 30
+}
+```
+
+**Response (201 Created):**
+```json
+{
+    "success": true,
+    "message": "Appliance added",
+    "appliance": {
+        "userId": "699ed8acc9c95125e883ac8f",
+        "name": "Refrigerator",
+        "wattage": 150,
+        "noOfHoursForDay": 8,
+        "noOfDaysForMonth": 30,
+        "category": "Kitchen",
+        "status": "off",
+        "totalKwhThisMonth": 0,
+        "_id": "699f4e0dfb7519c9609c5697",
+        "usageSessions": [],
+        "createdAt": "2026-02-25T19:31:25.466Z",
+        "__v": 0
+    }
+}
+```
+
 ---
+
+### Get My Appliances
+
+**GET** `/appliances`
+
+**Authentication:** Required
+
+Get all appliances for the authenticated user.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "appliances": [
+    {
+      "_id": "507f1f77bcf86cd799439011",
+      "name": "Refrigerator",
+      "wattage": 150,
+      "noOfHoursForDay": 8,
+      "noOfDaysForMonth": 30,
+      "category": "Kitchen",
+      "status": "off",
+      "userId": "507f1f77bcf86cd799439012",
+      "createdAt": "2026-02-25T00:00:00.000Z"
+    }
+  ]
+}
+```
+
+---
+
+### Update Appliance
+
+**PUT** `/appliances/:id`
+
+**Authentication:** Required
+
+Update an existing appliance.
+
+**Request Body:**
+```json
+{
+  "noOfHoursForDay": 5,
+  "noOfDaysForMonth": 30
+}
+```
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "message": "Appliance updated",
+    "appliance": {
+        "_id": "699f4bd403fa31a199a3028a",
+        "userId": "699ed8acc9c95125e883ac8f",
+        "name": "LED TV",
+        "wattage": 50,
+        "noOfHoursForDay": 5,
+        "noOfDaysForMonth": 30,
+        "category": "Living",
+        "status": "off",
+        "totalKwhThisMonth": 0,
+        "usageSessions": [],
+        "createdAt": "2026-02-25T19:21:56.834Z",
+        "__v": 0
+    }
+}
+```
+
+---
+
+### Delete Appliance
+
+**DELETE** `/appliances/:id`
+
+**Authentication:** Required
+
+Delete an appliance.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Appliance deleted"
+}
+```
+
+---
+
+### Toggle Appliance ON/OFF
+
+**PATCH** `/appliances/:id/toggle`
+
+**Authentication:** Required
+
+Toggle appliance power state. When turning **off**, the API records a usage session and updates `totalKwhThisMonth` for real-time bill calculations.
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "message": "Appliance turned on",
+    "appliance": {
+        "_id": "699f4bf103fa31a199a3028d",
+        "userId": "699ed8acc9c95125e883ac8f",
+        "name": "Washing Machine",
+        "wattage": 200,
+        "noOfHoursForDay": 2,
+        "noOfDaysForMonth": 5,
+        "category": "Other",
+        "status": "on",
+        "totalKwhThisMonth": 0,
+        "usageSessions": [],
+        "createdAt": "2026-02-25T19:22:25.586Z",
+        "__v": 0,
+        "lastStartTime": "2026-02-25T19:25:49.678Z"
+    }
+}
+```
+
+---
+
+### Get Real-Time Bill
+
+**GET** `/real-time-bill`
+
+**Authentication:** Required
+
+Get the **real-time** energy bill based on actual tracked usage (`totalKwhThisMonth`) from appliance toggle sessions and current tariffs.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "totalKwh": 150.5,
+  "realTimeBill": 827.75,
+  "appliances": 3,
+  "tariffApplied": "Block 1"
+}
+```
+
+---
+
+### Estimate Monthly Bill (Using Hours/Days Per Appliance)
+
+**GET** `/estimate-bill`
+
+**Authentication:** Required
+
+Estimate the **monthly** energy usage and bill based on each appliance's `wattage`, `noOfHoursForDay`, and `noOfDaysForMonth`, combined with the active tariff blocks.
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "totalEstimatedKwh": 38,
+    "totalEstimatedBill": 523,
+    "appliances": [
+        {
+            "applianceId": "699f4bf103fa31a199a3028d",
+            "name": "Washing Machine",
+            "wattage": 200,
+            "noOfHoursForDay": 2,
+            "noOfDaysForMonth": 5,
+            "estimatedKwhPerMonth": 2,
+            "estimatedCostPerMonth": 27.53
+        },
+        {
+            "applianceId": "699f4e0dfb7519c9609c5697",
+            "name": "Refrigerator",
+            "wattage": 150,
+            "noOfHoursForDay": 8,
+            "noOfDaysForMonth": 30,
+            "estimatedKwhPerMonth": 36,
+            "estimatedCostPerMonth": 495.47
+        }
+    ],
+    "tariffApplied": "Block 2",
+    "effectiveUnitRate": 13.7632
+}
+```
+
+---
+
+### Create Tariff (Admin Only)
+
+**POST** `/tariffs`
+
+**Authentication:** Required (Admin)
+
+Create a new energy tariff block.
+
+**Request Body:**
+```json
+{
+  "blockName": "Block 1",
+  "minUnits": 0,
+  "maxUnits": 30,
+  "unitRate": 5.50,
+  "fixedCharge": 100,
+  "isActive": true
+}
+```
+
+**Response (201 Created):**
+```json
+{
+  "success": true,
+  "message": "Tariff created",
+  "tariff": {
+    "_id": "507f1f77bcf86cd799439011",
+    "blockName": "Block 1",
+    "minUnits": 0,
+    "maxUnits": 30,
+    "unitRate": 5.5,
+    "fixedCharge": 100,
+    "isActive": true
+  }
+}
+```
+
+---
+
+### Get All Tariffs
+
+**GET** `/tariffs`
+
+**Authentication:** Required
+
+Get all active tariffs.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "tariffs": [
+    {
+      "_id": "507f1f77bcf86cd799439011",
+      "blockName": "Block 1",
+      "minUnits": 0,
+      "maxUnits": 30,
+      "unitRate": 5.5,
+      "fixedCharge": 100,
+      "isActive": true
+    }
+  ]
+}
+```
+
+---
+
+### Update Tariff (Admin Only)
+
+**PUT** `/tariffs/:id`
+
+**Authentication:** Required (Admin)
+
+Update an existing tariff.
+
+**Request Body:**
+```json
+{
+  "blockName": "Updated Block",
+  "unitRate": 6.00,
+  "fixedCharge": 120
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Tariff updated",
+  "tariff": {
+    "_id": "507f1f77bcf86cd799439011",
+    "blockName": "Updated Block",
+    "unitRate": 6.00,
+    "fixedCharge": 120
+  }
+}
+```
+
+---
+
+### Delete Tariff (Admin Only)
+
+**DELETE** `/tariffs/:id`
+
+**Authentication:** Required (Admin)
+
+Delete a tariff.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Tariff deleted successfully"
+}
+```
 
 ## Waste Management API
 
