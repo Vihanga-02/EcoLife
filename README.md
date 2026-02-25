@@ -676,18 +676,18 @@ Get all waste logs from all users (admin view).
 ```
 ## Marketplace API
 
-*Base URL:* /api/marketplace
+**Base URL:** `/api/marketplace`
 
 ### Create Item
 
-*POST* /items
+**POST** `/items`
 
-*Authentication:* Required
+**Authentication:** Required
 
 Create a new marketplace item listing.
 
-*Request Body:*
-json
+**Request Body:**
+```json
 {
   "title": "Vintage Bicycle",
   "description": "Eco-friendly transportation option",
@@ -696,12 +696,12 @@ json
   "listingType": "Free",
   "imageUrl": "https://example.com/image.jpg"
 }
+```
 
+**Note:** `listingType` can be `"sell"` or `"giveaway"`
 
-*Note:* listingType can be "sell" or "giveaway"
-
-*Response (201 Created):*
-json
+**Response (201 Created):**
+```json
 {
     "success": true,
     "message": "Item listed successfully",
@@ -721,29 +721,29 @@ json
         "__v": 0
     }
 }
-
+```
 
 ---
 
 ### Get All Items
 
-*GET* /items
+**GET** `/items`
 
-*Authentication:* Not Required
+**Authentication:** Not Required
 
 Get all marketplace items with optional filters.
 
-*Query Parameters:*
-- category - Filter by category
-- condition - Filter by condition
-- listingType - Filter by listing type (sell or giveaway)
-- page - Page number (default: 1)
-- limit - Items per page (default: 12)
+**Query Parameters:**
+- `category` - Filter by category
+- `condition` - Filter by condition
+- `listingType` - Filter by listing type (`sell` or `giveaway`)
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 12)
 
-*Example:* /items?category=Transportation&condition=Good&listingType=sell&page=1&limit=12
+**Example:** `/items?category=Transportation&condition=Good&listingType=sell&page=1&limit=12`
 
-*Response (200 OK):*
-json
+**Response (200 OK):**
+```json
 {
     "success": true,
     "total": 3,
@@ -812,20 +812,20 @@ json
         }
     ]
 }
-
+```
 
 ---
 
 ### Get Item by ID
 
-*GET* /items/:id
+**GET** `/items/:id`
 
-*Authentication:* Not Required
+**Authentication:** Not Required
 
 Get a specific item by ID.
 
-*Response (200 OK):*
-json
+**Response (200 OK):**
+```json
 {
     "success": true,
     "item": {
@@ -850,20 +850,20 @@ json
         "__v": 0
     }
 }
-
+```
 
 ---
 
 ### Get My Items
 
-*GET* /my-items
+**GET** `/my-items`
 
-*Authentication:* Required
+**Authentication:** Required
 
 Get all items listed by the authenticated user.
 
-*Response (200 OK):*
-json
+**Response (200 OK):**
+```json
 {
     "success": true,
     "count": 1,
@@ -885,29 +885,29 @@ json
         }
     ]
 }
-
+```
 
 ---
 
 ### Update Item
 
-*PUT* /items/:id
+**PUT** `/items/:id`
 
-*Authentication:* Required
+**Authentication:** Required
 
 Update an item (only by the seller).
 
-*Request Body:*
-json
+**Request Body:**
+```json
 {
   "title": "Updated Title",
   "description": "Updated description",
   "condition": "New"
 }
+```
 
-
-*Response (200 OK):*
-json
+**Response (200 OK):**
+```json
 {
     "success": true,
     "message": "Item updated",
@@ -927,38 +927,38 @@ json
         "__v": 0
     }
 }
-
+```
 
 ---
 
 ### Delete Item
 
-*DELETE* /items/:id
+**DELETE** `/items/:id`
 
-*Authentication:* Required
+**Authentication:** Required
 
 Delete an item (only by the seller).
 
-*Response (200 OK):*
-json
+**Response (200 OK):**
+```json
 {
     "success": true,
     "message": "Item deleted"
 }
-
+```
 
 ---
 
 ### Claim Item
 
-*POST* /items/:id/claim
+**POST** `/items/:id/claim`
 
-*Authentication:* Required
+**Authentication:** Required
 
 Claim a giveaway item or express interest in a sell item.
 
-*Response (200 OK):*
-json
+**Response (200 OK):**
+```json
 {
     "success": true,
     "message": "Claim request sent",
@@ -973,20 +973,20 @@ json
         "__v": 0
     }
 }
-
+```
 
 ---
 
 ### Get My Transactions
 
-*GET* /transactions
+**GET** `/transactions`
 
-*Authentication:* Required
+**Authentication:** Required
 
 Get all transactions for the authenticated user (as buyer or seller).
 
-*Response (200 OK):*
-json
+**Response (200 OK):**
+```json
 {
     "success": true,
     "count": 1,
@@ -1016,27 +1016,27 @@ json
         }
     ]
 }
-
+```
 
 ---
 
 ### Review Transaction
 
-*PATCH* /transactions/:id/review
+**PATCH** `/transactions/:id/review`
 
-*Authentication:* Required
+**Authentication:** Required
 
 Add a review and rating to a completed transaction.
 
-*Request Body:*
-json
+**Request Body:**
+```json
 {
   "action":"approve"
 }
+```
 
-
-*Response (200 OK):*
-json
+**Response (200 OK):**
+```json
 {
     "success": true,
     "message": "Transaction approved",
@@ -1051,20 +1051,20 @@ json
         "__v": 0
     }
 }
-
+```
 
 ---
 
 ### Get All Items (Admin Only)
 
-*GET* /admin/all
+**GET** `/admin/all`
 
-*Authentication:* Required (Admin)
+**Authentication:** Required (Admin)
 
 Get all marketplace items (admin view).
 
-*Response (200 OK):*
-json
+**Response (200 OK):**
+```json
 {
   "success": true,
   "items": [
@@ -1076,3 +1076,4 @@ json
     }
   ]
 }
+```
