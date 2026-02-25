@@ -8,6 +8,8 @@ const ApplianceSchema = new mongoose.Schema({
   },
   name: { type: String, required: true, trim: true },
   wattage: { type: Number, required: true, min: 0 },
+  noOfHoursForDay: { type: Number, default: 0, min: 0 },
+  noOfDaysForMonth: { type: Number, default: 0, min: 0 },
   category: {
     type: String,
     enum: ['Kitchen', 'Living', 'Bedroom', 'Other'],

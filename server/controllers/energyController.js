@@ -5,7 +5,7 @@ import User from '../models/User.js';
 // Add a new appliance
 const addAppliance = async (req, res) => {
   try {
-    const { name, wattage, category } = req.body;
+    const { name, wattage, category, noOfHoursForDay, noOfDaysForMonth } = req.body;
 
     if (!name || !wattage) {
       return res.status(400).json({ success: false, message: 'Name and wattage are required' });
@@ -16,6 +16,8 @@ const addAppliance = async (req, res) => {
       name,
       wattage,
       category,
+      noOfHoursForDay: noOfHoursForDay !== undefined ? noOfHoursForDay : 0,
+      noOfDaysForMonth: noOfDaysForMonth !== undefined ? noOfDaysForMonth : 0,
     });
 
     res.status(201).json({ success: true, message: 'Appliance added', appliance });
@@ -109,8 +111,8 @@ const toggleAppliance = async (req, res) => {
   }
 };
 
-// Estimate monthly electricity bill using tariff blocks
-const estimateBill = async (req, res) => {
+// Get real-time electricity bill using tracked usage (toggle on/off sessions)
+const realTimeBill = async (req, res) => {
   try {
     const appliances = await Appliance.find({ userId: req.user._id });
     const tariffs = await Tariff.find({ isActive: true }).sort({ minUnits: 1 });
@@ -132,12 +134,77 @@ const estimateBill = async (req, res) => {
     res.status(200).json({
       success: true,
       totalKwh: parseFloat(totalKwh.toFixed(3)),
-      estimatedBill: parseFloat(bill.toFixed(2)),
+      realTimeBill: parseFloat(bill.toFixed(2)),
       appliances: appliances.length,
       tariffApplied: matchedTariff ? matchedTariff.blockName : 'No matching tariff',
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message || 'Failed to estimate bill' });
+    res.status(500).json({ success: false, message: error.message || 'Failed to calculate real-time bill' });
+  }
+};
+
+// Estimate monthly electricity bill using configured hours/days per appliance
+const estimateBill = async (req, res) => {
+  try {
+    const appliances = await Appliance.find({ userId: req.user._id });
+    const tariffs = await Tariff.find({ isActive: true }).sort({ minUnits: 1 });
+
+    // Per-appliance estimated monthly kWh based on wattage, hours per day, and days per month
+    const applianceEstimates = appliances.map((a) => {
+      const hoursPerDay = a.noOfHoursForDay || 0;
+      const daysPerMonth = a.noOfDaysForMonth || 0;
+      const estimatedKwhPerMonth = (a.wattage / 1000) * hoursPerDay * daysPerMonth;
+
+      return {
+        applianceId: a._id,
+        name: a.name,
+        wattage: a.wattage,
+        noOfHoursForDay: hoursPerDay,
+        noOfDaysForMonth: daysPerMonth,
+        estimatedKwhPerMonth: parseFloat(estimatedKwhPerMonth.toFixed(3)),
+      };
+    });
+
+    const totalEstimatedKwh = applianceEstimates.reduce(
+      (sum, a) => sum + a.estimatedKwhPerMonth,
+      0
+    );
+
+    let bill = 0;
+    let matchedTariff = null;
+
+    for (const tariff of tariffs) {
+      const max = tariff.maxUnits ?? Infinity;
+      if (totalEstimatedKwh >= tariff.minUnits && totalEstimatedKwh <= max) {
+        bill = tariff.fixedCharge + totalEstimatedKwh * tariff.unitRate;
+        matchedTariff = tariff;
+        break;
+      }
+    }
+
+    const effectiveUnitRate =
+      totalEstimatedKwh > 0 ? bill / totalEstimatedKwh : 0;
+
+    const appliancesWithCost = applianceEstimates.map((a) => ({
+      ...a,
+      estimatedCostPerMonth: parseFloat(
+        (a.estimatedKwhPerMonth * effectiveUnitRate).toFixed(2)
+      ),
+    }));
+
+    res.status(200).json({
+      success: true,
+      totalEstimatedKwh: parseFloat(totalEstimatedKwh.toFixed(3)),
+      totalEstimatedBill: parseFloat(bill.toFixed(2)),
+      appliances: appliancesWithCost,
+      tariffApplied: matchedTariff ? matchedTariff.blockName : 'No matching tariff',
+      effectiveUnitRate: parseFloat(effectiveUnitRate.toFixed(4)),
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Failed to estimate bill',
+    });
   }
 };
 
@@ -201,6 +268,7 @@ export {
   updateAppliance,
   deleteAppliance,
   toggleAppliance,
+  realTimeBill,
   estimateBill,
   createTariff,
   getTariffs,

@@ -6,6 +6,7 @@ import {
   updateAppliance,
   deleteAppliance,
   toggleAppliance,
+  realTimeBill,
   estimateBill,
   createTariff,
   getTariffs,
@@ -26,6 +27,7 @@ router.route('/appliances/:id')
 router.patch('/appliances/:id/toggle', protect, toggleAppliance);
 
 // Bill estimation
+router.get('/real-time-bill', protect, realTimeBill);
 router.get('/estimate-bill', protect, estimateBill);
 
 // Tariff routes
