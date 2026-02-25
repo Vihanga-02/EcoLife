@@ -674,3 +674,405 @@ Get all waste logs from all users (admin view).
   ]
 }
 ```
+## Marketplace API
+
+*Base URL:* /api/marketplace
+
+### Create Item
+
+*POST* /items
+
+*Authentication:* Required
+
+Create a new marketplace item listing.
+
+*Request Body:*
+json
+{
+  "title": "Vintage Bicycle",
+  "description": "Eco-friendly transportation option",
+  "category": "Transportation",
+  "condition": "Good",
+  "listingType": "Free",
+  "imageUrl": "https://example.com/image.jpg"
+}
+
+
+*Note:* listingType can be "sell" or "giveaway"
+
+*Response (201 Created):*
+json
+{
+    "success": true,
+    "message": "Item listed successfully",
+    "item": {
+        "ownerId": "699d66f012dd846e485942cd",
+        "title": "Vintage Bicycle",
+        "description": "Eco-friendly transportation option",
+        "category": "Transportation",
+        "imageUrl": "https://example.com/image.jpg",
+        "condition": "Good",
+        "listingType": "Free",
+        "status": "available",
+        "claimedBy": null,
+        "_id": "699d719012dd846e48594313",
+        "createdAt": "2026-02-24T09:38:24.601Z",
+        "updatedAt": "2026-02-24T09:38:24.601Z",
+        "__v": 0
+    }
+}
+
+
+---
+
+### Get All Items
+
+*GET* /items
+
+*Authentication:* Not Required
+
+Get all marketplace items with optional filters.
+
+*Query Parameters:*
+- category - Filter by category
+- condition - Filter by condition
+- listingType - Filter by listing type (sell or giveaway)
+- page - Page number (default: 1)
+- limit - Items per page (default: 12)
+
+*Example:* /items?category=Transportation&condition=Good&listingType=sell&page=1&limit=12
+
+*Response (200 OK):*
+json
+{
+    "success": true,
+    "total": 3,
+    "page": 1,
+    "pages": 1,
+    "items": [
+        {
+            "_id": "699d719012dd846e48594313",
+            "ownerId": {
+                "_id": "699d66f012dd846e485942cd",
+                "name": "Updated Name",
+                "greenScore": 0,
+                "profileImage": "https://example.com/image.jpg"
+            },
+            "title": "Vintage Bicycle",
+            "description": "Eco-friendly transportation option",
+            "category": "Transportation",
+            "imageUrl": "https://example.com/image.jpg",
+            "condition": "Good",
+            "listingType": "Free",
+            "status": "available",
+            "claimedBy": null,
+            "createdAt": "2026-02-24T09:38:24.601Z",
+            "updatedAt": "2026-02-24T09:38:24.601Z",
+            "__v": 0
+        },
+        {
+            "_id": "69971b7b044515fc60b9e50d",
+            "ownerId": {
+                "_id": "699357b66d6c6833606542d9",
+                "name": "Amaya",
+                "greenScore": 4,
+                "profileImage": ""
+            },
+            "title": "Old Textbooks",
+            "description": "Used school books in good condition",
+            "category": "Books",
+            "imageUrl": "/images/sofa.jpg",
+            "condition": "Good",
+            "listingType": "Free",
+            "status": "available",
+            "claimedBy": null,
+            "createdAt": "2026-02-19T14:17:31.900Z",
+            "updatedAt": "2026-02-19T14:17:31.900Z",
+            "__v": 0
+        },
+        {
+            "_id": "699596cebaf900f94b2f2e87",
+            "ownerId": {
+                "_id": "699357b66d6c6833606542d9",
+                "name": "Amaya",
+                "greenScore": 4,
+                "profileImage": ""
+            },
+            "title": "Old Textbooks",
+            "description": "Used school books in good condition",
+            "category": "Books",
+            "imageUrl": "https://example.com/book.jpg",
+            "condition": "Good",
+            "listingType": "Free",
+            "status": "available",
+            "claimedBy": null,
+            "createdAt": "2026-02-18T10:39:10.653Z",
+            "updatedAt": "2026-02-18T10:39:10.653Z",
+            "__v": 0
+        }
+    ]
+}
+
+
+---
+
+### Get Item by ID
+
+*GET* /items/:id
+
+*Authentication:* Not Required
+
+Get a specific item by ID.
+
+*Response (200 OK):*
+json
+{
+    "success": true,
+    "item": {
+        "_id": "699d719012dd846e48594313",
+        "ownerId": {
+            "_id": "699d66f012dd846e485942cd",
+            "name": "Updated Name",
+            "email": "vihanga@example.com",
+            "greenScore": 0,
+            "profileImage": "https://example.com/image.jpg"
+        },
+        "title": "Vintage Bicycle",
+        "description": "Eco-friendly transportation option",
+        "category": "Transportation",
+        "imageUrl": "https://example.com/image.jpg",
+        "condition": "Good",
+        "listingType": "Free",
+        "status": "available",
+        "claimedBy": null,
+        "createdAt": "2026-02-24T09:38:24.601Z",
+        "updatedAt": "2026-02-24T09:38:24.601Z",
+        "__v": 0
+    }
+}
+
+
+---
+
+### Get My Items
+
+*GET* /my-items
+
+*Authentication:* Required
+
+Get all items listed by the authenticated user.
+
+*Response (200 OK):*
+json
+{
+    "success": true,
+    "count": 1,
+    "items": [
+        {
+            "_id": "699d719012dd846e48594313",
+            "ownerId": "699d66f012dd846e485942cd",
+            "title": "Vintage Bicycle",
+            "description": "Eco-friendly transportation option",
+            "category": "Transportation",
+            "imageUrl": "https://example.com/image.jpg",
+            "condition": "Good",
+            "listingType": "Free",
+            "status": "available",
+            "claimedBy": null,
+            "createdAt": "2026-02-24T09:38:24.601Z",
+            "updatedAt": "2026-02-24T09:38:24.601Z",
+            "__v": 0
+        }
+    ]
+}
+
+
+---
+
+### Update Item
+
+*PUT* /items/:id
+
+*Authentication:* Required
+
+Update an item (only by the seller).
+
+*Request Body:*
+json
+{
+  "title": "Updated Title",
+  "description": "Updated description",
+  "condition": "New"
+}
+
+
+*Response (200 OK):*
+json
+{
+    "success": true,
+    "message": "Item updated",
+    "item": {
+        "_id": "699d719012dd846e48594313",
+        "ownerId": "699d66f012dd846e485942cd",
+        "title": "Updated Title",
+        "description": "Updated description",
+        "category": "Transportation",
+        "imageUrl": "https://example.com/image.jpg",
+        "condition": "New",
+        "listingType": "Free",
+        "status": "available",
+        "claimedBy": null,
+        "createdAt": "2026-02-24T09:38:24.601Z",
+        "updatedAt": "2026-02-24T09:47:20.231Z",
+        "__v": 0
+    }
+}
+
+
+---
+
+### Delete Item
+
+*DELETE* /items/:id
+
+*Authentication:* Required
+
+Delete an item (only by the seller).
+
+*Response (200 OK):*
+json
+{
+    "success": true,
+    "message": "Item deleted"
+}
+
+
+---
+
+### Claim Item
+
+*POST* /items/:id/claim
+
+*Authentication:* Required
+
+Claim a giveaway item or express interest in a sell item.
+
+*Response (200 OK):*
+json
+{
+    "success": true,
+    "message": "Claim request sent",
+    "transaction": {
+        "itemId": "699596cebaf900f94b2f2e87",
+        "sellerId": "699357b66d6c6833606542d9",
+        "buyerId": "699d66f012dd846e485942cd",
+        "status": "pending",
+        "completedAt": null,
+        "_id": "699d740e12dd846e48594330",
+        "createdAt": "2026-02-24T09:49:02.155Z",
+        "__v": 0
+    }
+}
+
+
+---
+
+### Get My Transactions
+
+*GET* /transactions
+
+*Authentication:* Required
+
+Get all transactions for the authenticated user (as buyer or seller).
+
+*Response (200 OK):*
+json
+{
+    "success": true,
+    "count": 1,
+    "transactions": [
+        {
+            "_id": "699d740e12dd846e48594330",
+            "itemId": {
+                "_id": "699596cebaf900f94b2f2e87",
+                "title": "Old Textbooks",
+                "category": "Books",
+                "imageUrl": "https://example.com/book.jpg"
+            },
+            "sellerId": {
+                "_id": "699357b66d6c6833606542d9",
+                "name": "Amaya",
+                "email": "testuser@gmail.com"
+            },
+            "buyerId": {
+                "_id": "699d66f012dd846e485942cd",
+                "name": "Updated Name",
+                "email": "vihanga@example.com"
+            },
+            "status": "pending",
+            "completedAt": null,
+            "createdAt": "2026-02-24T09:49:02.155Z",
+            "__v": 0
+        }
+    ]
+}
+
+
+---
+
+### Review Transaction
+
+*PATCH* /transactions/:id/review
+
+*Authentication:* Required
+
+Add a review and rating to a completed transaction.
+
+*Request Body:*
+json
+{
+  "action":"approve"
+}
+
+
+*Response (200 OK):*
+json
+{
+    "success": true,
+    "message": "Transaction approved",
+    "transaction": {
+        "_id": "699d740e12dd846e48594330",
+        "itemId": "699596cebaf900f94b2f2e87",
+        "sellerId": "699357b66d6c6833606542d9",
+        "buyerId": "699d66f012dd846e485942cd",
+        "status": "completed",
+        "completedAt": "2026-02-24T10:17:26.794Z",
+        "createdAt": "2026-02-24T09:49:02.155Z",
+        "__v": 0
+    }
+}
+
+
+---
+
+### Get All Items (Admin Only)
+
+*GET* /admin/all
+
+*Authentication:* Required (Admin)
+
+Get all marketplace items (admin view).
+
+*Response (200 OK):*
+json
+{
+  "success": true,
+  "items": [
+    {
+      "_id": "507f1f77bcf86cd799439011",
+      "title": "Vintage Bicycle",
+      "seller": "507f1f77bcf86cd799439012",
+      "status": "available"
+    }
+  ]
+}
