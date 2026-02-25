@@ -320,7 +320,7 @@ Register a new regular user account.
 {
     "success": true,
     "message": "Registration successful",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWQ2NmYwMTJkZDg0NmU0ODU5NDJjZCIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzcxOTIzMTg1LCJleHAiOjE3NzQ1MTUxODV9.evOJ2fl6JemqQpt35nmiBdmtwcZstKvdbW0dLy_iScU",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWQ2********",
     "user": {
         "_id": "699d66f012dd846e485942cd",
         "name": "Vihanga Perera",
@@ -362,7 +362,7 @@ Register a new admin account.
 {
     "success": true,
     "message": "Admin registration successful",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWQ2OWIwMTJkZDg0NmU0ODU5NDJkMCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MTkyMzg4OCwiZXhwIjoxNzc0NTE1ODg4fQ.WmfM5D1P233W6BhWbnnw7UT4Y6moBWkjGdL3okUXXBI",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY******************",
     "user": {
         "_id": "699d69b012dd846e485942d0",
         "name": "Admin User",
@@ -395,7 +395,7 @@ Authenticate user and receive JWT token.
 {
     "success": true,
     "message": "Login successful",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWQ2NmYwMTJkZDg0NmU0ODU5NDJjZCIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzcxOTIzOTg1LCJleHAiOjE3NzQ1MTU5ODV9.dD6YNgIrWNzEByFM5Vj3XGNtmxBemapmDgskaYzzptM",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWQ2***************",
     "user": {
         "_id": "699d66f012dd846e485942cd",
         "name": "Vihanga Perera",
@@ -736,7 +736,7 @@ Get all marketplace items with optional filters.
 **Query Parameters:**
 - `category` - Filter by category
 - `condition` - Filter by condition
-- `listingType` - Filter by listing type (`sell` or `giveaway`)
+- `listingType` - Filter by listing type (`sell` or `free`)
 - `page` - Page number (default: 1)
 - `limit` - Items per page (default: 12)
 
