@@ -1077,3 +1077,418 @@ Get all marketplace items (admin view).
   ]
 }
 ```
+
+
+## Recycling API
+
+**Base URL:** `/api/recycling`
+
+### Get All Centers
+
+**GET** `/centers`
+
+**Authentication:** Not Required
+
+Get all recycling centers with optional filters.
+
+**Query Parameters:**
+- `city` - Filter by city
+- `material` - Filter by accepted material
+
+**Example:** `/centers?city=Mumbai&material=Plastic`
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "count": 1,
+    "centers": [
+        {
+            "location": {
+                "type": "Point",
+                "coordinates": [
+                    79.8612,
+                    6.9271
+                ]
+            },
+            "_id": "69959cf0baf900f94b2f2ea0",
+            "name": "Colombo Recycling Center",
+            "city": "Colombo",
+            "address": "No 25, Galle Road, Colombo 03",
+            "acceptMaterials": [
+                "Plastic",
+                "Glass",
+                "Paper"
+            ],
+            "contactNumber": "0771234567",
+            "operatingHours": "8:00 AM - 5:00 PM",
+            "isActive": true,
+            "createdAt": "2026-02-18T11:05:20.868Z",
+            "updatedAt": "2026-02-18T11:05:20.869Z",
+            "__v": 0
+        }
+    ]
+}
+```
+
+---
+
+### Get Nearby Centers
+
+**GET** `/centers/nearby`
+
+**Authentication:** Not Required
+
+Find recycling centers near a specific location.
+
+**Query Parameters:**
+- `lng` - Longitude (required)
+- `lat` - Latitude (required)
+- `maxDist` - Maximum distance in meters (default: 10000)
+
+**Example:** `/centers/nearby?lng=72.8777&lat=19.0760&maxDist=10000`
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "centers": [
+    {
+      "_id": "507f1f77bcf86cd799439011",
+      "name": "Green Recycling Center",
+      "distance": 500,
+      "address": "No. 45, Galle Road, Colombo 03",
+      "acceptMaterials": ["Plastic", "Paper", "Glass"]
+    }
+  ]
+}
+```
+
+---
+
+### Get Center by ID
+
+**GET** `/centers/:id`
+
+**Authentication:** Not Required
+
+Get a specific recycling center by ID.
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "center": {
+        "location": {
+            "type": "Point",
+            "coordinates": [
+                79.8612,
+                6.9271
+            ]
+        },
+        "_id": "69959cf0baf900f94b2f2ea0",
+        "name": "Colombo Recycling Center",
+        "city": "Colombo",
+        "address": "No 25, Galle Road, Colombo 03",
+        "acceptMaterials": [
+            "Plastic",
+            "Glass",
+            "Paper"
+        ],
+        "contactNumber": "0771234567",
+        "operatingHours": "8:00 AM - 5:00 PM",
+        "isActive": true,
+        "createdAt": "2026-02-18T11:05:20.868Z",
+        "updatedAt": "2026-02-18T11:05:20.869Z",
+        "__v": 0
+    }
+}
+```
+
+---
+
+### Create Center (Admin Only)
+
+**POST** `/centers`
+
+**Authentication:** Required (Admin)
+
+Create a new recycling center.
+
+**Request Body:**
+```json
+{
+  "name": "Green Recycling Center",
+  "city": "Colombo",
+  "address": "No. 45, Galle Road, Colombo 03",
+  "longitude": 72.8777,
+  "latitude": 19.0760,
+  "acceptMaterials": ["Plastic", "Paper", "Glass"],
+  "contactNumber": "+94 11 2345678",
+  "operatingHours": "9 AM - 6 PM"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+    "success": true,
+    "message": "Recycling center created",
+    "center": {
+        "name": "Green Recycling Center",
+        "city": "Colombo",
+        "address": "No. 45, Galle Road, Colombo 03",
+        "location": {
+            "type": "Point",
+            "coordinates": [
+                72.8777,
+                19.076
+            ]
+        },
+        "acceptMaterials": [
+            "Plastic",
+            "Paper",
+            "Glass"
+        ],
+        "contactNumber": "+94 11 2345678",
+        "operatingHours": "9 AM - 6 PM",
+        "isActive": true,
+        "_id": "699d830112dd846e48594364",
+        "createdAt": "2026-02-24T10:52:49.499Z",
+        "updatedAt": "2026-02-24T10:52:49.499Z",
+        "__v": 0
+    }
+}
+```
+
+---
+
+### Update Center (Admin Only)
+
+**PUT** `/centers/:id`
+
+**Authentication:** Required (Admin)
+
+Update an existing recycling center.
+
+**Request Body:**
+```json
+{
+  "name": "Colombo Recycling Hub",
+  "contactNumber": "0771234567",
+  "operatingHours": "8 AM - 7 PM"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "message": "Center updated",
+    "center": {
+        "location": {
+            "type": "Point",
+            "coordinates": [
+                72.8777,
+                19.076
+            ]
+        },
+        "_id": "699d830112dd846e48594364",
+        "name": "Colombo Recycling Hub",
+        "city": "Colombo",
+        "address": "No. 45, Galle Road, Colombo 03",
+        "acceptMaterials": [
+            "Plastic",
+            "Paper",
+            "Glass"
+        ],
+        "contactNumber": "0771234567",
+        "operatingHours": "8 AM - 7 PM",
+        "isActive": true,
+        "createdAt": "2026-02-24T10:52:49.499Z",
+        "updatedAt": "2026-02-24T10:54:45.631Z",
+        "__v": 0
+    }
+}
+```
+
+---
+
+### Delete Center (Admin Only)
+
+**DELETE** `/centers/:id`
+
+**Authentication:** Required (Admin)
+
+Delete a recycling center.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Recycling center deleted successfully"
+}
+```
+
+---
+
+### Create Submission
+
+**POST** `/submissions`
+
+**Authentication:** Required
+
+Create a new recycling submission.
+
+**Request Body:**
+```json
+{
+  "centerId": "699d830112dd846e48594364",
+  "materialType": "Plastic",
+  "estimatedWeight": 10
+}
+```
+
+**Response (201 Created):**
+```json
+{
+    "success": true,
+    "message": "Submission created",
+    "submission": {
+        "userId": "699d66f012dd846e485942cd",
+        "centerId": "699d830112dd846e48594364",
+        "materialType": "Plastic",
+        "estimatedWeight": 10,
+        "unit": "kg",
+        "status": "pending",
+        "reviewedBy": null,
+        "reviewedAt": null,
+        "_id": "699d8a3a744351932b771728",
+        "submittedAt": "2026-02-24T11:23:38.804Z",
+        "__v": 0
+    }
+}
+```
+
+---
+
+### Get My Submissions
+
+**GET** `/submissions/me`
+
+**Authentication:** Required
+
+Get all recycling submissions for the authenticated user.
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "count": 1,
+    "submissions": [
+        {
+            "_id": "699d8a3a744351932b771728",
+            "userId": "699d66f012dd846e485942cd",
+            "centerId": {
+                "_id": "699d830112dd846e48594364",
+                "name": "Colombo Recycling Hub",
+                "city": "Colombo",
+                "address": "No. 45, Galle Road, Colombo 03"
+            },
+            "materialType": "Plastic",
+            "estimatedWeight": 10,
+            "unit": "kg",
+            "status": "pending",
+            "reviewedBy": null,
+            "reviewedAt": null,
+            "submittedAt": "2026-02-24T11:23:38.804Z",
+            "__v": 0
+        }
+    ]
+}
+```
+
+---
+
+### Get All Submissions (Admin Only)
+
+**GET** `/submissions`
+
+**Authentication:** Required (Admin)
+
+Get all recycling submissions from all users.
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "count": 1,
+    "submissions": [
+        {
+            "_id": "699d8a3a744351932b771728",
+            "userId": {
+                "_id": "699d66f012dd846e485942cd",
+                "name": "Updated Name",
+                "email": "vihanga@example.com"
+            },
+            "centerId": {
+                "_id": "699d830112dd846e48594364",
+                "name": "Colombo Recycling Hub",
+                "city": "Colombo"
+            },
+            "materialType": "Plastic",
+            "estimatedWeight": 10,
+            "unit": "kg",
+            "status": "pending",
+            "reviewedBy": null,
+            "reviewedAt": null,
+            "submittedAt": "2026-02-24T11:23:38.804Z",
+            "__v": 0
+        }
+    ]
+}
+```
+
+---
+
+### Review Submission (Admin Only)
+
+**PATCH** `/submissions/:id/review`
+
+**Authentication:** Required (Admin)
+
+Review and approve/reject a recycling submission.
+
+**Request Body:**
+```json
+{
+  "status": "approved",
+  "adminNotes": "Submission approved"
+}
+```
+
+**Status values:** `pending`, `approved`, `rejected`
+
+**Response (200 OK):**
+```json
+{
+    "success": true,
+    "message": "Submission approved",
+    "submission": {
+        "_id": "699d8a3a744351932b771728",
+        "userId": "699d66f012dd846e485942cd",
+        "centerId": "699d830112dd846e48594364",
+        "materialType": "Plastic",
+        "estimatedWeight": 10,
+        "unit": "kg",
+        "status": "approved",
+        "reviewedBy": "699d69b012dd846e485942d0",
+        "reviewedAt": "2026-02-24T11:27:50.120Z",
+        "submittedAt": "2026-02-24T11:23:38.804Z",
+        "__v": 0,
+        "reviewNotes": ""
+    }
+}
+```
+
+---
