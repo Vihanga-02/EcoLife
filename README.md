@@ -1836,3 +1836,200 @@ Review and approve/reject a recycling submission.
 ```
 
 ---
+
+
+## Admin API
+
+**Base URL:** `/api/admin`
+
+**Note:** All endpoints require admin authentication.
+
+### Get Dashboard Stats
+
+**GET** `/stats`
+
+**Authentication:** Required (Admin)
+
+Get dashboard statistics for admin panel.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "stats": {
+    "totalUsers": 10,
+    "activeUsers": 8,
+    "totalWasteLogs": 5,
+    "totalRecyclingSubmissions": 10,
+    "totalMarketplaceItems": 10,
+    "recentActivity": [
+      {
+        "type": "user_registration",
+        "message": "New user registered",
+        "timestamp": "2026-02-26T00:00:00.000Z"
+      }
+    ]
+  }
+}
+```
+
+---
+
+### Get All Users
+
+**GET** `/users`
+
+**Authentication:** Required (Admin)
+
+Get all registered users.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "users": [
+    {
+      "_id": "507f1f77bcf86cd799439011",
+      "name": "Pavan Perera",
+      "email": "pavan@gmail.com",
+      "role": "user",
+      "greenScore": 50,
+      "isActive": true,
+      "createdAt": "2026-02-20T00:00:00.000Z"
+    }
+  ]
+}
+```
+
+---
+
+### Get User by ID
+
+**GET** `/users/:id`
+
+**Authentication:** Required (Admin)
+
+Get a specific user by ID.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "user": {
+    "_id": "507f1f77bcf86cd799439011",
+    "name": "Pavan Perera",
+    "email": "pavan@gmail.com",
+    "role": "user",
+    "greenScore": 50,
+    "isActive": true,
+    "profileImage": "https://example.com/image.jpg",
+    "createdAt": "2026-02-20T00:00:00.000Z"
+  }
+}
+```
+
+---
+
+### Toggle User Status
+
+**PATCH** `/users/:id/toggle-status`
+
+**Authentication:** Required (Admin)
+
+Activate or deactivate a user account.
+
+**Request Body:**
+```json
+{
+  "isActive": false
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "message": "User status updated successfully",
+  "user": {
+    "_id": "507f1f77bcf86cd799439011",
+    "isActive": false
+  }
+}
+```
+
+---
+
+## Error Responses
+
+All API endpoints may return the following error responses:
+
+### 400 Bad Request
+```json
+{
+  "success": false,
+  "message": "Validation error message"
+}
+```
+
+### 401 Unauthorized
+```json
+{
+  "success": false,
+  "message": "Not authorized, no token"
+}
+```
+or
+```json
+{
+  "success": false,
+  "message": "Invalid credentials"
+}
+```
+
+### 403 Forbidden
+```json
+{
+  "success": false,
+  "message": "Access denied: Admins only"
+}
+```
+
+### 404 Not Found
+```json
+{
+  "success": false,
+  "message": "Resource not found"
+}
+```
+
+### 500 Internal Server Error
+```json
+{
+  "success": false,
+  "message": "Server error message"
+}
+```
+
+---
+
+## Authentication
+
+### How to Use JWT Tokens
+
+1. **Login or Register** to receive a JWT token
+2. **Include the token** in the Authorization header for protected routes:
+   ```
+   Authorization: Bearer <your_jwt_token>
+   ```
+3. **Token expiration** - Tokens may expire after a certain period. Re-authenticate to get a new token.
+
+### Protected Routes
+
+Most endpoints require authentication. Look for the **Authentication: Required** note in the documentation.
+
+### Admin Routes
+
+Routes marked with **Admin Only** require:
+- Valid JWT token
+- User role must be `"admin"`
+---
