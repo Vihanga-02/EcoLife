@@ -48,6 +48,7 @@ export const energyAPI = {
   updateAppliance: (id, data) => api.put(`/energy/appliances/${id}`, data),
   deleteAppliance: (id) => api.delete(`/energy/appliances/${id}`),
   toggleAppliance: (id) => api.patch(`/energy/appliances/${id}/toggle`),
+  realTimeBill: () => api.get('/energy/real-time-bill'),
   estimateBill: () => api.get('/energy/estimate-bill'),
   // Tariffs
   getTariffs: () => api.get('/energy/tariffs'),
