@@ -3,11 +3,12 @@ import {
   Zap, Plus, Pencil, Trash2, Power,
   RefreshCw, CheckCircle, XCircle,
   UtensilsCrossed, Sofa, BedDouble, Cpu,
-  Activity, BarChart3, Clock, FlaskConical,
+  Activity, BarChart3, Clock, FlaskConical, LineChart,
   Radio, LayoutDashboard, Layers, ChevronRight
 } from 'lucide-react'
 import { energyAPI } from '../../api/api'
 import ApplianceForm from '../../components/forms/ApplianceForm'
+import BillingStats from './BillingStats'
 
 // ─── Constants ───────────────────────────────────────────────────────────
 const CATEGORY_META = {
@@ -597,6 +598,7 @@ export default function EnergyPage() {
                 id: 'appliances', label: `Appliances${appliances.length > 0 ? ` (${appliances.length})` : ''}`, icon: Layers,
                 badge: runningCount > 0 ? runningCount : null
               },
+              { id: 'billing', label: 'Billing Stats', icon: LineChart },
             ].map(t => {
               const Icon = t.icon
               return (
@@ -742,6 +744,17 @@ export default function EnergyPage() {
                 </button>
               </div>
             )}
+          </div>
+        )}
+
+        {/* ═══════════ BILLING STATS TAB ═══════════ */}
+        {tab === 'billing' && (
+          <div className="space-y-6">
+            <BillingStats onFinalizeSuccess={() => {
+              loadAppliances();
+              loadRt();
+              loadEst();
+            }} />
           </div>
         )}
       </div>
