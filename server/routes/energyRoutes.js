@@ -12,6 +12,8 @@ import {
   getTariffs,
   updateTariff,
   deleteTariff,
+  getBillingStats,
+  finalizeMonth,
 } from '../controllers/energyController.js';
 import { protect, adminOnly } from '../middleware/authMiddleware.js';
 
@@ -29,6 +31,11 @@ router.patch('/appliances/:id/toggle', protect, toggleAppliance);
 // Bill estimation
 router.get('/real-time-bill', protect, realTimeBill);
 router.get('/estimate-bill', protect, estimateBill);
+
+// Billing Stats History
+router.route('/billing-stats')
+  .get(protect, getBillingStats);
+router.post('/billing-stats/finalize', protect, finalizeMonth);
 
 // Tariff routes
 router.route('/tariffs')

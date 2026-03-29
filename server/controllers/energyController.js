@@ -1,6 +1,7 @@
 import Appliance from '../models/Appliance.js';
 import Tariff from '../models/Tariff.js';
 import User from '../models/User.js';
+import BillingStats from '../models/BillingStats.js';
 
 // Add a new appliance
 const addAppliance = async (req, res) => {
@@ -262,6 +263,115 @@ const deleteTariff = async (req, res) => {
   }
 };
 
+// BILLING STATS
+
+// Get historical monthly bills
+const getBillingStats = async (req, res) => {
+  try {
+    const stats = await BillingStats.find({ userId: req.user._id })
+      .sort({ year: -1, month: -1 });
+    res.status(200).json({ success: true, count: stats.length, stats });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message || 'Failed to get billing stats' });
+  }
+};
+
+// Finalize current month: save past bill and reset appliance usage
+const finalizeMonth = async (req, res) => {
+  try {
+    const appliances = await Appliance.find({ userId: req.user._id });
+    const tariffs = await Tariff.find({ isActive: true }).sort({ minUnits: 1 });
+
+    const now = new Date();
+    
+    // Preliminary step: if appliance is ON, we need to artificially "close" the current session up to NOW
+    // before calculating final totals, so the kwh up to this moment counts for this month's bill.
+    for (const a of appliances) {
+      if (a.status === 'on' && a.lastStartTime) {
+        const hoursUsed = (now - a.lastStartTime) / (1000 * 60 * 60);
+        const kwhUsed = (a.wattage / 1000) * hoursUsed;
+        a.totalKwhThisMonth = parseFloat((a.totalKwhThisMonth + kwhUsed).toFixed(4));
+        a.usageSessions.push({
+          startTime: a.lastStartTime,
+          endTime: now,
+          kwhUsed: parseFloat(kwhUsed.toFixed(4)),
+        });
+        a.lastStartTime = now; // reset so next interval counts for the new month
+      }
+    }
+
+    const totalKwh = appliances.reduce((sum, a) => sum + (a.totalKwhThisMonth || 0), 0);
+
+    let bill = 0;
+    let matchedTariff = null;
+
+    for (const tariff of tariffs) {
+      const max = tariff.maxUnits ?? Infinity;
+      if (totalKwh >= tariff.minUnits && totalKwh <= max) {
+        bill = tariff.fixedCharge + totalKwh * tariff.unitRate;
+        matchedTariff = tariff;
+        break;
+      }
+    }
+
+    let totalEstimatedKwh = 0;
+    const applianceSnapshots = appliances.map((a) => {
+      const hoursPerDay = a.noOfHoursForDay || 0;
+      const daysPerMonth = a.noOfDaysForMonth || 0;
+      const estimatedKwhPerMonth = (a.wattage / 1000) * hoursPerDay * daysPerMonth;
+      totalEstimatedKwh += estimatedKwhPerMonth;
+
+      return {
+        name: a.name,
+        category: a.category,
+        wattage: a.wattage,
+        totalKwh: parseFloat((a.totalKwhThisMonth || 0).toFixed(3)),
+      };
+    });
+
+    let estBill = 0;
+    for (const tariff of tariffs) {
+      const max = tariff.maxUnits ?? Infinity;
+      if (totalEstimatedKwh >= tariff.minUnits && totalEstimatedKwh <= max) {
+        estBill = tariff.fixedCharge + totalEstimatedKwh * tariff.unitRate;
+        break;
+      }
+    }
+
+    const month = now.getMonth() + 1;
+    const year = now.getFullYear();
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const monthLabel = `${monthNames[now.getMonth()]} ${year}`;
+
+    const exists = await BillingStats.findOne({ userId: req.user._id, year, month });
+    if (exists) {
+      return res.status(400).json({ success: false, message: `The bill for ${monthLabel} is already finalised.` });
+    }
+
+    const stat = await BillingStats.create({
+      userId: req.user._id,
+      year,
+      month,
+      monthLabel,
+      totalKwh: parseFloat(totalKwh.toFixed(3)),
+      realTimeBill: parseFloat(bill.toFixed(2)),
+      estimatedBill: parseFloat(estBill.toFixed(2)),
+      tariffApplied: matchedTariff ? matchedTariff.blockName : 'No matching tariff',
+      appliances: applianceSnapshots,
+    });
+
+    // Reset tracked usage
+    for (const a of appliances) {
+      a.totalKwhThisMonth = 0;
+      await a.save();
+    }
+
+    res.status(201).json({ success: true, message: `Month of ${monthLabel} finalised! Tracking reset to 0.`, stat });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message || 'Failed to finalize month' });
+  }
+};
+
 export {
   addAppliance,
   getMyAppliances,
@@ -274,4 +384,6 @@ export {
   getTariffs,
   updateTariff,
   deleteTariff,
+  getBillingStats,
+  finalizeMonth,
 };
