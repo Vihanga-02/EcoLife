@@ -61,6 +61,13 @@ export const energyAPI = {
 }
 
 // ========================
+// AI
+// ========================
+export const aiAPI = {
+  getEnergyTips: () => api.get('/ai/energy-tips'),
+}
+
+// ========================
 // MARKETPLACE
 // ========================
 // export const marketplaceAPI = {
