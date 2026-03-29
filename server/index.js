@@ -10,6 +10,7 @@ import marketplaceRoutes from './routes/marketplaceRoutes.js';
 import wasteRoutes from './routes/wasteRoutes.js';
 import recyclingRoutes from './routes/recyclingRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import aiRoutes from './routes/aiRoutes.js';
 
 // Load env vars
 dotenv.config();
@@ -38,6 +39,7 @@ app.use('/api/marketplace', marketplaceRoutes);
 app.use('/api/waste', wasteRoutes);
 app.use('/api/recycling', recyclingRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/ai', aiRoutes);
 
 // ===== 404 Handler =====
 app.use((req, res, next) => {
