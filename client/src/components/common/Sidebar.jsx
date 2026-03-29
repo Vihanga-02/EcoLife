@@ -10,20 +10,20 @@ import { useAuth } from '../../context/AuthContext'
 
 /** Navigation items for the User dashboard (/dashboard/*) */
 export const userSidebarItems = [
-  { path: '/dashboard',        label: 'Overview',       icon: <BarChart2 />, exact: true },
+  { path: '/dashboard', label: 'Overview', icon: <BarChart2 />, exact: true },
   { path: '/dashboard/energy', label: 'Energy Monitor', icon: <Zap /> },
-  { path: '/dashboard/waste',  label: 'Waste Tracker',  icon: <Trash2 /> },
-  { path: '/dashboard/market', label: 'My Listings',    icon: <ShoppingBag /> },
+  { path: '/dashboard/waste', label: 'Waste Tracker', icon: <Trash2 /> },
+  { path: '/dashboard/market', label: 'My Listings', icon: <ShoppingBag /> },
 ]
 
 /** Navigation items for the Admin dashboard (/admin/*) */
 export const adminSidebarItems = [
-  { path: '/admin',             label: 'Overview',    icon: <Grid />,        exact: true },
-  { path: '/admin/users',       label: 'Users',       icon: <Users /> },
+  { path: '/admin', label: 'Overview', icon: <Grid />, exact: true },
+  { path: '/admin/users', label: 'Users', icon: <Users /> },
   { path: '/admin/marketplace', label: 'Marketplace', icon: <ShoppingBag /> },
-  { path: '/admin/recycling',   label: 'Recycling',   icon: <MapPin /> },
-  { path: '/admin/waste',       label: 'Waste',       icon: <Trash2 /> },
-  { path: '/admin/tariffs',     label: 'Tariffs',     icon: <Zap /> },
+  { path: '/admin/recycling', label: 'Recycling', icon: <MapPin /> },
+  { path: '/admin/waste', label: 'Waste', icon: <Trash2 /> },
+  { path: '/admin/tariffs', label: 'Tariffs', icon: <Zap /> },
 ]
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -108,11 +108,10 @@ export default function Sidebar({ mode = 'user', sidebarItems = [], onClose, onL
               key={item.path}
               to={item.path}
               onClick={onClose}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all cursor-pointer text-sm ${
-                active
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all cursor-pointer text-sm ${active
                   ? 'text-green-600 bg-green-100 border-l-2 border-green-500'
                   : 'text-gray-600 hover:text-black hover:bg-green-50'
-              }`}
+                }`}
             >
               {item.icon}
               <span className="flex-1 text-sm">{item.label}</span>
