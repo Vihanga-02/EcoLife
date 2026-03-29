@@ -55,6 +55,9 @@ export const energyAPI = {
   createTariff: (data) => api.post('/energy/tariffs', data),
   updateTariff: (id, data) => api.put(`/energy/tariffs/${id}`, data),
   deleteTariff: (id) => api.delete(`/energy/tariffs/${id}`),
+  // Billing Stats
+  getBillingStats: () => api.get('/energy/billing-stats'),
+  finalizeMonth: () => api.post('/energy/billing-stats/finalize'),
 }
 
 // ========================
