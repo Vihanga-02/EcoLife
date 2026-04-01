@@ -8,6 +8,7 @@ import {
   deleteWasteLog,
   updateWasteLog,
   adminGetAllWasteLogs,
+  analyzeWasteImage
 } from '../controllers/wasteController.js';
 import { protect, adminOnly } from '../middleware/authMiddleware.js';
 import upload from '../utils/multer.js';
@@ -19,6 +20,8 @@ router.get('/admin/all', protect, adminOnly, adminGetAllWasteLogs);
 router.route('/')
   .get(protect, getMyWasteLogs)
   .post(protect, upload.single('image'), logWaste);
+
+router.post('/analyze', protect, upload.single('image'), analyzeWasteImage);  
 
 router.get('/analytics', protect, getWasteAnalytics);
 
