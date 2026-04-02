@@ -218,6 +218,15 @@ const analyzeWasteImage = async (req, res) => {
     // Call Google Vision API via our service
     const labels = await analyzeImageBuffer(req.file.buffer);
 
+
+    //Ensure Vision API returned valid labels before classification
+    if (!labels || labels.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Could not detect any waste type from image'
+      });
+    } 
+
     // Classify based on detected labels
     const classification = classifyWaste(labels);
 

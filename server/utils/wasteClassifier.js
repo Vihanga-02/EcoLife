@@ -43,9 +43,11 @@ const RECYCLABLE_TYPES = ['Plastic', 'Paper', 'Glass', 'E-waste'];
 export const classifyWaste = (labels) => {
   if (!labels || labels.length === 0) {
     return {
-      wasteType: 'Plastic', // fallback to default
-      isRecyclable: true,
-      isBiodegradable: false
+      wasteType: 'Unknown',
+      isRecyclable: false,
+      isBiodegradable: false,
+      confidenceScore: 0,
+      detectedLabels: []
     };
   }
 
@@ -71,7 +73,7 @@ export const classifyWaste = (labels) => {
   });
 
   // Find the highest scoring category
-  let bestMatch = 'Plastic'; // Default fallback
+  let bestMatch = 'Unknown';
   let highestScore = 0;
 
   for (const [category, score] of Object.entries(scores)) {
