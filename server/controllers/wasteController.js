@@ -201,7 +201,18 @@ const adminGetAllWasteLogs = async (req, res) => {
 const analyzeWasteImage = async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ success: false, message: 'No image uploaded for analysis' });
+      return res.status(400).json({ 
+        success: false,
+         message: 'No image uploaded for analysis'
+         });
+    }
+
+    //buffer check
+    if (!req.file.buffer || req.file.buffer.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Uploaded file is empty'
+      });
     }
 
     // Call Google Vision API via our service
