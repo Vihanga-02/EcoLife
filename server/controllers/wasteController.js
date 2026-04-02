@@ -106,7 +106,7 @@ const getWasteAnalytics = async (req, res) => {
   }
 };
 
-// Get single waste log for by using user id
+// Get a single waste log by ID for the authenticated user
 const getWasteLogById = async (req, res) => {
   try {
     const log = await WasteLog.findOne({ _id: req.params.id, userId: req.user._id });
@@ -185,7 +185,7 @@ const deleteWasteLog = async (req, res) => {
   }
 };
 
-// Admin: Get all waste logs
+// Get all waste logs (Admin only)
 const adminGetAllWasteLogs = async (req, res) => {
   try {
     const logs = await WasteLog.find()
@@ -197,7 +197,7 @@ const adminGetAllWasteLogs = async (req, res) => {
   }
 };
 
-// Analyze waste image using AI
+//Analyze uploaded waste image using Google Vision API
 const analyzeWasteImage = async (req, res) => {
   try {
     if (!req.file) {
