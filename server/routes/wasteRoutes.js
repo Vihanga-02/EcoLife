@@ -13,14 +13,14 @@ import {
 import { protect, adminOnly } from '../middleware/authMiddleware.js';
 import upload from '../utils/multer.js';
 
-// Admin
+// Admin routes
 router.get('/admin/all', protect, adminOnly, adminGetAllWasteLogs);
 
-// User routes
+// User waste log routes
 router.route('/')
   .get(protect, getMyWasteLogs)
   .post(protect, upload.single('image'), logWaste);
-
+// AI analysis route
 router.post('/analyze', protect, upload.single('image'), analyzeWasteImage);  
 
 router.get('/analytics', protect, getWasteAnalytics);

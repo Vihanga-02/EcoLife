@@ -203,7 +203,7 @@ const analyzeWasteImage = async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ 
         success: false,
-         message: 'No image uploaded for analysis'
+         message: 'No image uploaded'
          });
     }
 
@@ -238,7 +238,7 @@ const analyzeWasteImage = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error.message || 'Failed to analyze image'
+      message: error.message || 'Image analysis failed'
     });
   }
 };
