@@ -64,7 +64,9 @@ export default function WastePage() {
       ])
       if (logsRes.status      === 'fulfilled') setLogs(logsRes.value.data.logs || [])
       if (analyticsRes.status === 'fulfilled') setAnalytics(analyticsRes.value.data)
-    } catch { showToast('Failed to load data.', 'error') }
+    } catch { 
+        console.error(err) 
+        showToast('Failed to load data.', 'error') }
     finally  { setLoading(false) }
   }, [])
 
