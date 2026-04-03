@@ -1,14 +1,24 @@
 import MarketItem from '../models/MarketItem.js';
 import MarketTransaction from '../models/MarketTransaction.js';
 import User from '../models/User.js';
+import { uploadToFirebase } from '../utils/firebaseUpload.js';
 
 // Create a new marketplace listing
 const createItem = async (req, res) => {
   try {
-    const { title, description, category, condition, listingType, imageUrl } = req.body;
+    const { title, description, category, condition, listingType } = req.body;
 
     if (!title || !category) {
       return res.status(400).json({ success: false, message: 'Title and category are required' });
+    }
+
+    let imageUrl = '';
+    if (req.file) {
+      imageUrl = await uploadToFirebase(req.file, 'marketplace');
+    }
+
+    if (!imageUrl) {
+      return res.status(400).json({ success: false, message: 'An image is required' });
     }
 
     const item = await MarketItem.create({
@@ -16,7 +26,7 @@ const createItem = async (req, res) => {
       title,
       description,
       category,
-      imageUrl: imageUrl || '',
+      imageUrl,
       condition,
       listingType,
     });
@@ -27,7 +37,7 @@ const createItem = async (req, res) => {
   }
 };
 
-// Get all available marketplace items
+// Get all available marketplace items (optionally exclude current user)
 const getAllItems = async (req, res) => {
   try {
     const { category, condition, listingType, page = 1, limit = 12 } = req.query;
@@ -84,7 +94,7 @@ const getMyItems = async (req, res) => {
   }
 };
 
-// Update a listing (owner only)
+// Update a listing (owner only) – supports optional image re-upload
 const updateItem = async (req, res) => {
   try {
     const item = await MarketItem.findOne({ _id: req.params.id, ownerId: req.user._id });
@@ -93,9 +103,16 @@ const updateItem = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Item not found or not yours' });
     }
 
+    const updateData = { ...req.body, updatedAt: new Date() };
+
+    // If a new image file was uploaded, replace the URL
+    if (req.file) {
+      updateData.imageUrl = await uploadToFirebase(req.file, 'marketplace');
+    }
+
     const updated = await MarketItem.findByIdAndUpdate(
       req.params.id,
-      { ...req.body, updatedAt: new Date() },
+      updateData,
       { new: true, runValidators: true }
     );
 
@@ -215,7 +232,7 @@ const getMyTransactions = async (req, res) => {
     const transactions = await MarketTransaction.find({
       $or: [{ buyerId: req.user._id }, { sellerId: req.user._id }],
     })
-      .populate('itemId', 'title imageUrl category')
+      .populate('itemId', 'title imageUrl category listingType condition')
       .populate('buyerId', 'name email')
       .populate('sellerId', 'name email')
       .sort({ createdAt: -1 });
@@ -231,10 +248,26 @@ const adminGetAllItems = async (req, res) => {
   try {
     const items = await MarketItem.find()
       .populate('ownerId', 'name email')
+      .populate('claimedBy', 'name email')
       .sort({ createdAt: -1 });
     res.status(200).json({ success: true, count: items.length, items });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message || 'Failed to get items' });
+  }
+};
+
+// Admin: Get all marketplace transactions
+const adminGetAllTransactions = async (req, res) => {
+  try {
+    const transactions = await MarketTransaction.find()
+      .populate('itemId', 'title imageUrl category listingType condition')
+      .populate('buyerId', 'name email')
+      .populate('sellerId', 'name email')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, count: transactions.length, transactions });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message || 'Failed to get transactions' });
   }
 };
 
@@ -249,4 +282,5 @@ export {
   reviewTransaction,
   getMyTransactions,
   adminGetAllItems,
+  adminGetAllTransactions,
 };
