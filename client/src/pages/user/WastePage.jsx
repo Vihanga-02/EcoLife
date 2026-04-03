@@ -81,22 +81,60 @@ export default function WastePage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {logs.map((log) => (
-              <div
-                key={log._id}
-                className="border border-gray-200 rounded-lg p-3 flex justify-between items-center"
-              >
-                <div>
-                  <p className="font-semibold text-black">{log.wasteType}</p>
-                  <p className="text-sm text-gray-600">
-                    {log.quantity} {log.unit}
+            {logs.map((log) => {
+              const TYPE_META = {
+                Plastic: { color: 'text-blue-600', bg: 'bg-blue-50', emoji: '🧴' },
+                Paper: { color: 'text-yellow-600', bg: 'bg-yellow-50', emoji: '📄' },
+                Glass: { color: 'text-cyan-600', bg: 'bg-cyan-50', emoji: '🍶' },
+                Organic: { color: 'text-green-600', bg: 'bg-green-50', emoji: '🌿' },
+                'E-waste': { color: 'text-red-600', bg: 'bg-red-50', emoji: '🔌' },
+              }
+
+              const meta = TYPE_META[log.wasteType] || TYPE_META['Plastic']
+
+              return (
+                <div
+                  key={log._id}
+                  className="bg-white rounded-xl border p-4 flex items-center gap-4 shadow-sm"
+                >
+                  <div className={`w-12 h-12 ${meta.bg} rounded-xl flex items-center justify-center text-xl`}>
+                    {meta.emoji}
+                  </div>
+
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className={`font-bold ${meta.color}`}>{log.wasteType}</p>
+                      <span className="text-xs text-gray-400">•</span>
+                      <p className="text-sm text-gray-700">
+                        {log.quantity} {log.unit}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-3 mt-1 flex-wrap">
+                      <p className="text-xs text-gray-500">
+                        🌫 {log.carbonEquivalent?.toFixed(2)} kg CO₂
+                      </p>
+
+                      {log.isRecyclable && (
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                          ♻ Recyclable
+                        </span>
+                      )}
+
+                      {log.isBiodegradable && (
+                        <span className="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full">
+                          🌱 Biodegradable
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-gray-400">
+                    {new Date(log.date).toLocaleDateString()}
                   </p>
                 </div>
-                <p className="text-xs text-gray-500">
-                  {new Date(log.date).toLocaleDateString()}
-                </p>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
