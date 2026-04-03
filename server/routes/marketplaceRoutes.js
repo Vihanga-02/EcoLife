@@ -11,7 +11,7 @@ import {
   reviewTransaction,
   getMyTransactions,
   adminGetAllItems,
-  
+  adminGetAllTransactions,
 } from '../controllers/marketplaceController.js';
 import { protect, adminOnly } from '../middleware/authMiddleware.js';
 import upload from '../utils/multer.js';
