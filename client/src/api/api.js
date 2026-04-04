@@ -70,53 +70,53 @@ export const aiAPI = {
 // ========================
 // MARKETPLACE
 // ========================
-// export const marketplaceAPI = {
-//   getItems: (params) => api.get('/marketplace/items', { params }),
-//   getItemById: (id) => api.get(`/marketplace/items/${id}`),
-//   getMyItems: () => api.get('/marketplace/my-items'),
-//   createItem: (formData) => api.post('/marketplace/items', formData, {
-//     headers: { 'Content-Type': 'multipart/form-data' }
-//   }),
-//   updateItem: (id, data) => api.put(`/marketplace/items/${id}`, data),
-//   deleteItem: (id) => api.delete(`/marketplace/items/${id}`),
-//   claimItem: (id) => api.post(`/marketplace/items/${id}/claim`),
-//   getMyTransactions: () => api.get('/marketplace/transactions'),
-//   reviewTransaction: (id, action) => api.patch(`/marketplace/transactions/${id}/review`, { action }),
-//   // Admin
-//   adminGetAll: () => api.get('/marketplace/admin/all'),
-// }
+export const marketplaceAPI = {
+  getItems: (params) => api.get('/marketplace/items', { params }),
+  getItemById: (id) => api.get(`/marketplace/items/${id}`),
+  getMyItems: () => api.get('/marketplace/my-items'),
+  createItem: (formData) => api.post('/marketplace/items', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  updateItem: (id, data) => api.put(`/marketplace/items/${id}`, data),
+  deleteItem: (id) => api.delete(`/marketplace/items/${id}`),
+  claimItem: (id) => api.post(`/marketplace/items/${id}/claim`),
+  getMyTransactions: () => api.get('/marketplace/transactions'),
+  reviewTransaction: (id, action) => api.patch(`/marketplace/transactions/${id}/review`, { action }),
+  // Admin
+  adminGetAll: () => api.get('/marketplace/admin/all'),
+}
 
 // ========================
 // WASTE
 // ========================
-// export const wasteAPI = {
-//   getLogs: (params) => api.get('/waste', { params }),
-//   logWaste: (formData) => api.post('/waste', formData, {
-//     headers: { 'Content-Type': 'multipart/form-data' }
-//   }),
-//   getAnalytics: () => api.get('/waste/analytics'),
-//   getLogById: (id) => api.get(`/waste/${id}`),
-//   deleteLog: (id) => api.delete(`/waste/${id}`),
-//   // Admin
-//   adminGetAll: () => api.get('/waste/admin/all'),
-// }
+export const wasteAPI = {
+  getLogs: (params) => api.get('/waste', { params }),
+  logWaste: (formData) => api.post('/waste', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  getAnalytics: () => api.get('/waste/analytics'),
+  getLogById: (id) => api.get(`/waste/${id}`),
+  deleteLog: (id) => api.delete(`/waste/${id}`),
+  // Admin
+  adminGetAll: () => api.get('/waste/admin/all'),
+}
 
 // ========================
 // RECYCLING
 // ========================
-// export const recyclingAPI = {
-//   getCenters: (params) => api.get('/recycling/centers', { params }),
-//   getNearbyCenters: (params) => api.get('/recycling/centers/nearby', { params }),
-//   getCenterById: (id) => api.get(`/recycling/centers/${id}`),
-//   createSubmission: (data) => api.post('/recycling/submissions', data),
-//   getMySubmissions: () => api.get('/recycling/submissions/me'),
-//   // Admin
-//   getAllSubmissions: (params) => api.get('/recycling/submissions', { params }),
-//   reviewSubmission: (id, data) => api.patch(`/recycling/submissions/${id}/review`, data),
-//   createCenter: (data) => api.post('/recycling/centers', data),
-//   updateCenter: (id, data) => api.put(`/recycling/centers/${id}`, data),
-//   deleteCenter: (id) => api.delete(`/recycling/centers/${id}`),
-// }
+export const recyclingAPI = {
+  getCenters: (params) => api.get('/recycling/centers', { params }),
+  getNearbyCenters: (params) => api.get('/recycling/centers/nearby', { params }),
+  getCenterById: (id) => api.get(`/recycling/centers/${id}`),
+  createSubmission: (data) => api.post('/recycling/submissions', data),
+  getMySubmissions: () => api.get('/recycling/submissions/me'),
+  // Admin
+  getAllSubmissions: (params) => api.get('/recycling/submissions', { params }),
+  reviewSubmission: (id, data) => api.patch(`/recycling/submissions/${id}/review`, data),
+  createCenter: (data) => api.post('/recycling/centers', data),
+  updateCenter: (id, data) => api.put(`/recycling/centers/${id}`, data),
+  deleteCenter: (id) => api.delete(`/recycling/centers/${id}`),
+}
 
 // ========================
 // ADMIN
