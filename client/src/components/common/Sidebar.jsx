@@ -13,6 +13,7 @@ export const userSidebarItems = [
   { path: '/dashboard', label: 'Overview', icon: <BarChart2 />, exact: true },
   { path: '/dashboard/energy', label: 'Energy Monitor', icon: <Zap /> },
   { path: '/dashboard/waste', label: 'Waste Tracker', icon: <Trash2 /> },
+  { path: '/dashboard/recycling', label: 'My Recycling', icon: <MapPin /> },
   { path: '/dashboard/market', label: 'My Listings', icon: <ShoppingBag /> },
 ]
 
