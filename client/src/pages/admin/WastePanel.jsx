@@ -50,7 +50,7 @@ export default function WastePanel() {
       if (l.isBiodegradable) biodegradableCt++
       if (typeAgg[l.wasteType] !== undefined) {
         // Uniformly treating counts or kg as "units" visually for the high-level dashboard chart
-        typeAgg[l.wasteType] += l.quantity || 0 
+        typeAgg[l.wasteType] += l.quantity || 0
       }
     })
 
@@ -65,7 +65,7 @@ export default function WastePanel() {
   const filteredLogs = useMemo(() => {
     const q = search.toLowerCase()
     if (!q) return logs
-    return logs.filter(l => 
+    return logs.filter(l =>
       l.userId?.name?.toLowerCase().includes(q) ||
       l.userId?.email?.toLowerCase().includes(q) ||
       l.wasteType?.toLowerCase().includes(q)
@@ -108,7 +108,7 @@ export default function WastePanel() {
               <div className="w-14 h-14 bg-gray-50 text-gray-500 rounded-2xl flex items-center justify-center shrink-0 border border-gray-100"><Trash2 className="w-6 h-6" /></div>
               <div><p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Total Logs</p><p className="text-2xl font-black text-gray-800">{stats.totalLogs}</p></div>
             </div>
-            
+
             <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-center gap-4">
               <div className="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center shrink-0 border border-purple-100"><FlaskConical className="w-6 h-6" /></div>
               <div><p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Carbon Saved</p><p className="text-2xl font-black text-purple-700">{fmt(stats.carbonSum, 1)} <span className="text-sm font-medium">kg CO₂</span></p></div>
@@ -131,12 +131,12 @@ export default function WastePanel() {
               <BarChart3 className="w-4 h-4 text-orange-500" /> Aggregate Waste Quantities by Type
             </h3>
             <div className="h-[250px] w-full">
-               <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={stats.chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
                   <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#6B7280' }} tickLine={false} axisLine={false} />
                   <YAxis tick={{ fontSize: 12, fill: '#6B7280' }} tickLine={false} axisLine={false} />
-                  <RechartsTooltip 
+                  <RechartsTooltip
                     cursor={{ fill: '#F3F4F6' }}
                     contentStyle={{ borderRadius: '0.75rem', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
                     formatter={(value) => [`${value} units`, 'Quantity']}
@@ -157,8 +157,8 @@ export default function WastePanel() {
               <h3 className="text-sm font-bold text-gray-800">Global Submission Logs</h3>
               <div className="relative w-full sm:max-w-xs">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input 
-                  type="text" placeholder="Search by user or type..." 
+                <input
+                  type="text" placeholder="Search by user or type..."
                   value={search} onChange={e => setSearch(e.target.value)}
                   className="w-full bg-white border border-gray-300 text-gray-900 rounded-xl pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none shadow-sm"
                 />
@@ -198,10 +198,10 @@ export default function WastePanel() {
                             </div>
                           </td>
                           <td className="px-5 py-3.5">
-                             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-bold border border-purple-100">
-                               <FlaskConical className="w-3.5 h-3.5" />
-                               {fmt(log.carbonEquivalent, 2)} kg
-                             </div>
+                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-bold border border-purple-100">
+                              <FlaskConical className="w-3.5 h-3.5" />
+                              {fmt(log.carbonEquivalent, 2)} kg
+                            </div>
                           </td>
                           <td className="px-5 py-3.5">
                             <div className="flex flex-col gap-1 w-max">
@@ -212,7 +212,7 @@ export default function WastePanel() {
                           </td>
                           <td className="px-5 py-3.5 text-right whitespace-nowrap">
                             <span className="text-xs text-gray-500">
-                              {new Date(log.date).toLocaleString('en-US', { day: 'numeric', month: 'short', year:'numeric', hour: '2-digit', minute: '2-digit' })}
+                              {new Date(log.date).toLocaleString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                             </span>
                           </td>
                         </tr>
