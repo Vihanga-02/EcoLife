@@ -9,7 +9,7 @@ import OverviewPage from './OverviewPage'
 import EnergyPage from './EnergyPage'
 import WastePage from './WastePage'
 import MarketPage from './MarketPage'
-
+import RecycleDetails from './RecycleDetails'
 
 export default function UserDashboard() {
   const { logout } = useAuth()
@@ -62,6 +62,7 @@ export default function UserDashboard() {
           <Route path="energy" element={<EnergyPage />} />
           <Route path="waste" element={<WastePage />} />
           <Route path="market" element={<MarketPage />} />
+          <Route path="recycling" element={<RecycleDetails />} />
         </Routes>
       </main>
     </div>
