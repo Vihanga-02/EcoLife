@@ -55,6 +55,7 @@ export default function WastePage() {
 
   const showToast = (msg, type = 'success') => { setToast({ msg, type }); setTimeout(() => setToast(null), 3000) }
 
+// API Calls 
   const load = useCallback(async () => {
     setLoading(true)
     try {
@@ -64,7 +65,7 @@ export default function WastePage() {
       ])
       if (logsRes.status === 'fulfilled') setLogs(logsRes.value.data.logs || [])
       if (analyticsRes.status === 'fulfilled') setAnalytics(analyticsRes.value.data)
-    } catch {
+    } catch (err) {
       console.error(err)
       showToast('Failed to load data.', 'error')
     }
@@ -94,7 +95,9 @@ export default function WastePage() {
   }
 
   const types = ['All', ...WASTE_TYPES]
+  // Filter logs based on selected waste type
   const filtered = activeType === 'All' ? logs : logs.filter(l => l.wasteType === activeType)
+  // Find most common waste type (for future insights)
   const maxType = analytics?.totalByType
     ? Object.entries(analytics.totalByType).reduce((a, b) => b[1] > a[1] ? b : a, ['', 0])
     : null
