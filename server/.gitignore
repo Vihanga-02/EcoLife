@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 .env
+vihanga.txt
+config/vision-key.json

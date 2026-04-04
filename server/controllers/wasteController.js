@@ -1,5 +1,8 @@
 import WasteLog from '../models/WasteLog.js';
 import User from '../models/User.js';
+import { analyzeImageBuffer } from '../services/visionService.js';
+import { classifyWaste } from '../utils/wasteClassifier.js';
+
 
 const CARBON_FACTORS = {
   Plastic: 2.0,
@@ -194,6 +197,33 @@ const adminGetAllWasteLogs = async (req, res) => {
   }
 };
 
+// Analyze waste image using AI
+const analyzeWasteImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No image uploaded for analysis' });
+    }
+
+    // Call Google Vision API via our service
+    const labels = await analyzeImageBuffer(req.file.buffer);
+
+    // Classify based on detected labels
+    const classification = classifyWaste(labels);
+
+    res.status(200).json({
+      success: true,
+      data: classification,
+      message: `Detected category: ${classification.wasteType}`
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Failed to analyze image'
+    });
+  }
+};
+
+
 export {
   logWaste,
   getMyWasteLogs,
@@ -201,5 +231,6 @@ export {
   getWasteLogById,
   deleteWasteLog,
   adminGetAllWasteLogs,
-  updateWasteLog 
+  updateWasteLog,
+  analyzeWasteImage 
 };

@@ -48,12 +48,23 @@ export const energyAPI = {
   updateAppliance: (id, data) => api.put(`/energy/appliances/${id}`, data),
   deleteAppliance: (id) => api.delete(`/energy/appliances/${id}`),
   toggleAppliance: (id) => api.patch(`/energy/appliances/${id}/toggle`),
+  realTimeBill: () => api.get('/energy/real-time-bill'),
   estimateBill: () => api.get('/energy/estimate-bill'),
   // Tariffs
   getTariffs: () => api.get('/energy/tariffs'),
   createTariff: (data) => api.post('/energy/tariffs', data),
   updateTariff: (id, data) => api.put(`/energy/tariffs/${id}`, data),
   deleteTariff: (id) => api.delete(`/energy/tariffs/${id}`),
+  // Billing Stats
+  getBillingStats: () => api.get('/energy/billing-stats'),
+  finalizeMonth: () => api.post('/energy/billing-stats/finalize'),
+}
+
+// ========================
+// AI
+// ========================
+export const aiAPI = {
+  getEnergyTips: () => api.get('/ai/energy-tips'),
 }
 
 // ========================
