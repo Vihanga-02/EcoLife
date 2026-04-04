@@ -89,17 +89,19 @@ export const aiAPI = {
 // ========================
 // WASTE
 // ========================
-// export const wasteAPI = {
-//   getLogs: (params) => api.get('/waste', { params }),
-//   logWaste: (formData) => api.post('/waste', formData, {
-//     headers: { 'Content-Type': 'multipart/form-data' }
-//   }),
-//   getAnalytics: () => api.get('/waste/analytics'),
-//   getLogById: (id) => api.get(`/waste/${id}`),
-//   deleteLog: (id) => api.delete(`/waste/${id}`),
-//   // Admin
-//   adminGetAll: () => api.get('/waste/admin/all'),
-// }
+export const wasteAPI = {
+  getLogs: (params) => api.get('/waste', { params }),
+  logWaste: (data) => api.post('/waste', data),
+  updateLog: (id, data) => api.put(`/waste/${id}`, data),
+  analyzeImage: (formData) => api.post('/waste/analyze', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  }),
+  getAnalytics: () => api.get('/waste/analytics'),
+  getLogById: (id) => api.get(`/waste/${id}`),
+  deleteLog: (id) => api.delete(`/waste/${id}`),
+  // Admin
+  adminGetAll: () => api.get('/waste/admin/all'),
+}
 
 // ========================
 // RECYCLING
