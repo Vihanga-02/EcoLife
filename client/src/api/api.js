@@ -70,21 +70,21 @@ export const aiAPI = {
 // ========================
 // MARKETPLACE
 // ========================
-// export const marketplaceAPI = {
-//   getItems: (params) => api.get('/marketplace/items', { params }),
-//   getItemById: (id) => api.get(`/marketplace/items/${id}`),
-//   getMyItems: () => api.get('/marketplace/my-items'),
-//   createItem: (formData) => api.post('/marketplace/items', formData, {
-//     headers: { 'Content-Type': 'multipart/form-data' }
-//   }),
-//   updateItem: (id, data) => api.put(`/marketplace/items/${id}`, data),
-//   deleteItem: (id) => api.delete(`/marketplace/items/${id}`),
-//   claimItem: (id) => api.post(`/marketplace/items/${id}/claim`),
-//   getMyTransactions: () => api.get('/marketplace/transactions'),
-//   reviewTransaction: (id, action) => api.patch(`/marketplace/transactions/${id}/review`, { action }),
-//   // Admin
-//   adminGetAll: () => api.get('/marketplace/admin/all'),
-// }
+export const marketplaceAPI = {
+  getItems: (params) => api.get('/marketplace/items', { params }),
+  getItemById: (id) => api.get(`/marketplace/items/${id}`),
+  getMyItems: () => api.get('/marketplace/my-items'),
+  createItem: (formData) => api.post('/marketplace/items', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  updateItem: (id, data) => api.put(`/marketplace/items/${id}`, data),
+  deleteItem: (id) => api.delete(`/marketplace/items/${id}`),
+  claimItem: (id) => api.post(`/marketplace/items/${id}/claim`),
+  getMyTransactions: () => api.get('/marketplace/transactions'),
+  reviewTransaction: (id, action) => api.patch(`/marketplace/transactions/${id}/review`, { action }),
+  // Admin
+  adminGetAll: () => api.get('/marketplace/admin/all'),
+}
 
 // ========================
 // WASTE
