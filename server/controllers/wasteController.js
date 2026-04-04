@@ -106,7 +106,7 @@ const getWasteAnalytics = async (req, res) => {
   }
 };
 
-// Get single waste log for by using user id
+// Get a single waste log by ID for the authenticated user
 const getWasteLogById = async (req, res) => {
   try {
     const log = await WasteLog.findOne({ _id: req.params.id, userId: req.user._id });
@@ -185,7 +185,7 @@ const deleteWasteLog = async (req, res) => {
   }
 };
 
-// Admin: Get all waste logs
+// Get all waste logs (Admin only)
 const adminGetAllWasteLogs = async (req, res) => {
   try {
     const logs = await WasteLog.find()
@@ -197,15 +197,35 @@ const adminGetAllWasteLogs = async (req, res) => {
   }
 };
 
-// Analyze waste image using AI
+//Analyze uploaded waste image using Google Vision API
 const analyzeWasteImage = async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ success: false, message: 'No image uploaded for analysis' });
+      return res.status(400).json({ 
+        success: false,
+         message: 'No image uploaded'
+         });
+    }
+
+    //buffer check
+    if (!req.file.buffer || req.file.buffer.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Uploaded file is empty'
+      });
     }
 
     // Call Google Vision API via our service
     const labels = await analyzeImageBuffer(req.file.buffer);
+
+
+    //Ensure Vision API returned valid labels before classification
+    if (!labels || labels.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Could not detect any waste type from image'
+      });
+    } 
 
     // Classify based on detected labels
     const classification = classifyWaste(labels);
@@ -218,7 +238,7 @@ const analyzeWasteImage = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error.message || 'Failed to analyze image'
+      message: error.message || 'Image analysis failed'
     });
   }
 };

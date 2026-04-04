@@ -11,12 +11,14 @@ import {
   reviewTransaction,
   getMyTransactions,
   adminGetAllItems,
+  adminGetAllTransactions,
 } from '../controllers/marketplaceController.js';
 import { protect, adminOnly } from '../middleware/authMiddleware.js';
 import upload from '../utils/multer.js';
 
-// Admin
+// Admin routes
 router.get('/admin/all', protect, adminOnly, adminGetAllItems);
+router.get('/admin/transactions', protect, adminOnly, adminGetAllTransactions);
 
 // Items
 router.route('/items')
@@ -27,7 +29,7 @@ router.get('/my-items', protect, getMyItems);
 
 router.route('/items/:id')
   .get(getItemById)
-  .put(protect, updateItem)
+  .put(protect, upload.single('image'), updateItem)
   .delete(protect, deleteItem);
 
 router.post('/items/:id/claim', protect, claimItem);
