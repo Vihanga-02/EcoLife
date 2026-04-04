@@ -70,6 +70,36 @@ export default function MarketItemForm({ item = null, onSuccess, onClose }) {
 
         {/* Scrollable form body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto">
+        
+        {/* Title */}
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+    Title <span className="text-red-500">*</span>
+  </label>
+  <input
+    type="text"
+    name="title"
+    value={form.title}
+    onChange={handleChange}
+    placeholder="e.g. Used Bicycle in Good Condition"
+    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all"
+  />
+</div>
+
+{/* Description */}
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+    Description <span className="text-gray-400 text-xs font-normal">(optional)</span>
+  </label>
+  <textarea
+    name="description"
+    value={form.description}
+    onChange={handleChange}
+    rows={2}
+    placeholder="Describe your item — age, defects, reason for listing..."
+    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all resize-none"
+  />
+</div>
           {/* Form fields will go here */}
           
           {error && (
