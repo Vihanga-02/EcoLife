@@ -1,5 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
-import { X, ShoppingBag } from 'lucide-react'
+import { X, ShoppingBag, ChevronDown, Package} from 'lucide-react'
+
+const CATEGORIES = ['Electronics', 'Furniture', 'Clothing', 'Books', 'Tools', 'Toys', 'Sports', 'Other']
+const CONDITIONS = ['New', 'Good', 'Fair']
+const LISTING_TYPES = ['Free', 'Trade']
+
+const CONDITION_META = {
+  New:  { color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200' },
+  Good: { color: 'text-blue-600',    bg: 'bg-blue-50',    border: 'border-blue-200'    },
+  Fair: { color: 'text-amber-600',   bg: 'bg-amber-50',   border: 'border-amber-200'   },
+}
 
 /**
  * MarketItemForm — Add / Edit a marketplace listing.
@@ -99,6 +109,68 @@ export default function MarketItemForm({ item = null, onSuccess, onClose }) {
     placeholder="Describe your item — age, defects, reason for listing..."
     className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all resize-none"
   />
+</div>
+
+{/* Category */}
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-1.5">Category</label>
+  <div className="relative">
+    <select
+      name="category"
+      value={form.category}
+      onChange={handleChange}
+      className="w-full appearance-none px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-white pr-10"
+    >
+      {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+    </select>
+    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+  </div>
+</div>
+
+{/* Condition + Listing type */}
+<div className="grid grid-cols-2 gap-4">
+  {/* Condition pills */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1.5">Condition</label>
+    <div className="flex gap-1.5">
+      {CONDITIONS.map(c => {
+        const m = CONDITION_META[c]
+        return (
+          <button
+            key={c}
+            type="button"
+            onClick={() => setForm(p => ({ ...p, condition: c }))}
+            className={`flex-1 py-2 rounded-xl text-xs font-semibold border-2 transition-all ${form.condition === c
+              ? `${m.bg} ${m.color} ${m.border}`
+              : 'border-gray-100 bg-gray-50 text-gray-500 hover:border-indigo-300'
+            }`}
+          >
+            {c}
+          </button>
+        )
+      })}
+    </div>
+  </div>
+
+  {/* Listing type pills */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1.5">Listing Type</label>
+    <div className="flex gap-1.5">
+      {LISTING_TYPES.map(t => (
+        <button
+          key={t}
+          type="button"
+          onClick={() => setForm(p => ({ ...p, listingType: t }))}
+          className={`flex-1 py-2 rounded-xl text-xs font-semibold border-2 transition-all ${form.listingType === t
+            ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+            : 'border-gray-100 bg-gray-50 text-gray-500 hover:border-indigo-300'
+          }`}
+        >
+          {t === 'Free' ? '🎁 Free' : '🔄 Trade'}
+        </button>
+      ))}
+    </div>
+  </div>
 </div>
           {/* Form fields will go here */}
           
