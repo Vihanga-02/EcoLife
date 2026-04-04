@@ -164,7 +164,7 @@ const getMySubmissions = async (req, res) => {
   try {
     const submissions = await RecyclingSubmission.find({ userId: req.user._id })
       .populate('centerId', 'name city address')
-      .sort({ submittedAt: -1 });
+      .sort({ submittedAt: -1 }); 
 
     res.status(200).json({ success: true, count: submissions.length, submissions });
   } catch (error) {
