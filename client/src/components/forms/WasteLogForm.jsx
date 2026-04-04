@@ -110,7 +110,7 @@ export default function WasteLogForm({ log = null, onSuccess, onClose }) {
 
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="bg-gradient-to-r from-orange-500 to-red-500 px-6 py-5 flex items-center justify-between shrink-0">
+        <div className="bg-green-600 px-6 py-5 flex items-center justify-between shrink-0 px-6 py-5 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center">
               <Trash2 className="text-white w-5 h-5" />
@@ -181,8 +181,8 @@ export default function WasteLogForm({ log = null, onSuccess, onClose }) {
                     type="button"
                     onClick={() => { setError(''); setAiSuccess(''); setForm(p => ({ ...p, wasteType: t })) }}
                     className={`flex flex-col items-center gap-1 py-2.5 px-1 rounded-xl border-2 text-xs font-medium transition-all ${form.wasteType === t
-                        ? `border-orange-500 shadow-sm ${m.bg} ${m.color}`
-                        : 'border-gray-100 bg-gray-50 text-gray-500 hover:border-orange-300'
+                        ? `border-green-500 shadow-sm ${m.bg} ${m.color}`
+                        : 'border-gray-100 bg-gray-50 text-gray-500 hover:border-green-300'
                       }`}
                   >
                     <span className="text-lg">{m.emoji}</span>
@@ -248,7 +248,7 @@ export default function WasteLogForm({ log = null, onSuccess, onClose }) {
             <button type="button" onClick={onClose} className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">
               Cancel
             </button>
-            <button type="submit" disabled={loading || analyzingImage} className="flex-1 px-4 py-2.5 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl text-sm font-bold hover:from-orange-600 hover:to-red-600 transition-all disabled:opacity-60 flex items-center justify-center gap-2">
+            <button type="submit" disabled={loading || analyzingImage} className="flex-1 px-4 py-2.5 bg-green-700 text-white rounded-xl text-sm font-bold hover:bg-green-800 transition-all disabled:opacity-60 flex items-center justify-center gap-2 shadow-sm hover:shadow-md">
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
               {isEdit ? 'Save Changes' : 'Log Waste'}
             </button>
