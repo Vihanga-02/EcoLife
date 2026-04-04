@@ -3,9 +3,38 @@ import { CheckCircle, Clock, Package, Recycle, XCircle, Loader2, Leaf, BarChart2
 import { recyclingAPI } from '../../api/api'
 import { useAuth } from '../../context/AuthContext'
 
+const STATUS_META = {
+  pending: { label: 'Pending', color: 'text-amber-600', bg: 'bg-amber-100', icon: Clock },
+  approved: { label: 'Approved', color: 'text-emerald-600', bg: 'bg-emerald-100', icon: CheckCircle },
+  rejected: { label: 'Rejected', color: 'text-red-500', bg: 'bg-red-100', icon: XCircle }
+}
 
+export default function RecycleDetails() {
+  const { user } = useAuth()
+  const [submissions, setSubmissions] = useState([])
+  const [loading, setLoading] = useState(true)
 
-return (
+  const fetchSubmissions = useCallback(async () => {
+    setLoading(true)
+    try {
+      const res = await recyclingAPI.getMySubmissions()
+      setSubmissions(res.data.submissions || [])
+    } catch {
+      setSubmissions([])
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchSubmissions()
+  }, [fetchSubmissions])
+
+  const pending = submissions.filter(s => s.status === 'pending').length
+  const completed = submissions.filter(s => s.status === 'approved').length
+  const totalWeight = submissions.filter(s => s.status === 'approved').reduce((acc, curr) => acc + curr.estimatedWeight, 0)
+
+  return (
     <div className="p-5 md:p-6 max-w-5xl mx-auto space-y-6 min-h-screen">
       
       {/* Header */}
@@ -16,7 +45,17 @@ return (
         <p className="text-gray-500 text-sm mt-1">Track your green drop-offs and earned points</p>
       </div>
 
-      
+      {/* Stats row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-green-50 rounded-2xl p-5 border border-green-100 flex items-center gap-4">
+          <div className="w-12 h-12 bg-green-200 text-green-700 rounded-xl flex items-center justify-center shrink-0">
+            <Package className="w-6 h-6" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-gray-700">Recycled Total</p>
+            <p className="text-2xl font-black text-green-700">{totalWeight.toFixed(1)} kg</p>
+          </div>
+        </div>
 
         <div className="bg-amber-50 rounded-2xl p-5 border border-amber-100 flex items-center gap-4">
           <div className="w-12 h-12 bg-amber-200 text-amber-700 rounded-xl flex items-center justify-center shrink-0">
@@ -107,7 +146,5 @@ return (
       </div>
 
     </div>
-
   )
 }
-
