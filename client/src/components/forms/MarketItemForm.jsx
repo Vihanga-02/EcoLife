@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { X, ShoppingBag, Loader2, ChevronDown, Package, Upload, ImagePlus } from 'lucide-react'
+import { marketplaceAPI } from '../../api/api'
 
 const CATEGORIES = ['Electronics', 'Furniture', 'Clothing', 'Books', 'Tools', 'Toys', 'Sports', 'Other']
 const CONDITIONS = ['New', 'Good', 'Fair']
@@ -29,47 +30,48 @@ export default function MarketItemForm({ item = null, onSuccess, onClose }) {
     condition:   item?.condition   || 'Good',
     listingType: item?.listingType || 'Free',
   })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [imageFile,    setImageFile]    = useState(null)   // new file picked by user
+  const [previewUrl,   setPreviewUrl]   = useState(item?.imageUrl || null)  // preview src
+  const [loading,      setLoading]      = useState(false)
+  const [error,        setError]        = useState('')
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const fileInputRef = useRef(null)
 
-  const [imageFile, setImageFile] = useState(null)
-const [previewUrl, setPreviewUrl] = useState(item?.imageUrl || null)
-const [uploadProgress, setUploadProgress] = useState(0)
-const fileInputRef = useRef(null)
   // Escape key closes modal
   useEffect(() => {
     const h = (e) => { if (e.key === 'Escape') onClose() }
     window.addEventListener('keydown', h)
     return () => window.removeEventListener('keydown', h)
   }, [onClose])
-// Cleanup object URL on unmount / file change
-useEffect(() => {
-  return () => {
-    if (previewUrl && imageFile) URL.revokeObjectURL(previewUrl)
-  }
-}, [previewUrl, imageFile])
 
-const handleFileChange = (e) => {
-  const file = e.target.files?.[0]
-  if (!file) return
-  if (!file.type.startsWith('image/')) {
-    setError('Only image files are allowed.')
-    return
-  }
-  if (file.size > 5 * 1024 * 1024) {
-    setError('Image must be smaller than 5 MB.')
-    return
-  }
-  setError('')
-  setImageFile(file)
-  setPreviewUrl(URL.createObjectURL(file))
-}
+  // Cleanup object URL on unmount / file change
+  useEffect(() => {
+    return () => {
+      if (previewUrl && imageFile) URL.revokeObjectURL(previewUrl)
+    }
+  }, [previewUrl, imageFile])
 
-const handleDrop = (e) => {
-  e.preventDefault()
-  const file = e.dataTransfer.files?.[0]
-  if (file) handleFileChange({ target: { files: [file] } })
-}
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!file.type.startsWith('image/')) {
+      setError('Only image files are allowed.')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image must be smaller than 5 MB.')
+      return
+    }
+    setError('')
+    setImageFile(file)
+    setPreviewUrl(URL.createObjectURL(file))
+  }
+
+  const handleDrop = (e) => {
+    e.preventDefault()
+    const file = e.dataTransfer.files?.[0]
+    if (file) handleFileChange({ target: { files: [file] } })
+  }
 
   const handleChange = (e) => {
     setError('')
@@ -78,10 +80,42 @@ const handleDrop = (e) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (!form.title.trim()) { setError('Title is required.'); return }
+    if (!isEdit && !imageFile) { setError('Please select an image.'); return }
+
     setLoading(true)
     setError('')
-    // TODO: Implement API call
-    setLoading(false)
+    setUploadProgress(0)
+
+    try {
+      const formData = new FormData()
+      formData.append('title',       form.title.trim())
+      formData.append('description', form.description.trim())
+      formData.append('category',    form.category)
+      formData.append('condition',   form.condition)
+      formData.append('listingType', form.listingType)
+      if (imageFile) formData.append('image', imageFile)
+
+      // Simulate progress (real progress needs XMLHttpRequest or axios onUploadProgress)
+      const progressInterval = setInterval(() => {
+        setUploadProgress(p => Math.min(p + 15, 85))
+      }, 200)
+
+      if (isEdit) {
+        await marketplaceAPI.updateItem(item._id, formData)
+      } else {
+        await marketplaceAPI.createItem(formData)
+      }
+
+      clearInterval(progressInterval)
+      setUploadProgress(100)
+      onSuccess()
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to save listing.')
+    } finally {
+      setLoading(false)
+      setUploadProgress(0)
+    }
   }
 
   return (
@@ -112,158 +146,167 @@ const handleDrop = (e) => {
 
         {/* Scrollable form body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto">
-        
-        {/* Title */}
-<div>
-  <label className="block text-sm font-medium text-gray-700 mb-1.5">
-    Title <span className="text-red-500">*</span>
-  </label>
-  <input
-    type="text"
-    name="title"
-    value={form.title}
-    onChange={handleChange}
-    placeholder="e.g. Used Bicycle in Good Condition"
-    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all"
-  />
-</div>
 
-{/* Description */}
-<div>
-  <label className="block text-sm font-medium text-gray-700 mb-1.5">
-    Description <span className="text-gray-400 text-xs font-normal">(optional)</span>
-  </label>
-  <textarea
-    name="description"
-    value={form.description}
-    onChange={handleChange}
-    rows={2}
-    placeholder="Describe your item — age, defects, reason for listing..."
-    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all resize-none"
-  />
-</div>
+          {/* Title */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Title <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="title"
+              value={form.title}
+              onChange={handleChange}
+              placeholder="e.g. Used Bicycle in Good Condition"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all"
+            />
+          </div>
 
-{/* Image Upload */}
-<div>
-  <label className="block text-sm font-medium text-gray-700 mb-1.5">
-    Item Photo <span className="text-red-500">*</span>
-  </label>
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Description <span className="text-gray-400 text-xs font-normal">(optional)</span>
+            </label>
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              rows={2}
+              placeholder="Describe your item — age, defects, reason for listing..."
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all resize-none"
+            />
+          </div>
 
-  {/* Drop zone */}
-  <div
-    onClick={() => fileInputRef.current?.click()}
-    onDrop={handleDrop}
-    onDragOver={(e) => e.preventDefault()}
-    className={`relative border-2 border-dashed rounded-xl transition-all cursor-pointer overflow-hidden
-      ${previewUrl
-        ? 'border-indigo-300 bg-indigo-50/30'
-        : 'border-gray-200 bg-gray-50 hover:border-indigo-300 hover:bg-indigo-50/20'
-      }`}
-  >
-    {previewUrl ? (
-      <div className="relative h-40 group">
-        <img
-          src={previewUrl}
-          alt="preview"
-          className="w-full h-full object-cover"
-        />
-        {/* Overlay on hover */}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
-          <ImagePlus className="w-7 h-7 text-white" />
-          <span className="text-white text-xs font-semibold">Click to change photo</span>
-        </div>
-      </div>
-    ) : (
-      <div className="flex flex-col items-center justify-center gap-3 py-10 px-4">
-        <div className="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center">
-          <Upload className="w-6 h-6 text-indigo-500" />
-        </div>
-        <div className="text-center">
-          <p className="text-sm font-semibold text-gray-700">Click or drag to upload</p>
-          <p className="text-xs text-gray-400 mt-0.5">PNG, JPG, WEBP up to 5 MB</p>
-        </div>
-      </div>
-    )}
-    <input
-      ref={fileInputRef}
-      type="file"
-      accept="image/*"
-      className="hidden"
-      onChange={handleFileChange}
-    />
-  </div>
+          {/* Image Upload */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Item Photo <span className="text-red-500">*</span>
+            </label>
 
-  {imageFile && !loading && (
-    <p className="text-xs text-gray-400 mt-1.5 flex items-center gap-1">
-      <Package className="w-3 h-3" />
-      {imageFile.name} · {(imageFile.size / 1024).toFixed(0)} KB
-    </p>
-  )}
-</div>
+            {/* Drop zone */}
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              onDrop={handleDrop}
+              onDragOver={(e) => e.preventDefault()}
+              className={`relative border-2 border-dashed rounded-xl transition-all cursor-pointer overflow-hidden
+                ${previewUrl
+                  ? 'border-indigo-300 bg-indigo-50/30'
+                  : 'border-gray-200 bg-gray-50 hover:border-indigo-300 hover:bg-indigo-50/20'
+                }`}
+            >
+              {previewUrl ? (
+                <div className="relative h-40 group">
+                  <img
+                    src={previewUrl}
+                    alt="preview"
+                    className="w-full h-full object-cover"
+                  />
+                  {/* Overlay on hover */}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                    <ImagePlus className="w-7 h-7 text-white" />
+                    <span className="text-white text-xs font-semibold">Click to change photo</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center gap-3 py-10 px-4">
+                  <div className="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center">
+                    <Upload className="w-6 h-6 text-indigo-500" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-semibold text-gray-700">Click or drag to upload</p>
+                    <p className="text-xs text-gray-400 mt-0.5">PNG, JPG, WEBP up to 5 MB</p>
+                  </div>
+                </div>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+            </div>
 
-{/* Category */}
-<div>
-  <label className="block text-sm font-medium text-gray-700 mb-1.5">Category</label>
-  <div className="relative">
-    <select
-      name="category"
-      value={form.category}
-      onChange={handleChange}
-      className="w-full appearance-none px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-white pr-10"
-    >
-      {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-    </select>
-    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-  </div>
-</div>
+            {/* Upload progress bar */}
+            {loading && uploadProgress > 0 && (
+              <div className="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-300"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
+            )}
 
-{/* Condition + Listing type */}
-<div className="grid grid-cols-2 gap-4">
-  {/* Condition pills */}
-  <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1.5">Condition</label>
-    <div className="flex gap-1.5">
-      {CONDITIONS.map(c => {
-        const m = CONDITION_META[c]
-        return (
-          <button
-            key={c}
-            type="button"
-            onClick={() => setForm(p => ({ ...p, condition: c }))}
-            className={`flex-1 py-2 rounded-xl text-xs font-semibold border-2 transition-all ${form.condition === c
-              ? `${m.bg} ${m.color} ${m.border}`
-              : 'border-gray-100 bg-gray-50 text-gray-500 hover:border-indigo-300'
-            }`}
-          >
-            {c}
-          </button>
-        )
-      })}
-    </div>
-  </div>
+            {imageFile && !loading && (
+              <p className="text-xs text-gray-400 mt-1.5 flex items-center gap-1">
+                <Package className="w-3 h-3" />
+                {imageFile.name} · {(imageFile.size / 1024).toFixed(0)} KB
+              </p>
+            )}
+          </div>
 
-  {/* Listing type pills */}
-  <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1.5">Listing Type</label>
-    <div className="flex gap-1.5">
-      {LISTING_TYPES.map(t => (
-        <button
-          key={t}
-          type="button"
-          onClick={() => setForm(p => ({ ...p, listingType: t }))}
-          className={`flex-1 py-2 rounded-xl text-xs font-semibold border-2 transition-all ${form.listingType === t
-            ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-            : 'border-gray-100 bg-gray-50 text-gray-500 hover:border-indigo-300'
-          }`}
-        >
-          {t === 'Free' ? '🎁 Free' : '🔄 Trade'}
-        </button>
-      ))}
-    </div>
-  </div>
-</div>
-          {/* Form fields will go here */}
-          
+          {/* Category */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Category</label>
+            <div className="relative">
+              <select
+                name="category"
+                value={form.category}
+                onChange={handleChange}
+                className="w-full appearance-none px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-white pr-10"
+              >
+                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            </div>
+          </div>
+
+          {/* Condition + Listing type */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Condition pills */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Condition</label>
+              <div className="flex gap-1.5">
+                {CONDITIONS.map(c => {
+                  const m = CONDITION_META[c]
+                  return (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => setForm(p => ({ ...p, condition: c }))}
+                      className={`flex-1 py-2 rounded-xl text-xs font-semibold border-2 transition-all ${form.condition === c
+                          ? `${m.bg} ${m.color} ${m.border}`
+                          : 'border-gray-100 bg-gray-50 text-gray-500 hover:border-indigo-300'
+                        }`}
+                    >
+                      {c}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Listing type pills */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Listing Type</label>
+              <div className="flex gap-1.5">
+                {LISTING_TYPES.map(t => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setForm(p => ({ ...p, listingType: t }))}
+                    className={`flex-1 py-2 rounded-xl text-xs font-semibold border-2 transition-all ${form.listingType === t
+                        ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                        : 'border-gray-100 bg-gray-50 text-gray-500 hover:border-indigo-300'
+                      }`}
+                  >
+                    {t === 'Free' ? '🎁 Free' : '🔄 Trade'}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-red-600 text-sm">{error}</div>
           )}
@@ -279,9 +322,10 @@ const handleDrop = (e) => {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl text-sm font-bold hover:from-indigo-600 hover:to-purple-700 transition-all disabled:opacity-60"
+              className="flex-1 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl text-sm font-bold hover:from-indigo-600 hover:to-purple-700 transition-all disabled:opacity-60 flex items-center justify-center gap-2"
             >
-              {loading ? 'Saving...' : isEdit ? 'Save Changes' : 'List Item'}
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+              {loading ? 'Uploading...' : isEdit ? 'Save Changes' : 'List Item'}
             </button>
           </div>
         </form>
