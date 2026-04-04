@@ -10,14 +10,14 @@ import WasteLogForm from '../../components/forms/WasteLogForm'
 
 // ─── Constants ────────────────────────────────────────────────────────────
 const WASTE_TYPES = ['Plastic', 'Paper', 'Glass', 'Organic', 'E-waste']
-const UNITS       = ['kg', 'count']
+const UNITS = ['kg', 'count']
 
 const TYPE_META = {
-  Plastic:  { color: 'text-blue-600',   bg: 'bg-blue-50',   border: 'border-blue-200',   bar: 'bg-blue-400',   emoji: '🧴' },
-  Paper:    { color: 'text-yellow-600', bg: 'bg-yellow-50', border: 'border-yellow-200', bar: 'bg-yellow-400', emoji: '📄' },
-  Glass:    { color: 'text-cyan-600',   bg: 'bg-cyan-50',   border: 'border-cyan-200',   bar: 'bg-cyan-400',   emoji: '🍶' },
-  Organic:  { color: 'text-green-600',  bg: 'bg-green-50',  border: 'border-green-200',  bar: 'bg-green-400',  emoji: '🌿' },
-  'E-waste':{ color: 'text-red-600',    bg: 'bg-red-50',    border: 'border-red-200',    bar: 'bg-red-400',    emoji: '🔌' },
+  Plastic: { color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', bar: 'bg-blue-400', emoji: '🧴' },
+  Paper: { color: 'text-yellow-600', bg: 'bg-yellow-50', border: 'border-yellow-200', bar: 'bg-yellow-400', emoji: '📄' },
+  Glass: { color: 'text-cyan-600', bg: 'bg-cyan-50', border: 'border-cyan-200', bar: 'bg-cyan-400', emoji: '🍶' },
+  Organic: { color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200', bar: 'bg-green-400', emoji: '🌿' },
+  'E-waste': { color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200', bar: 'bg-red-400', emoji: '🔌' },
 }
 
 const fmt = (n, d = 2) => parseFloat(n || 0).toFixed(d)
@@ -44,14 +44,14 @@ function ConfirmDialog({ onConfirm, onCancel }) {
 // ─── Main WastePage ───────────────────────────────────────────────────────
 export default function WastePage() {
   const { refreshUser } = useAuth()
-  const [logs,       setLogs]       = useState([])
-  const [analytics,  setAnalytics]  = useState(null)
-  const [loading,    setLoading]    = useState(true)
-  const [showForm,   setShowForm]   = useState(false)
+  const [logs, setLogs] = useState([])
+  const [analytics, setAnalytics] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [showForm, setShowForm] = useState(false)
   const [editTarget, setEditTarget] = useState(null)
   const [deleteTarget, setDeleteTarget] = useState(null)
   const [activeType, setActiveType] = useState('All')
-  const [toast,      setToast]      = useState(null)
+  const [toast, setToast] = useState(null)
 
   const showToast = (msg, type = 'success') => { setToast({ msg, type }); setTimeout(() => setToast(null), 3000) }
 
@@ -62,12 +62,13 @@ export default function WastePage() {
         wasteAPI.getLogs(),
         wasteAPI.getAnalytics(),
       ])
-      if (logsRes.status      === 'fulfilled') setLogs(logsRes.value.data.logs || [])
+      if (logsRes.status === 'fulfilled') setLogs(logsRes.value.data.logs || [])
       if (analyticsRes.status === 'fulfilled') setAnalytics(analyticsRes.value.data)
-    } catch { 
-        console.error(err) 
-        showToast('Failed to load data.', 'error') }
-    finally  { setLoading(false) }
+    } catch {
+      console.error(err)
+      showToast('Failed to load data.', 'error')
+    }
+    finally { setLoading(false) }
   }, [])
 
   useEffect(() => { load() }, [load])
@@ -92,9 +93,9 @@ export default function WastePage() {
     if (wasNew) refreshUser()  // sync green score in sidebar/profile
   }
 
-  const types    = ['All', ...WASTE_TYPES]
+  const types = ['All', ...WASTE_TYPES]
   const filtered = activeType === 'All' ? logs : logs.filter(l => l.wasteType === activeType)
-  const maxType  = analytics?.totalByType
+  const maxType = analytics?.totalByType
     ? Object.entries(analytics.totalByType).reduce((a, b) => b[1] > a[1] ? b : a, ['', 0])
     : null
 
@@ -138,10 +139,10 @@ export default function WastePage() {
         {/* Analytics cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: 'Total Logs',       value: analytics?.totalLogs || 0,                               icon: <Package className="w-4 h-4 text-blue-400" />,   bg: 'bg-blue-50',   txt: 'text-blue-700'   },
-            { label: 'Carbon Equiv.',    value: `${fmt(analytics?.totalCarbonEquivalent, 1)} kg`,        icon: <FlaskConical className="w-4 h-4 text-purple-400" />, bg: 'bg-purple-50', txt: 'text-purple-700' },
-            { label: 'Recyclable Logs', value: analytics?.recyclableItems || 0,                         icon: <Recycle className="w-4 h-4 text-green-400" />,  bg: 'bg-green-50',  txt: 'text-green-700'  },
-            { label: 'Biodegradable',   value: analytics?.biodegradableItems || 0,                      icon: <Leaf className="w-4 h-4 text-teal-400" />,      bg: 'bg-teal-50',   txt: 'text-teal-700'   },
+            { label: 'Total Logs', value: analytics?.totalLogs || 0, icon: <Package className="w-4 h-4 text-blue-400" />, bg: 'bg-blue-50', txt: 'text-blue-700' },
+            { label: 'Carbon Equiv.', value: `${fmt(analytics?.totalCarbonEquivalent, 1)} kg`, icon: <FlaskConical className="w-4 h-4 text-purple-400" />, bg: 'bg-purple-50', txt: 'text-purple-700' },
+            { label: 'Recyclable Logs', value: analytics?.recyclableItems || 0, icon: <Recycle className="w-4 h-4 text-green-400" />, bg: 'bg-green-50', txt: 'text-green-700' },
+            { label: 'Biodegradable', value: analytics?.biodegradableItems || 0, icon: <Leaf className="w-4 h-4 text-teal-400" />, bg: 'bg-teal-50', txt: 'text-teal-700' },
           ].map(s => (
             <div key={s.label} className={`${s.bg} rounded-2xl p-4 flex items-center gap-3`}>
               <div className="shrink-0">{s.icon}</div>
@@ -161,9 +162,9 @@ export default function WastePage() {
             </h3>
             <div className="space-y-3">
               {Object.entries(analytics.totalByType)
-                .sort(([,a],[,b]) => b - a)
+                .sort(([, a], [, b]) => b - a)
                 .map(([type, qty]) => {
-                  const m   = TYPE_META[type] || TYPE_META.Plastic
+                  const m = TYPE_META[type] || TYPE_META.Plastic
                   const max = Math.max(...Object.values(analytics.totalByType))
                   const pct = max > 0 ? (qty / max) * 100 : 0
                   return (
@@ -189,16 +190,15 @@ export default function WastePage() {
         <div>
           <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-1">
             {types.map(t => {
-              const m   = t === 'All' ? null : TYPE_META[t]
+              const m = t === 'All' ? null : TYPE_META[t]
               const cnt = t === 'All' ? logs.length : logs.filter(l => l.wasteType === t).length
               if (cnt === 0 && t !== 'All') return null
               return (
                 <button key={t} onClick={() => setActiveType(t)}
-                  className={`flex items-center gap-1.5 whitespace-nowrap px-3.5 py-2 rounded-xl text-sm font-semibold border transition-all ${
-                    activeType === t
-                      ? 'bg-orange-500 text-white border-orange-500 shadow-sm'
-                      : 'bg-white text-gray-500 border-gray-200 hover:border-orange-300'
-                  }`}
+                  className={`flex items-center gap-1.5 whitespace-nowrap px-3.5 py-2 rounded-xl text-sm font-semibold border transition-all ${activeType === t
+                    ? 'bg-orange-500 text-white border-orange-500 shadow-sm'
+                    : 'bg-white text-gray-500 border-gray-200 hover:border-orange-300'
+                    }`}
                 >
                   {m?.emoji} {t}
                   <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${activeType === t ? 'bg-white/25 text-white' : 'bg-gray-100 text-gray-500'}`}>{cnt}</span>
@@ -248,7 +248,7 @@ export default function WastePage() {
                         <span className="text-xs text-gray-400 flex items-center gap-1">
                           <FlaskConical className="w-3 h-3" /> {fmt(log.carbonEquivalent, 2)} kg CO₂e
                         </span>
-                        {log.isRecyclable   && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium flex items-center gap-1"><Recycle className="w-3 h-3" /> Recyclable</span>}
+                        {log.isRecyclable && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium flex items-center gap-1"><Recycle className="w-3 h-3" /> Recyclable</span>}
                         {log.isBiodegradable && <span className="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full font-medium flex items-center gap-1"><Leaf className="w-3 h-3" /> Biodegradable</span>}
                       </div>
                       {log.notes && <p className="text-xs text-gray-400 mt-1 truncate">{log.notes}</p>}
@@ -275,7 +275,7 @@ export default function WastePage() {
         </div>
       </div>
 
-      {showForm     && <WasteLogForm log={editTarget} onSuccess={handleFormSuccess} onClose={() => { setShowForm(false); setEditTarget(null) }} />}
+      {showForm && <WasteLogForm log={editTarget} onSuccess={handleFormSuccess} onClose={() => { setShowForm(false); setEditTarget(null) }} />}
       {deleteTarget && <ConfirmDialog onConfirm={handleDelete} onCancel={() => setDeleteTarget(null)} />}
     </div>
   )
