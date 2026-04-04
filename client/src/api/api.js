@@ -39,15 +39,69 @@ export const authAPI = {
   updateProfile: (data) => api.put('/auth/me', data),
 }
 
-
+// ========================
+// ENERGY / APPLIANCES
+// ========================
+export const energyAPI = {
+  getAppliances: () => api.get('/energy/appliances'),
+  addAppliance: (data) => api.post('/energy/appliances', data),
+  updateAppliance: (id, data) => api.put(`/energy/appliances/${id}`, data),
+  deleteAppliance: (id) => api.delete(`/energy/appliances/${id}`),
+  toggleAppliance: (id) => api.patch(`/energy/appliances/${id}/toggle`),
+  realTimeBill: () => api.get('/energy/real-time-bill'),
+  estimateBill: () => api.get('/energy/estimate-bill'),
+  // Tariffs
+  getTariffs: () => api.get('/energy/tariffs'),
+  createTariff: (data) => api.post('/energy/tariffs', data),
+  updateTariff: (id, data) => api.put(`/energy/tariffs/${id}`, data),
+  deleteTariff: (id) => api.delete(`/energy/tariffs/${id}`),
+  // Billing Stats
+  getBillingStats: () => api.get('/energy/billing-stats'),
+  finalizeMonth: () => api.post('/energy/billing-stats/finalize'),
+}
 
 // ========================
 // AI
 // ========================
-// export const aiAPI = {
-//   getEnergyTips: () => api.get('/ai/energy-tips'),
+export const aiAPI = {
+  getEnergyTips: () => api.get('/ai/energy-tips'),
+}
+
+// ========================
+// MARKETPLACE
+// ========================
+// export const marketplaceAPI = {
+//   getItems: (params) => api.get('/marketplace/items', { params }),
+//   getItemById: (id) => api.get(`/marketplace/items/${id}`),
+//   getMyItems: () => api.get('/marketplace/my-items'),
+//   createItem: (formData) => api.post('/marketplace/items', formData, {
+//     headers: { 'Content-Type': 'multipart/form-data' }
+//   }),
+//   updateItem: (id, data) => api.put(`/marketplace/items/${id}`, data),
+//   deleteItem: (id) => api.delete(`/marketplace/items/${id}`),
+//   claimItem: (id) => api.post(`/marketplace/items/${id}/claim`),
+//   getMyTransactions: () => api.get('/marketplace/transactions'),
+//   reviewTransaction: (id, action) => api.patch(`/marketplace/transactions/${id}/review`, { action }),
+//   // Admin
+//   adminGetAll: () => api.get('/marketplace/admin/all'),
 // }
 
+// ========================
+// WASTE
+// ========================
+export const wasteAPI = {
+  getLogs: (params) => api.get('/waste', { params }),
+  logWaste: (data) => api.post('/waste', data),
+  updateLog: (id, data) => api.put(`/waste/${id}`, data),
+  analyzeImage: (formData) => api.post('/waste/analyze', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  }),
+  getAnalytics: () => api.get('/waste/analytics'),
+  getLogById: (id) => api.get(`/waste/${id}`),
+  deleteLog: (id) => api.delete(`/waste/${id}`),
+  // Admin
+  adminGetAll: () => api.get('/waste/admin/all'),
+}
 
 // ========================
 // RECYCLING
@@ -67,14 +121,13 @@ export const recyclingAPI = {
 }
 
 // ========================
-// ADMIN................................................................................................................
-
+// ADMIN
 // ========================
-// export const adminAPI = {
-//   getStats: () => api.get('/admin/stats'),
-//   getUsers: (params) => api.get('/admin/users', { params }),
-//   getUserById: (id) => api.get(`/admin/users/${id}`),
-//   toggleUserStatus: (id) => api.patch(`/admin/users/${id}/toggle-status`),
-// }
+export const adminAPI = {
+  getStats: () => api.get('/admin/stats'),
+  getUsers: (params) => api.get('/admin/users', { params }),
+  getUserById: (id) => api.get(`/admin/users/${id}`),
+  toggleUserStatus: (id) => api.patch(`/admin/users/${id}/toggle-status`),
+}
 
 export default api
