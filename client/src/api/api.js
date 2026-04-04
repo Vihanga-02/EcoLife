@@ -75,17 +75,19 @@ export const marketplaceAPI = {
   getItemById: (id) => api.get(`/marketplace/items/${id}`),
   getMyItems: () => api.get('/marketplace/my-items'),
   createItem: (formData) => api.post('/marketplace/items', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    headers: { 'Content-Type': 'multipart/form-data' },
   }),
-  updateItem: (id, data) => api.put(`/marketplace/items/${id}`, data),
+  updateItem: (id, formData) => api.put(`/marketplace/items/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  }),
   deleteItem: (id) => api.delete(`/marketplace/items/${id}`),
   claimItem: (id) => api.post(`/marketplace/items/${id}/claim`),
   getMyTransactions: () => api.get('/marketplace/transactions'),
   reviewTransaction: (id, action) => api.patch(`/marketplace/transactions/${id}/review`, { action }),
   // Admin
   adminGetAll: () => api.get('/marketplace/admin/all'),
+  adminGetAllTransactions: () => api.get('/marketplace/admin/transactions'),
 }
-
 // ========================
 // WASTE
 // ========================
