@@ -99,6 +99,7 @@ export const wasteAPI = {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
   getAnalytics: () => api.get('/waste/analytics'),
+  getMonthlyBreakdown: () => api.get('/waste/monthly-breakdown'),
   getLogById: (id) => api.get(`/waste/${id}`),
   deleteLog: (id) => api.delete(`/waste/${id}`),
   // Admin
