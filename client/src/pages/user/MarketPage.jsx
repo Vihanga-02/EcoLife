@@ -2,54 +2,62 @@ import { useState, useEffect, useCallback } from 'react'
 import {
   ShoppingBag, Plus, RefreshCw, CheckCircle, XCircle,
   Trash2, Loader2, Package, Tag,
-  ArrowLeftRight, Clock, MessageSquare
+  ArrowLeftRight, Clock, MessageSquare, Pencil
 } from 'lucide-react'
 import { marketplaceAPI } from '../../api/api'
 import { useAuth } from '../../context/AuthContext'
 import MarketItemForm from '../../components/forms/MarketItemForm'
 
-// ─── Constants ───────────────────────────────────────────────────────────────
+// ─── Constants ──────────────────────────────────────────────────────────────
 const CONDITION_META = {
-  New:  { color: 'text-green-700',  bg: 'bg-green-50',  dot: 'bg-green-500'  },
-  Good: { color: 'text-blue-700',   bg: 'bg-blue-50',   dot: 'bg-blue-400'   },
-  Fair: { color: 'text-yellow-700', bg: 'bg-yellow-50', dot: 'bg-yellow-400' },
+  New: { color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200' },
+  Good: { color: 'text-sky-700', bg: 'bg-sky-50', border: 'border-sky-200' },
+  Fair: { color: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200' },
 }
 
 const STATUS_META = {
-  available: { label: 'Available', color: 'text-green-700',  bg: 'bg-green-50'  },
-  reserved:  { label: 'Reserved',  color: 'text-yellow-700', bg: 'bg-yellow-50' },
-  completed: { label: 'Completed', color: 'text-gray-500',   bg: 'bg-gray-100'  },
+  available: { label: 'Available', color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200' },
+  reserved: { label: 'Reserved', color: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200' },
+  completed: { label: 'Completed', color: 'text-violet-700', bg: 'bg-violet-50', border: 'border-violet-200' },
 }
 
 const TXN_STATUS = {
-  pending:   { label: 'Pending',   color: 'text-yellow-700', bg: 'bg-yellow-50' },
-  completed: { label: 'Completed', color: 'text-green-700',  bg: 'bg-green-50'  },
-  rejected:  { label: 'Rejected',  color: 'text-red-600',    bg: 'bg-red-50'    },
+  pending: { label: 'Pending', color: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200' },
+  completed: { label: 'Completed', color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200' },
+  rejected: { label: 'Rejected', color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200' },
 }
 
 // ─── Confirm Dialog ──────────────────────────────────────────────────────────
 function ConfirmDialog({ title, onConfirm, onCancel }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/30" onClick={onCancel} />
-      <div className="relative bg-white rounded-xl shadow-xl p-6 max-w-sm w-full border border-gray-200">
-        <div className="w-10 h-10 bg-red-50 border border-red-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-          <Trash2 className="text-red-500 w-4 h-4" />
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        onClick={onCancel}
+      />
+      <div className="relative w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl">
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50">
+          <Trash2 className="h-5 w-5 text-red-500" />
         </div>
-        <h3 className="font-bold text-gray-900 text-center mb-1 text-sm">Delete Listing?</h3>
-        <p className="text-xs text-gray-500 text-center mb-5">
+
+        <h3 className="mb-1 text-center text-lg font-bold text-gray-900">
+          Delete Listing?
+        </h3>
+
+        <p className="mb-5 text-center text-sm text-gray-500">
           <span className="font-semibold text-gray-700">"{title}"</span> will be permanently removed.
         </p>
-        <div className="flex gap-2">
+
+        <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+            className="flex-1 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-semibold transition-colors"
+            className="flex-1 rounded-xl bg-red-500 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-red-600"
           >
             Delete
           </button>
@@ -59,167 +67,202 @@ function ConfirmDialog({ title, onConfirm, onCancel }) {
   )
 }
 
-// ─── Item Card ───────────────────────────────────────────────────────────────
+// ─── Item Card ──────────────────────────────────────────────────────────────
 function ItemCard({ item, onEdit, onDelete }) {
   const sm = STATUS_META[item.status] || STATUS_META.available
   const cm = CONDITION_META[item.condition] || CONDITION_META.Good
 
   return (
-    <div className="group bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-green-400 hover:shadow-md transition-all duration-200">
-      {/* Image */}
-      <div className="relative h-40 bg-gray-50 overflow-hidden">
+    <div className="group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+      <div className="relative h-44 overflow-hidden bg-gray-100">
         {item.imageUrl ? (
           <img
             src={item.imageUrl}
             alt={item.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center gap-1.5">
-            <Package className="w-8 h-8 text-gray-300" />
-            <span className="text-[10px] text-gray-300">No image</span>
+          <div className="flex h-full w-full items-center justify-center">
+            <Package className="h-10 w-10 text-gray-300" />
           </div>
         )}
 
-        {/* Badges */}
-        <div className="absolute top-2 left-2 flex gap-1.5">
-          <span className={`text-[10px] px-2 py-0.5 rounded font-semibold uppercase tracking-wide ${sm.bg} ${sm.color}`}>
+        <div className="absolute left-3 top-3 flex flex-wrap gap-2">
+          <span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${sm.bg} ${sm.color} ${sm.border}`}>
             {sm.label}
           </span>
-          <span className="text-[10px] px-2 py-0.5 rounded font-semibold bg-gray-800 text-white uppercase tracking-wide">
+          <span className="rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-semibold text-gray-600">
             {item.listingType === 'Free' ? 'Free' : 'Trade'}
           </span>
         </div>
 
-        {/* Actions */}
-        <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute right-3 top-3 flex gap-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
           <button
             onClick={() => onEdit(item)}
-            className="w-7 h-7 bg-white border border-gray-200 rounded-md flex items-center justify-center text-gray-500 hover:text-green-600 hover:border-green-300 transition-colors text-xs"
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 shadow-sm transition hover:text-emerald-600"
           >
-            ✏️
+            <Pencil className="h-4 w-4" />
           </button>
           <button
             onClick={() => onDelete(item)}
-            className="w-7 h-7 bg-white border border-gray-200 rounded-md flex items-center justify-center text-gray-400 hover:text-red-500 hover:border-red-200 transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 shadow-sm transition hover:text-red-500"
           >
-            <Trash2 className="w-3 h-3" />
+            <Trash2 className="h-4 w-4" />
           </button>
         </div>
       </div>
 
-      {/* Info */}
-      <div className="p-3.5">
-        <h3 className="font-semibold text-gray-900 text-sm truncate mb-2">{item.title}</h3>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <Tag className="w-3 h-3 text-gray-400" />
-            <span className="text-[11px] text-gray-400">{item.category}</span>
-          </div>
-          <span className={`inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded font-medium ${cm.bg} ${cm.color}`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${cm.dot}`} />
+      <div className="p-4">
+        <h3 className="mb-1 truncate text-sm font-bold text-gray-900">
+          {item.title}
+        </h3>
+
+        <div className="mb-3 flex items-center gap-2 text-xs text-gray-500">
+          <Tag className="h-3.5 w-3.5" />
+          <span>{item.category}</span>
+        </div>
+
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <span className={`rounded-full border px-2.5 py-1 text-xs font-medium ${cm.bg} ${cm.color} ${cm.border}`}>
             {item.condition}
           </span>
+          <span className="flex items-center gap-1 text-xs text-gray-400">
+            <Clock className="h-3.5 w-3.5" />
+            {new Date(item.createdAt).toLocaleDateString('en-LK', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+            })}
+          </span>
         </div>
-        <p className="text-[11px] text-gray-400 mt-2 border-t border-gray-100 pt-2">
-          Listed {new Date(item.createdAt).toLocaleDateString('en-LK', { day: '2-digit', month: 'short', year: 'numeric' })}
-        </p>
       </div>
     </div>
   )
 }
 
-// ─── Transaction Row ─────────────────────────────────────────────────────────
+// ─── Transaction Row ────────────────────────────────────────────────────────
 function TxnRow({ txn, isIncoming, onApprove, onReject }) {
   const sm = TXN_STATUS[txn.status] || TXN_STATUS.pending
   const isPending = txn.status === 'pending'
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-4 hover:border-green-300 transition-colors">
-      <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-50 border border-gray-100 shrink-0 flex items-center justify-center">
-        {txn.itemId?.imageUrl
-          ? <img src={txn.itemId.imageUrl} alt="" className="w-full h-full object-cover" />
-          : <Package className="w-5 h-5 text-gray-300" />
-        }
+    <div className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:shadow-md">
+      <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gray-100">
+        {txn.itemId?.imageUrl ? (
+          <img src={txn.itemId.imageUrl} alt="" className="h-full w-full object-cover" />
+        ) : (
+          <Package className="h-6 w-6 text-gray-300" />
+        )}
       </div>
 
-      <div className="flex-1 min-w-0">
-        <p className="font-semibold text-gray-900 text-sm truncate">{txn.itemId?.title || 'Unknown item'}</p>
-        <p className="text-xs text-gray-500 mt-0.5">
-          {isIncoming
-            ? <>Requested by <span className="font-semibold text-gray-700">{txn.buyerId?.name || 'Unknown'}</span></>
-            : <>Seller: <span className="font-semibold text-gray-700">{txn.sellerId?.name || 'Unknown'}</span></>
-          }
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-bold text-gray-900">
+          {txn.itemId?.title || 'Unknown item'}
         </p>
-        <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-          <span className={`text-[11px] px-2 py-0.5 rounded font-semibold ${sm.bg} ${sm.color}`}>
+
+        <p className="mt-0.5 text-xs text-gray-500">
+          {isIncoming ? (
+            <>Requested by <span className="font-semibold text-gray-700">{txn.buyerId?.name || 'Unknown'}</span></>
+          ) : (
+            <>From <span className="font-semibold text-gray-700">{txn.sellerId?.name || 'Unknown'}</span></>
+          )}
+        </p>
+
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${sm.bg} ${sm.color} ${sm.border}`}>
             {sm.label}
           </span>
+
           {txn.itemId?.listingType && (
-            <span className="text-[11px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded">
-              {txn.itemId.listingType}
+            <span className="text-xs text-gray-500">
+              {txn.itemId.listingType === 'Free' ? 'Free' : 'Trade'}
             </span>
           )}
-          <span className="text-[11px] text-gray-400 flex items-center gap-1">
-            <Clock className="w-3 h-3" />
-            {new Date(txn.createdAt).toLocaleDateString('en-LK', { day: '2-digit', month: 'short' })}
+
+          <span className="flex items-center gap-1 text-xs text-gray-400">
+            <Clock className="h-3 w-3" />
+            {new Date(txn.createdAt).toLocaleDateString('en-LK', {
+              day: '2-digit',
+              month: 'short',
+            })}
           </span>
         </div>
       </div>
 
-      {/* Actions */}
       {isIncoming && isPending && (
-        <div className="flex gap-2 shrink-0">
+        <div className="flex shrink-0 gap-2">
           <button
             onClick={() => onApprove(txn._id)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-semibold transition-colors"
+            className="flex items-center gap-1 rounded-xl bg-emerald-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-emerald-700"
           >
-            <CheckCircle className="w-3.5 h-3.5" /> Approve
+            <CheckCircle className="h-3.5 w-3.5" />
+            Approve
           </button>
           <button
             onClick={() => onReject(txn._id)}
-            className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-200 text-gray-500 hover:bg-red-50 hover:text-red-500 hover:border-red-200 rounded-lg text-xs font-semibold transition-colors"
+            className="flex items-center gap-1 rounded-xl border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-600 transition hover:border-red-200 hover:bg-red-50 hover:text-red-500"
           >
-            <XCircle className="w-3.5 h-3.5" /> Reject
+            <XCircle className="h-3.5 w-3.5" />
+            Reject
           </button>
         </div>
       )}
+
       {!isIncoming && txn.status === 'completed' && (
-        <div className="flex items-center gap-1 text-green-600 shrink-0 bg-green-50 px-2.5 py-1.5 rounded-lg border border-green-100">
-          <CheckCircle className="w-3.5 h-3.5" />
-          <span className="text-xs font-semibold">+5 pts</span>
+        <div className="shrink-0 text-xs font-bold text-emerald-700">
+          Completed
         </div>
       )}
     </div>
   )
 }
 
-// ─── Empty State ─────────────────────────────────────────────────────────────
-function EmptyState({ icon: Icon, title, description, action }) {
+// ─── Stat Card ──────────────────────────────────────────────────────────────
+function StatCard({ label, value, tone = 'default' }) {
+  const toneMap = {
+    primary: 'bg-sky-50 border-sky-200 text-sky-800',
+    success: 'bg-emerald-50 border-emerald-200 text-emerald-700',
+    warning: 'bg-amber-50 border-amber-200 text-amber-700',
+    secondary: 'bg-violet-50 border-violet-200 text-violet-700',
+  }
+
   return (
-    <div className="bg-white border border-dashed border-gray-200 rounded-xl p-14 text-center">
-      <div className="w-12 h-12 bg-gray-50 border border-gray-200 rounded-xl flex items-center justify-center mx-auto mb-4">
-        <Icon className="w-6 h-6 text-gray-300" />
-      </div>
-      <h3 className="text-gray-800 font-semibold text-sm mb-1">{title}</h3>
-      <p className="text-gray-400 text-xs max-w-xs mx-auto mb-4">{description}</p>
-      {action}
+    <div className={`rounded-2xl border p-4 shadow-sm transition hover:shadow-md ${toneMap[tone]}`}>
+      <p className="text-2xl font-black">{value}</p>
+      <p className="mt-1 text-sm font-semibold text-gray-600">{label}</p>
     </div>
   )
 }
 
-// ─── Main MarketPage ─────────────────────────────────────────────────────────
+// ─── Empty State ────────────────────────────────────────────────────────────
+function EmptyState({ icon: Icon, title, description, action }) {
+  return (
+    <div className="rounded-2xl border border-dashed border-gray-300 bg-white p-14 text-center">
+      <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-50">
+        <Icon className="h-7 w-7 text-gray-300" />
+      </div>
+      <h3 className="text-base font-bold text-gray-800">{title}</h3>
+      <p className="mx-auto mt-1 max-w-sm text-sm text-gray-400">
+        {description}
+      </p>
+      {action && <div className="mt-5">{action}</div>}
+    </div>
+  )
+}
+
+// ─── Main MarketPage ────────────────────────────────────────────────────────
 export default function MarketPage() {
   const { user, refreshUser } = useAuth()
-  const [tab,          setTab]          = useState('listings')
-  const [items,        setItems]        = useState([])
+
+  const [tab, setTab] = useState('listings')
+  const [items, setItems] = useState([])
   const [transactions, setTransactions] = useState([])
-  const [loading,      setLoading]      = useState(true)
-  const [txnLoading,   setTxnLoading]   = useState(true)
-  const [showForm,     setShowForm]     = useState(false)
-  const [editTarget,   setEditTarget]   = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [txnLoading, setTxnLoading] = useState(true)
+  const [showForm, setShowForm] = useState(false)
+  const [editTarget, setEditTarget] = useState(null)
   const [deleteTarget, setDeleteTarget] = useState(null)
-  const [toast,        setToast]        = useState(null)
+  const [toast, setToast] = useState(null)
 
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type })
@@ -228,119 +271,155 @@ export default function MarketPage() {
 
   const loadItems = useCallback(async () => {
     setLoading(true)
-    try { setItems((await marketplaceAPI.getMyItems()).data.items || []) }
-    catch { showToast('Failed to load listings.', 'error') }
-    finally { setLoading(false) }
+    try {
+      setItems((await marketplaceAPI.getMyItems()).data.items || [])
+    } catch {
+      showToast('Failed to load listings.', 'error')
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   const loadTxns = useCallback(async () => {
     setTxnLoading(true)
-    try { setTransactions((await marketplaceAPI.getMyTransactions()).data.transactions || []) }
-    catch { /* silent */ }
-    finally { setTxnLoading(false) }
+    try {
+      setTransactions((await marketplaceAPI.getMyTransactions()).data.transactions || [])
+    } catch {
+      //
+    } finally {
+      setTxnLoading(false)
+    }
   }, [])
 
-  useEffect(() => { loadItems(); loadTxns() }, [loadItems, loadTxns])
+  useEffect(() => {
+    loadItems()
+    loadTxns()
+  }, [loadItems, loadTxns])
 
   const handleDelete = async () => {
     try {
       await marketplaceAPI.deleteItem(deleteTarget._id)
       showToast(`"${deleteTarget.title}" removed.`)
-      setDeleteTarget(null); loadItems()
-    } catch { showToast('Delete failed.', 'error'); setDeleteTarget(null) }
+      setDeleteTarget(null)
+      loadItems()
+    } catch {
+      showToast('Delete failed.', 'error')
+      setDeleteTarget(null)
+    }
   }
 
   const handleReview = async (txnId, action) => {
     try {
       await marketplaceAPI.reviewTransaction(txnId, action)
-      showToast(action === 'approve' ? 'Request approved! +10 Green pts' : 'Request rejected.')
-      loadItems(); loadTxns()
+      showToast(action === 'approve' ? 'Request approved successfully.' : 'Request rejected.')
+      loadItems()
+      loadTxns()
       if (action === 'approve') await refreshUser()
-    } catch { showToast('Action failed.', 'error') }
+    } catch {
+      showToast('Action failed.', 'error')
+    }
   }
 
-  const incoming = transactions.filter(t => t.sellerId?._id === user?._id || t.sellerId === user?._id)
-  const outgoing  = transactions.filter(t => t.buyerId?._id  === user?._id || t.buyerId  === user?._id)
-  const pendingCount = incoming.filter(t => t.status === 'pending').length
+  const incoming = transactions.filter(
+    (t) => t.sellerId?._id === user?._id || t.sellerId === user?._id
+  )
+  const outgoing = transactions.filter(
+    (t) => t.buyerId?._id === user?._id || t.buyerId === user?._id
+  )
+
+  const pendingIncoming = incoming.filter((t) => t.status === 'pending').length
 
   const stats = [
-    { label: 'Total',     value: items.length,                                       color: 'text-gray-800'   },
-    { label: 'Available', value: items.filter(i => i.status === 'available').length, color: 'text-green-700'  },
-    { label: 'Reserved',  value: items.filter(i => i.status === 'reserved').length,  color: 'text-yellow-700' },
-    { label: 'Completed', value: items.filter(i => i.status === 'completed').length, color: 'text-gray-500'   },
+    { label: 'Total Listings', value: items.length, tone: 'primary' },
+    { label: 'Available', value: items.filter((i) => i.status === 'available').length, tone: 'success' },
+    { label: 'Reserved', value: items.filter((i) => i.status === 'reserved').length, tone: 'warning' },
+    { label: 'Completed', value: items.filter((i) => i.status === 'completed').length, tone: 'secondary' },
   ]
 
-  const TABS = [
-    { id: 'listings',     label: 'My Listings',  count: items.length,    icon: Package       },
-    { id: 'requests',     label: 'Requests',      count: pendingCount,    icon: MessageSquare },
-    { id: 'transactions', label: 'My Requests',   count: outgoing.length, icon: ArrowLeftRight },
+  const tabs = [
+    { id: 'listings', label: 'My Listings', count: items.length, icon: Package },
+    { id: 'requests', label: 'Requests', count: pendingIncoming, icon: MessageSquare },
+    { id: 'transactions', label: 'My Requests', count: outgoing.length, icon: ArrowLeftRight },
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-
-      {/* Toast */}
+    <div className="min-h-screen bg-gray-50">
       {toast && (
-        <div className={`fixed top-5 right-5 z-50 px-4 py-3 rounded-lg shadow-lg text-white text-xs font-semibold flex items-center gap-2 ${
-          toast.type === 'error' ? 'bg-red-600' : 'bg-green-700'
+        <div className={`fixed right-5 top-5 z-50 flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-medium text-white shadow-xl ${
+          toast.type === 'error' ? 'bg-red-500' : 'bg-emerald-600'
         }`}>
-          {toast.type === 'error' ? <XCircle className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
+          {toast.type === 'error' ? (
+            <XCircle className="h-4 w-4" />
+          ) : (
+            <CheckCircle className="h-4 w-4" />
+          )}
           {toast.msg}
         </div>
       )}
 
-      {/* ── Page Header ── */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-5xl mx-auto px-5 pt-6 pb-0">
+      <div className="border-b border-gray-200 bg-white">
+        <div className="mx-auto max-w-6xl px-4 py-6 md:px-6">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+            <div className="max-w-2xl">
+              <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-600 shadow-sm">
+                <ShoppingBag className="h-5 w-5 text-white" />
+              </div>
 
-          {/* Title row */}
-          <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-green-600 rounded-lg flex items-center justify-center">
-                <ShoppingBag className="text-white w-4 h-4" />
-              </div>
-              <div>
-                <h1 className="text-base font-bold text-gray-900 leading-tight">My Marketplace</h1>
-                <p className="text-gray-400 text-[11px]">Manage your listings & trade requests</p>
-              </div>
+              <h1 className="text-2xl font-black tracking-tight text-gray-900">
+                My Marketplace
+              </h1>
+              <p className="mt-1 text-sm text-gray-500">
+                Manage your listings and track marketplace requests in one place.
+              </p>
             </div>
-            <div className="flex gap-2">
+
+            <div className="flex gap-2 self-start">
               <button
-                onClick={() => { loadItems(); loadTxns() }}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-500 text-xs font-medium transition-colors"
+                onClick={() => {
+                  loadItems()
+                  loadTxns()
+                }}
+                className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
               >
-                <RefreshCw className="w-3.5 h-3.5" /> Refresh
+                <RefreshCw className="h-4 w-4" />
+                Refresh
               </button>
+
               <button
-                onClick={() => { setEditTarget(null); setShowForm(true) }}
-                className="flex items-center gap-1.5 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-semibold transition-colors"
+                onClick={() => {
+                  setEditTarget(null)
+                  setShowForm(true)
+                }}
+                className="flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-700"
               >
-                <Plus className="w-3.5 h-3.5" /> New Listing
+                <Plus className="h-4 w-4" />
+                New Listing
               </button>
             </div>
           </div>
 
-          {/* Tabs */}
-          <div className="flex gap-0">
-            {TABS.map(t => {
+          <div className="mt-6 flex flex-wrap gap-2">
+            {tabs.map((t) => {
               const Icon = t.icon
-              const active = tab === t.id
+              const isActive = tab === t.id
+
               return (
                 <button
                   key={t.id}
                   onClick={() => setTab(t.id)}
-                  className={`flex items-center gap-2 px-4 py-3 text-xs font-semibold border-b-2 transition-all -mb-px ${
-                    active
-                      ? 'border-green-600 text-green-700'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
+                    isActive
+                      ? 'border border-emerald-200 bg-emerald-50 text-emerald-700'
+                      : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5" />
+                  <Icon className="h-4 w-4" />
                   {t.label}
                   {t.count > 0 && (
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
-                      active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+                    <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${
+                      isActive
+                        ? 'bg-emerald-100 text-emerald-700'
+                        : 'bg-gray-100 text-gray-500'
                     }`}>
                       {t.count}
                     </span>
@@ -352,131 +431,139 @@ export default function MarketPage() {
         </div>
       </div>
 
-      {/* ── Content ── */}
-      <div className="max-w-5xl mx-auto px-5 py-6 space-y-5">
-
-        {/* ── LISTINGS TAB ── */}
+      <div className="mx-auto max-w-6xl px-4 py-6 md:px-6">
         {tab === 'listings' && (
-          <>
-            {/* Stats */}
-            <div className="grid grid-cols-4 gap-3">
-              {stats.map(s => (
-                <div key={s.label} className="bg-white border border-gray-200 rounded-xl p-4 text-center">
-                  <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
-                  <p className="text-gray-400 text-[11px] mt-0.5">{s.label}</p>
-                </div>
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {stats.map((s) => (
+                <StatCard key={s.label} {...s} />
               ))}
             </div>
 
             {loading ? (
-              <div className="flex items-center justify-center py-20">
-                <Loader2 className="w-6 h-6 text-green-600 animate-spin" />
+              <div className="flex items-center justify-center py-24">
+                <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
               </div>
             ) : items.length === 0 ? (
               <EmptyState
                 icon={ShoppingBag}
                 title="No listings yet"
-                description="List items you no longer need. Give them a second life and earn green points!"
+                description="List items you no longer need and make them available for others."
                 action={
                   <button
-                    onClick={() => { setEditTarget(null); setShowForm(true) }}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-semibold transition-colors"
+                    onClick={() => {
+                      setEditTarget(null)
+                      setShowForm(true)
+                    }}
+                    className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-700"
                   >
-                    <Plus className="w-3.5 h-3.5" /> Create First Listing
+                    <Plus className="h-4 w-4" />
+                    Create First Listing
                   </button>
                 }
               />
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {items.map(item => (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {items.map((item) => (
                   <ItemCard
                     key={item._id}
                     item={item}
-                    onEdit={(i) => { setEditTarget(i); setShowForm(true) }}
+                    onEdit={(i) => {
+                      setEditTarget(i)
+                      setShowForm(true)
+                    }}
                     onDelete={(i) => setDeleteTarget(i)}
                   />
                 ))}
-                {/* Add card */}
+
                 <button
-                  onClick={() => { setEditTarget(null); setShowForm(true) }}
-                  className="bg-white border border-dashed border-gray-200 hover:border-green-400 hover:bg-green-50/30 rounded-xl flex flex-col items-center justify-center gap-2.5 text-gray-400 hover:text-green-600 transition-all min-h-[200px]"
+                  onClick={() => {
+                    setEditTarget(null)
+                    setShowForm(true)
+                  }}
+                  className="flex min-h-[220px] flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-gray-300 bg-white text-gray-400 transition hover:border-emerald-300 hover:text-emerald-600"
                 >
-                  <div className="w-10 h-10 border border-gray-200 rounded-lg flex items-center justify-center">
-                    <Plus className="w-5 h-5" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-50">
+                    <Plus className="h-6 w-6" />
                   </div>
-                  <span className="text-xs font-semibold">Add Listing</span>
+                  <span className="text-sm font-semibold">New Listing</span>
                 </button>
               </div>
             )}
-          </>
+          </div>
         )}
 
-        {/* ── REQUESTS TAB ── */}
         {tab === 'requests' && (
-          <>
+          <div>
             {txnLoading ? (
-              <div className="flex items-center justify-center py-20">
-                <Loader2 className="w-6 h-6 text-green-600 animate-spin" />
+              <div className="flex items-center justify-center py-24">
+                <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
               </div>
             ) : incoming.length === 0 ? (
               <EmptyState
                 icon={MessageSquare}
-                title="No incoming requests"
+                title="No incoming requests yet"
                 description="When someone requests one of your listings, it will appear here."
               />
             ) : (
               <div className="space-y-3">
-                {incoming.map(t => (
+                {incoming.map((t) => (
                   <TxnRow
                     key={t._id}
                     txn={t}
-                    isIncoming
+                    isIncoming={true}
                     onApprove={(id) => handleReview(id, 'approve')}
                     onReject={(id) => handleReview(id, 'reject')}
                   />
                 ))}
               </div>
             )}
-          </>
+          </div>
         )}
 
-        {/* ── MY REQUESTS TAB ── */}
         {tab === 'transactions' && (
-          <>
+          <div>
             {txnLoading ? (
-              <div className="flex items-center justify-center py-20">
-                <Loader2 className="w-6 h-6 text-green-600 animate-spin" />
+              <div className="flex items-center justify-center py-24">
+                <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
               </div>
             ) : outgoing.length === 0 ? (
               <EmptyState
                 icon={ArrowLeftRight}
                 title="No requests made yet"
-                description="Browse the marketplace and request items you need."
+                description="Your marketplace requests will appear here once you start requesting items."
               />
             ) : (
               <div className="space-y-3">
-                {outgoing.map(t => (
-                  <TxnRow key={t._id} txn={t} isIncoming={false} />
+                {outgoing.map((t) => (
+                  <TxnRow
+                    key={t._id}
+                    txn={t}
+                    isIncoming={false}
+                  />
                 ))}
               </div>
             )}
-          </>
+          </div>
         )}
       </div>
 
-      {/* Modals */}
       {showForm && (
         <MarketItemForm
           item={editTarget}
           onSuccess={() => {
             setShowForm(false)
             setEditTarget(null)
-            showToast(editTarget ? 'Listing updated!' : 'Item listed successfully!')
+            showToast(editTarget ? 'Listing updated successfully.' : 'Item listed successfully.')
             loadItems()
           }}
-          onClose={() => { setShowForm(false); setEditTarget(null) }}
+          onClose={() => {
+            setShowForm(false)
+            setEditTarget(null)
+          }}
         />
       )}
+
       {deleteTarget && (
         <ConfirmDialog
           title={deleteTarget.title}
