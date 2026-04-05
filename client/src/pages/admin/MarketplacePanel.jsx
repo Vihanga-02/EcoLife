@@ -20,6 +20,42 @@ const TXN_STATUS_META = {
   approved:  { label: 'Approved',  color: 'text-blue-600',    bg: 'bg-blue-100'    },
 }
 
+// ─── Stat Card ────────────────────────────────────────────────────────────────
+function StatCard({ label, value, icon: Icon, color, bg }) {
+  return (
+    <div className={`${bg} rounded-2xl p-5 flex items-center gap-4`}>
+      <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${color.replace('text', 'bg').replace('-600', '-100').replace('-500', '-100')}`}>
+        <Icon className={`w-5 h-5 ${color}`} />
+      </div>
+      <div>
+        <p className={`text-2xl font-black ${color}`}>{value}</p>
+        <p className="text-gray-500 text-xs mt-0.5">{label}</p>
+      </div>
+    </div>
+  )
+}
+
+// ─── Loading Spinner ─────────────────────────────────────────────────────────
+function Spinner() {
+  return (
+    <div className="flex items-center justify-center py-20">
+      <div className="w-8 h-8 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+    </div>
+  )
+}
+
+// ─── Empty State ─────────────────────────────────────────────────────────────
+function Empty({ icon: Icon, text }) {
+  return (
+    <div className="text-center py-16">
+      <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <Icon className="w-8 h-8 text-gray-300" />
+      </div>
+      <p className="text-gray-400 text-sm">{text}</p>
+    </div>
+  )
+}
+
 // ─── Main Admin Panel ─────────────────────────────────────────────────────────
 export default function MarketplacePanel() {
   const [tab, setTab] = useState('overview')
@@ -115,6 +151,44 @@ export default function MarketplacePanel() {
           )
         })}
       </div>
+
+      {/* ══ OVERVIEW TAB ══ */}
+{tab === 'overview' && (
+  <div className="space-y-6">
+    {/* Item Stats */}
+    <div>
+      <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Listings Overview</h3>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <StatCard label="Total Listings"  value={items.length}     icon={ShoppingBag}   color="text-indigo-600"  bg="bg-indigo-50"  />
+        <StatCard label="Available"       value={items.filter(i => i.status === 'available').length} icon={CheckCircle} color="text-emerald-600" bg="bg-emerald-50" />
+        <StatCard label="Reserved"        value={items.filter(i => i.status === 'reserved').length}  icon={Clock}         color="text-amber-600"   bg="bg-amber-50"   />
+        <StatCard label="Completed"       value={items.filter(i => i.status === 'completed').length} icon={Package}       color="text-gray-500"    bg="bg-gray-100"   />
+      </div>
+    </div>
+
+    {/* Transaction Stats */}
+    <div>
+      <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Transaction Summary</h3>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <StatCard label="Total Transactions" value={transactions.length} icon={ArrowLeftRight} color="text-indigo-600"  bg="bg-indigo-50"  />
+        <StatCard label="Completed"          value={transactions.filter(t => t.status === 'completed').length} icon={CheckCircle} color="text-emerald-600" bg="bg-emerald-50" />
+        <StatCard label="Pending"            value={transactions.filter(t => t.status === 'pending').length}   icon={Clock}       color="text-amber-600"   bg="bg-amber-50"   />
+        <StatCard label="Rejected"           value={transactions.filter(t => t.status === 'rejected').length}  icon={XCircle}     color="text-red-500"     bg="bg-red-50"     />
+      </div>
+    </div>
+
+    {/* Community Stats */}
+    <div>
+      <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Community Activity</h3>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <StatCard label="Active Sellers"  value={new Set(items.map(i => i.ownerId?._id || i.ownerId)).size} icon={Users} color="text-purple-600" bg="bg-purple-50" />
+        <StatCard label="Active Buyers"   value={new Set(transactions.map(t => t.buyerId?._id || t.buyerId)).size} icon={TrendingUp} color="text-pink-600" bg="bg-pink-50" />
+        <StatCard label="Green Points Awarded" value={transactions.filter(t => t.status === 'completed').length * 15} icon={Tag} color="text-emerald-600" bg="bg-emerald-50" />
+      </div>
+    </div>
+  </div>
+)}
     </div>
   )
 }
+
