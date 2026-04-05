@@ -201,10 +201,10 @@ const adminGetAllWasteLogs = async (req, res) => {
 const analyzeWasteImage = async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-         message: 'No image uploaded'
-         });
+        message: 'No image uploaded'
+      });
     }
 
     //buffer check
@@ -225,7 +225,7 @@ const analyzeWasteImage = async (req, res) => {
         success: false,
         message: 'Could not detect any waste type from image'
       });
-    } 
+    }
 
     // Classify based on detected labels
     const classification = classifyWaste(labels);
@@ -344,5 +344,5 @@ export {
   deleteWasteLog,
   adminGetAllWasteLogs,
   updateWasteLog,
-  analyzeWasteImage 
+  analyzeWasteImage
 };

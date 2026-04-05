@@ -137,9 +137,8 @@ export default function WastePage() {
       {/* Toast */}
       {toast && (
         <div
-          className={`fixed top-5 right-5 z-50 px-5 py-3 rounded-2xl shadow-xl text-white text-sm font-medium flex items-center gap-2 ${
-            toast.type === 'error' ? 'bg-red-500' : 'bg-emerald-500'
-          }`}
+          className={`fixed top-5 right-5 z-50 px-5 py-3 rounded-2xl shadow-xl text-white text-sm font-medium flex items-center gap-2 ${toast.type === 'error' ? 'bg-red-500' : 'bg-emerald-500'
+            }`}
         >
           {toast.type === 'error' ? <XCircle className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
           {toast.msg}
@@ -279,17 +278,15 @@ export default function WastePage() {
                 <button
                   key={t}
                   onClick={() => setActiveType(t)}
-                  className={`flex items-center gap-1.5 whitespace-nowrap px-3.5 py-2 rounded-xl text-sm font-semibold border transition-all ${
-                    activeType === t
+                  className={`flex items-center gap-1.5 whitespace-nowrap px-3.5 py-2 rounded-xl text-sm font-semibold border transition-all ${activeType === t
                       ? 'bg-green-600 text-white border-green-600 shadow-sm'
                       : 'bg-white text-gray-500 border-gray-200 hover:border-green-300'
-                  }`}
+                    }`}
                 >
                   {m?.emoji} {t}
                   <span
-                    className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${
-                      activeType === t ? 'bg-white/25 text-white' : 'bg-gray-100 text-gray-500'
-                    }`}
+                    className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${activeType === t ? 'bg-white/25 text-white' : 'bg-gray-100 text-gray-500'
+                      }`}
                   >
                     {cnt}
                   </span>

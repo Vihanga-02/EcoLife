@@ -22,13 +22,13 @@ router.route('/')
   .get(protect, getMyWasteLogs)
   .post(protect, upload.single('image'), logWaste);
 // AI analysis route
-router.post('/analyze', protect, upload.single('image'), analyzeWasteImage);  
+router.post('/analyze', protect, upload.single('image'), analyzeWasteImage);
 router.get('/monthly-breakdown', protect, getMonthlyWasteBreakdown)
 router.get('/analytics', protect, getWasteAnalytics);
 
 router.route('/:id')
   .get(protect, getWasteLogById)
-  .put(protect, updateWasteLog) 
+  .put(protect, updateWasteLog)
   .delete(protect, deleteWasteLog);
 
 export default router;
