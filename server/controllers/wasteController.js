@@ -243,6 +243,98 @@ const analyzeWasteImage = async (req, res) => {
   }
 };
 
+//chart
+export const getMonthlyWasteBreakdown = async (req, res) => {
+  try {
+    const userId = req.user._id
+    const monthsToFetch = 6
+
+    const startDate = new Date()
+    startDate.setMonth(startDate.getMonth() - (monthsToFetch - 1))
+    startDate.setDate(1)
+    startDate.setHours(0, 0, 0, 0)
+
+    const logs = await WasteLog.aggregate([
+      {
+        $match: {
+          userId,
+          date: { $gte: startDate }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: '$date' },
+            month: { $month: '$date' },
+            wasteType: '$wasteType'
+          },
+          totalQuantity: { $sum: '$quantity' }
+        }
+      },
+      {
+        $sort: {
+          '_id.year': 1,
+          '_id.month': 1
+        }
+      }
+    ])
+
+    const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+
+    const resultMap = {}
+
+    logs.forEach((item) => {
+      const monthIndex = item._id.month - 1
+      const monthLabel = monthNames[monthIndex]
+
+      if (!resultMap[monthLabel]) {
+        resultMap[monthLabel] = {
+          month: monthLabel,
+          Plastic: 0,
+          Paper: 0,
+          Glass: 0,
+          Organic: 0,
+          'E-waste': 0,
+        }
+      }
+
+      resultMap[monthLabel][item._id.wasteType] = Number(item.totalQuantity.toFixed(2))
+    })
+
+    const finalData = []
+    const current = new Date(startDate)
+
+    for (let i = 0; i < monthsToFetch; i++) {
+      const label = monthNames[current.getMonth()]
+
+      finalData.push(
+        resultMap[label] || {
+          month: label,
+          Plastic: 0,
+          Paper: 0,
+          Glass: 0,
+          Organic: 0,
+          'E-waste': 0,
+        }
+      )
+
+      current.setMonth(current.getMonth() + 1)
+    }
+
+    res.status(200).json({
+      success: true,
+      data: finalData
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch monthly waste breakdown',
+      error: error.message
+    })
+  }
+}
+
+
 
 export {
   logWaste,
