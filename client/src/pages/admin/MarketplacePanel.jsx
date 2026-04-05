@@ -9,15 +9,15 @@ import {
 // ─── Constants ───────────────────────────────────────────────────────────────
 const ITEM_STATUS_META = {
   available: { label: 'Available', color: 'text-emerald-600', bg: 'bg-emerald-100' },
-  reserved:  { label: 'Reserved',  color: 'text-amber-600',   bg: 'bg-amber-100'   },
-  completed: { label: 'Completed', color: 'text-gray-500',    bg: 'bg-gray-100'    },
+  reserved: { label: 'Reserved', color: 'text-amber-600', bg: 'bg-amber-100' },
+  completed: { label: 'Completed', color: 'text-gray-500', bg: 'bg-gray-100' },
 }
 
 const TXN_STATUS_META = {
-  pending:   { label: 'Pending',   color: 'text-amber-600',   bg: 'bg-amber-100'   },
+  pending: { label: 'Pending', color: 'text-amber-600', bg: 'bg-amber-100' },
   completed: { label: 'Completed', color: 'text-emerald-600', bg: 'bg-emerald-100' },
-  rejected:  { label: 'Rejected',  color: 'text-red-500',     bg: 'bg-red-100'     },
-  approved:  { label: 'Approved',  color: 'text-blue-600',    bg: 'bg-blue-100'    },
+  rejected: { label: 'Rejected', color: 'text-red-500', bg: 'bg-red-100' },
+  approved: { label: 'Approved', color: 'text-blue-600', bg: 'bg-blue-100' },
 }
 
 // ─── Stat Card ────────────────────────────────────────────────────────────────
@@ -58,15 +58,15 @@ function Empty({ icon: Icon, text }) {
 
 // ─── Main Admin Panel ─────────────────────────────────────────────────────────
 export default function MarketplacePanel() {
-  const [tab,          setTab]          = useState('overview')
-  const [items,        setItems]        = useState([])
+  const [tab, setTab] = useState('overview')
+  const [items, setItems] = useState([])
   const [transactions, setTransactions] = useState([])
   const [loadingItems, setLoadingItems] = useState(true)
-  const [loadingTxns,  setLoadingTxns]  = useState(true)
-  const [itemSearch,   setItemSearch]   = useState('')
-  const [txnSearch,    setTxnSearch]    = useState('')
-  const [txnFilter,    setTxnFilter]    = useState('all')
-  const [toast,        setToast]        = useState(null)
+  const [loadingTxns, setLoadingTxns] = useState(true)
+  const [itemSearch, setItemSearch] = useState('')
+  const [txnSearch, setTxnSearch] = useState('')
+  const [txnFilter, setTxnFilter] = useState('all')
+  const [toast, setToast] = useState(null)
 
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type })
@@ -100,18 +100,18 @@ export default function MarketplacePanel() {
   useEffect(() => { loadItems(); loadTransactions() }, [loadItems, loadTransactions])
 
   // ─── Derived stats ──────────────────────────────────────────────────────────
-  const totalItems        = items.length
-  const availableItems    = items.filter(i => i.status === 'available').length
-  const reservedItems     = items.filter(i => i.status === 'reserved').length
-  const completedItems    = items.filter(i => i.status === 'completed').length
-  const totalTxns         = transactions.length
-  const completedTxns     = transactions.filter(t => t.status === 'completed').length
-  const pendingTxns       = transactions.filter(t => t.status === 'pending').length
-  const rejectedTxns      = transactions.filter(t => t.status === 'rejected').length
+  const totalItems = items.length
+  const availableItems = items.filter(i => i.status === 'available').length
+  const reservedItems = items.filter(i => i.status === 'reserved').length
+  const completedItems = items.filter(i => i.status === 'completed').length
+  const totalTxns = transactions.length
+  const completedTxns = transactions.filter(t => t.status === 'completed').length
+  const pendingTxns = transactions.filter(t => t.status === 'pending').length
+  const rejectedTxns = transactions.filter(t => t.status === 'rejected').length
 
   // Unique sellers / buyers
   const uniqueSellers = new Set(items.map(i => i.ownerId?._id || i.ownerId)).size
-  const uniqueBuyers  = new Set(transactions.map(t => t.buyerId?._id || t.buyerId)).size
+  const uniqueBuyers = new Set(transactions.map(t => t.buyerId?._id || t.buyerId)).size
 
   // ─── Filtered lists ─────────────────────────────────────────────────────────
   const filteredItems = items.filter(i => {
@@ -133,9 +133,9 @@ export default function MarketplacePanel() {
     })
 
   const tabs = [
-    { id: 'overview',      label: 'Overview',      icon: BarChart3    },
-    { id: 'items',         label: `Items (${totalItems})`,       icon: Package   },
-    { id: 'transactions',  label: `Transactions (${totalTxns})`, icon: ArrowLeftRight },
+    { id: 'overview', label: 'Overview', icon: BarChart3 },
+    { id: 'items', label: `Items (${totalItems})`, icon: Package },
+    { id: 'transactions', label: `Transactions (${totalTxns})`, icon: ArrowLeftRight },
   ]
 
   return (
@@ -175,11 +175,10 @@ export default function MarketplacePanel() {
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-                tab === t.id
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${tab === t.id
                   ? 'bg-indigo-500 text-white shadow-md'
                   : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-              }`}
+                }`}
             >
               <Icon className="w-4 h-4" />
               {t.label}
@@ -195,10 +194,10 @@ export default function MarketplacePanel() {
           <div>
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Listings Overview</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <StatCard label="Total Listings"  value={totalItems}     icon={ShoppingBag}   color="text-indigo-600"  bg="bg-indigo-50"  />
-              <StatCard label="Available"        value={availableItems} icon={CheckCircle}   color="text-emerald-600" bg="bg-emerald-50" />
-              <StatCard label="Reserved"         value={reservedItems}  icon={Clock}         color="text-amber-600"   bg="bg-amber-50"   />
-              <StatCard label="Completed"        value={completedItems} icon={Package}       color="text-gray-500"    bg="bg-gray-100"   />
+              <StatCard label="Total Listings" value={totalItems} icon={ShoppingBag} color="text-indigo-600" bg="bg-indigo-50" />
+              <StatCard label="Available" value={availableItems} icon={CheckCircle} color="text-emerald-600" bg="bg-emerald-50" />
+              <StatCard label="Reserved" value={reservedItems} icon={Clock} color="text-amber-600" bg="bg-amber-50" />
+              <StatCard label="Completed" value={completedItems} icon={Package} color="text-gray-500" bg="bg-gray-100" />
             </div>
           </div>
 
@@ -206,10 +205,10 @@ export default function MarketplacePanel() {
           <div>
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Transaction Summary</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <StatCard label="Total Transactions" value={totalTxns}     icon={ArrowLeftRight} color="text-indigo-600"  bg="bg-indigo-50"  />
-              <StatCard label="Completed"           value={completedTxns} icon={CheckCircle}    color="text-emerald-600" bg="bg-emerald-50" />
-              <StatCard label="Pending"             value={pendingTxns}   icon={Clock}          color="text-amber-600"   bg="bg-amber-50"   />
-              <StatCard label="Rejected"            value={rejectedTxns}  icon={XCircle}        color="text-red-500"     bg="bg-red-50"     />
+              <StatCard label="Total Transactions" value={totalTxns} icon={ArrowLeftRight} color="text-indigo-600" bg="bg-indigo-50" />
+              <StatCard label="Completed" value={completedTxns} icon={CheckCircle} color="text-emerald-600" bg="bg-emerald-50" />
+              <StatCard label="Pending" value={pendingTxns} icon={Clock} color="text-amber-600" bg="bg-amber-50" />
+              <StatCard label="Rejected" value={rejectedTxns} icon={XCircle} color="text-red-500" bg="bg-red-50" />
             </div>
           </div>
 
@@ -217,8 +216,8 @@ export default function MarketplacePanel() {
           <div>
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Community Activity</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              <StatCard label="Active Sellers"  value={uniqueSellers} icon={Users}      color="text-purple-600" bg="bg-purple-50" />
-              <StatCard label="Active Buyers"   value={uniqueBuyers}  icon={TrendingUp} color="text-pink-600"   bg="bg-pink-50"  />
+              <StatCard label="Active Sellers" value={uniqueSellers} icon={Users} color="text-purple-600" bg="bg-purple-50" />
+              <StatCard label="Active Buyers" value={uniqueBuyers} icon={TrendingUp} color="text-pink-600" bg="bg-pink-50" />
               <StatCard label="Green Points Awarded" value={completedTxns * 15} icon={Tag} color="text-emerald-600" bg="bg-emerald-50" />
             </div>
           </div>
@@ -329,11 +328,10 @@ export default function MarketplacePanel() {
                         </td>
                         <td className="px-4 py-3 text-gray-500">{item.category}</td>
                         <td className="px-4 py-3">
-                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                            item.condition === 'New'  ? 'bg-emerald-100 text-emerald-700' :
-                            item.condition === 'Good' ? 'bg-blue-100 text-blue-700' :
-                            'bg-amber-100 text-amber-700'
-                          }`}>
+                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${item.condition === 'New' ? 'bg-emerald-100 text-emerald-700' :
+                              item.condition === 'Good' ? 'bg-blue-100 text-blue-700' :
+                                'bg-amber-100 text-amber-700'
+                            }`}>
                             {item.condition}
                           </span>
                         </td>
@@ -377,11 +375,10 @@ export default function MarketplacePanel() {
                 <button
                   key={s}
                   onClick={() => setTxnFilter(s)}
-                  className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all capitalize ${
-                    txnFilter === s
+                  className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all capitalize ${txnFilter === s
                       ? 'bg-indigo-500 text-white border-indigo-500'
                       : 'bg-white text-gray-600 border-gray-200 hover:border-indigo-300'
-                  }`}
+                    }`}
                 >
                   {s}
                 </button>
