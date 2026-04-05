@@ -149,8 +149,8 @@ export default function WastePage() {
       <div className="bg-white border-b border-gray-100 px-4 md:px-6 py-5">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-green-500/10 rounded-2xl flex items-center justify-center shadow-sm">
-              <img src="../../src/assets/bin.png" alt="Bin" className="w-20 h-20 object-contain" />
+            <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center shadow-md">
+              <Trash2 className="text-white w-5 h-5" />
             </div>
             <div>
               <h1 className="text-xl font-black text-gray-900">Waste Tracker</h1>
@@ -279,8 +279,8 @@ export default function WastePage() {
                   key={t}
                   onClick={() => setActiveType(t)}
                   className={`flex items-center gap-1.5 whitespace-nowrap px-3.5 py-2 rounded-xl text-sm font-semibold border transition-all ${activeType === t
-                      ? 'bg-green-600 text-white border-green-600 shadow-sm'
-                      : 'bg-white text-gray-500 border-gray-200 hover:border-green-300'
+                    ? 'bg-green-600 text-white border-green-600 shadow-sm'
+                    : 'bg-white text-gray-500 border-gray-200 hover:border-green-300'
                     }`}
                 >
                   {m?.emoji} {t}
