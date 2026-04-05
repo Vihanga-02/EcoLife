@@ -7,7 +7,7 @@ import { useAuth } from '../../context/AuthContext'
 import {
   Search, ShoppingBag, Tag, CheckCircle, XCircle,
   Loader2, Package, SlidersHorizontal, X,
-  Leaf, ArrowRight, Heart, Grid2X2, List
+  Leaf, ArrowRight, Heart, Info, PlusCircle
 } from 'lucide-react'
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -18,6 +18,79 @@ const CONDITION_META = {
   New:  { color: 'text-green-800', bg: 'bg-green-100', dot: 'bg-green-500' },
   Good: { color: 'text-green-700', bg: 'bg-green-50',  dot: 'bg-green-400' },
   Fair: { color: 'text-yellow-700', bg: 'bg-yellow-50', dot: 'bg-yellow-400' },
+}
+
+// ─── How It Works Modal ─────────────────────────────────────────────────────
+function HowItWorksModal({ onClose }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 animate-fade-in-up">
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+          <X className="w-5 h-5" />
+        </button>
+        
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+            <Info className="w-6 h-6 text-green-600" />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-gray-900">How It Works</h3>
+            <p className="text-gray-500 text-sm">Simple steps to start sharing</p>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div className="flex gap-4">
+            <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
+            <div>
+              <h4 className="font-semibold text-gray-800 mb-1">Browse Items</h4>
+              <p className="text-gray-500 text-sm">Explore free and tradeable items listed by your community members.</p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
+            <div>
+              <h4 className="font-semibold text-gray-800 mb-1">Send Request</h4>
+              <p className="text-gray-500 text-sm">Found something you need? Click "Request Item" and the owner will be notified.</p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
+            <div>
+              <h4 className="font-semibold text-gray-800 mb-1">Owner Approves</h4>
+              <p className="text-gray-500 text-sm">The item owner will review your request and approve or reject it.</p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">4</div>
+            <div>
+              <h4 className="font-semibold text-gray-800 mb-1">Complete Exchange</h4>
+              <p className="text-gray-500 text-sm">Once approved, arrange pickup or delivery and complete the exchange.</p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">5</div>
+            <div>
+              <h4 className="font-semibold text-gray-800 mb-1">Earn Green Points</h4>
+              <p className="text-gray-500 text-sm">Successfully completed transactions earn you Green Points! 🌿</p>
+            </div>
+          </div>
+        </div>
+
+        <button
+          onClick={onClose}
+          className="w-full mt-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold transition-colors"
+        >
+          Got it!
+        </button>
+      </div>
+    </div>
+  )
 }
 
 // ─── Item Card ───────────────────────────────────────────────────────────────
@@ -121,16 +194,6 @@ function Toast({ msg, type }) {
   )
 }
 
-// ─── Stat Badge ──────────────────────────────────────────────────────────────
-function StatBadge({ label, value }) {
-  return (
-    <div className="flex flex-col items-center border-r border-green-800 last:border-r-0 px-8 first:pl-0 last:pr-0">
-      <span className="text-2xl font-bold text-white">{value}</span>
-      <span className="text-green-300 text-xs font-medium mt-0.5 uppercase tracking-wider">{label}</span>
-    </div>
-  )
-}
-
 // ─── Main Page ───────────────────────────────────────────────────────────────
 export default function MarketplacePage() {
   const { user, isAuthenticated } = useAuth()
@@ -144,6 +207,7 @@ export default function MarketplacePage() {
   const [requesting, setRequesting] = useState(null)
   const [toast,      setToast]      = useState(null)
   const [showFilter, setShowFilter] = useState(false)
+  const [showHowItWorks, setShowHowItWorks] = useState(false)
 
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type })
@@ -181,7 +245,10 @@ export default function MarketplacePage() {
     })
 
   const handleRequest = async (item) => {
-    if (!isAuthenticated()) { navigate('/login'); return }
+    if (!isAuthenticated()) { 
+      navigate('/login')
+      return 
+    }
     setRequesting(item._id)
     try {
       await marketplaceAPI.claimItem(item._id)
@@ -194,77 +261,54 @@ export default function MarketplacePage() {
     }
   }
 
+  const handleListItem = () => {
+    if (!isAuthenticated()) {
+      navigate('/login')
+      return
+    }
+    navigate('/dashboard/market')
+  }
+
   const activeFilters = (category !== 'All' ? 1 : 0) + (condition !== 'All' ? 1 : 0)
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col" style={{ fontFamily: "'DM Sans', sans-serif" }}>
       {toast && <Toast msg={toast.msg} type={toast.type} />}
+      {showHowItWorks && <HowItWorksModal onClose={() => setShowHowItWorks(false)} />}
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono&display=swap" rel="stylesheet" />
       <Navbar />
 
       {/* ── Hero ── */}
       <div className="bg-green-700 text-white">
         <div className="max-w-7xl mx-auto px-6 py-14">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+          <div className="flex flex-col items-center text-center">
             {/* Left */}
-            <div>
-              <div className="flex items-center gap-2 mb-4">
+            <div className="max-w-2xl">
+              <div className="flex items-center justify-center gap-2 mb-4">
                 <Leaf className="w-4 h-4 text-green-300" />
                 <span className="text-green-300 text-xs font-semibold uppercase tracking-widest">EcoLife Marketplace</span>
               </div>
               <h1 className="text-3xl md:text-4xl font-bold leading-tight mb-3">
                 Give Items a Second Life
               </h1>
-              <p className="text-green-200 text-sm leading-relaxed max-w-md">
+              <p className="text-green-200 text-sm leading-relaxed">
                 Browse free and tradeable items listed by your community. Reduce waste, earn green points, and help the planet — one item at a time.
               </p>
-              <div className="flex gap-3 mt-6">
-                <button className="bg-white text-green-700 hover:bg-green-50 transition-colors px-5 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
-                  How It Works <ArrowRight className="w-3.5 h-3.5" />
+              <div className="flex gap-4 mt-8 justify-center">
+                <button 
+                  onClick={() => setShowHowItWorks(true)}
+                  className="bg-white text-green-700 hover:bg-green-50 transition-colors px-6 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2"
+                >
+                  <Info className="w-4 h-4" /> How It Works
                 </button>
-                <button className="border border-green-500 text-green-100 hover:bg-green-600 transition-colors px-5 py-2 rounded-lg text-sm font-semibold">
-                  List an Item
+                <button 
+                  onClick={handleListItem}
+                  className="border-2 border-white text-white hover:bg-white hover:text-green-700 transition-colors px-6 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2"
+                >
+                  <PlusCircle className="w-4 h-4" /> List an Item
                 </button>
               </div>
             </div>
-
-            {/* Stats */}
-            <div className="flex items-center border-t border-green-600 pt-6 md:border-t-0 md:pt-0 md:border-l md:border-green-600 md:pl-10">
-              <div className="flex items-center gap-0">
-                <StatBadge value="2.4k+" label="Items Listed" />
-                <StatBadge value="840+" label="Members" />
-                <StatBadge value="1.1t" label="CO₂ Saved" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom bar */}
-        <div className="border-t border-green-600 bg-green-800">
-          <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-6 overflow-x-auto">
-            {CATEGORIES.filter(c => c !== 'All').map(c => (
-              <button
-                key={c}
-                onClick={() => { setCategory(c); setShowFilter(false) }}
-                className={`text-xs font-medium whitespace-nowrap pb-0.5 transition-colors border-b-2 ${
-                  category === c
-                    ? 'text-white border-green-300'
-                    : 'text-green-400 border-transparent hover:text-green-200 hover:border-green-500'
-                }`}
-              >
-                {c}
-              </button>
-            ))}
-            <button
-              onClick={() => setCategory('All')}
-              className={`text-xs font-medium whitespace-nowrap pb-0.5 transition-colors border-b-2 ${
-                category === 'All'
-                  ? 'text-white border-green-300'
-                  : 'text-green-400 border-transparent hover:text-green-200'
-              }`}
-            >
-              All Categories
-            </button>
           </div>
         </div>
       </div>
