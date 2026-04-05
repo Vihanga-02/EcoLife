@@ -127,10 +127,6 @@ function ItemCard({ item, onRequest, requesting }) {
           </span>
         </div>
 
-        {/* Wishlist */}
-        <button className="absolute top-2.5 right-2.5 w-7 h-7 bg-white border border-gray-200 rounded-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150 hover:border-green-400">
-          <Heart className="w-3.5 h-3.5 text-gray-400 hover:text-green-600 transition-colors" />
-        </button>
       </div>
 
       {/* Body */}
