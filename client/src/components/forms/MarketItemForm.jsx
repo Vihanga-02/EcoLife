@@ -7,7 +7,7 @@ const CONDITIONS = ['New', 'Good', 'Fair']
 const LISTING_TYPES = ['Free', 'Trade']
 
 const CONDITION_META = {
-    New: { color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200' },
+    New: { color: 'text-green-700', bg: 'bg-green-50', border: 'border-green-200' },
     Good: { color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200' },
     Fair: { color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200' },
 }
@@ -124,7 +124,7 @@ export default function MarketItemForm({ item = null, onSuccess, onClose }) {
 
             <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden max-h-[95vh] flex flex-col">
                 {/* Header */}
-                <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-5 flex items-center justify-between shrink-0">
+                <div className="bg-green-700 px-6 py-5 flex items-center justify-between shrink-0">
                     <div className="flex items-center gap-3">
                         <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center">
                             <ShoppingBag className="text-white w-5 h-5" />
@@ -133,7 +133,7 @@ export default function MarketItemForm({ item = null, onSuccess, onClose }) {
                             <h2 className="text-white font-bold text-lg leading-tight">
                                 {isEdit ? 'Edit Listing' : 'New Listing'}
                             </h2>
-                            <p className="text-indigo-100 text-xs">EcoLife Marketplace</p>
+                            <p className="text-green-200 text-xs">EcoLife Marketplace</p>
                         </div>
                     </div>
                     <button
@@ -158,7 +158,7 @@ export default function MarketItemForm({ item = null, onSuccess, onClose }) {
                             value={form.title}
                             onChange={handleChange}
                             placeholder="e.g. Used Bicycle in Good Condition"
-                            className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all"
+                            className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                         />
                     </div>
 
@@ -173,7 +173,7 @@ export default function MarketItemForm({ item = null, onSuccess, onClose }) {
                             onChange={handleChange}
                             rows={2}
                             placeholder="Describe your item — age, defects, reason for listing..."
-                            className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all resize-none"
+                            className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none"
                         />
                     </div>
 
@@ -190,8 +190,8 @@ export default function MarketItemForm({ item = null, onSuccess, onClose }) {
                             onDragOver={(e) => e.preventDefault()}
                             className={`relative border-2 border-dashed rounded-xl transition-all cursor-pointer overflow-hidden
                 ${previewUrl
-                                    ? 'border-indigo-300 bg-indigo-50/30'
-                                    : 'border-gray-200 bg-gray-50 hover:border-indigo-300 hover:bg-indigo-50/20'
+                                    ? 'border-green-300 bg-green-50/30'
+                                    : 'border-gray-200 bg-gray-50 hover:border-green-300 hover:bg-green-50/20'
                                 }`}
                         >
                             {previewUrl ? (
@@ -209,8 +209,8 @@ export default function MarketItemForm({ item = null, onSuccess, onClose }) {
                                 </div>
                             ) : (
                                 <div className="flex flex-col items-center justify-center gap-3 py-10 px-4">
-                                    <div className="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center">
-                                        <Upload className="w-6 h-6 text-indigo-500" />
+                                    <div className="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center">
+                                        <Upload className="w-6 h-6 text-green-600" />
                                     </div>
                                     <div className="text-center">
                                         <p className="text-sm font-semibold text-gray-700">Click or drag to upload</p>
@@ -231,7 +231,7 @@ export default function MarketItemForm({ item = null, onSuccess, onClose }) {
                         {loading && uploadProgress > 0 && (
                             <div className="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden">
                                 <div
-                                    className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-300"
+                                    className="h-full bg-green-600 rounded-full transition-all duration-300"
                                     style={{ width: `${uploadProgress}%` }}
                                 />
                             </div>
@@ -253,7 +253,7 @@ export default function MarketItemForm({ item = null, onSuccess, onClose }) {
                                 name="category"
                                 value={form.category}
                                 onChange={handleChange}
-                                className="w-full appearance-none px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-white pr-10"
+                                className="w-full appearance-none px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white pr-10"
                             >
                                 {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                             </select>
@@ -276,7 +276,7 @@ export default function MarketItemForm({ item = null, onSuccess, onClose }) {
                                             onClick={() => setForm(p => ({ ...p, condition: c }))}
                                             className={`flex-1 py-2 rounded-xl text-xs font-semibold border-2 transition-all ${form.condition === c
                                                 ? `${m.bg} ${m.color} ${m.border}`
-                                                : 'border-gray-100 bg-gray-50 text-gray-500 hover:border-indigo-300'
+                                                : 'border-gray-100 bg-gray-50 text-gray-500 hover:border-green-300'
                                                 }`}
                                         >
                                             {c}
@@ -296,8 +296,8 @@ export default function MarketItemForm({ item = null, onSuccess, onClose }) {
                                         type="button"
                                         onClick={() => setForm(p => ({ ...p, listingType: t }))}
                                         className={`flex-1 py-2 rounded-xl text-xs font-semibold border-2 transition-all ${form.listingType === t
-                                            ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-                                            : 'border-gray-100 bg-gray-50 text-gray-500 hover:border-indigo-300'
+                                            ? 'border-green-600 bg-green-50 text-green-700'
+                                            : 'border-gray-100 bg-gray-50 text-gray-500 hover:border-green-300'
                                             }`}
                                     >
                                         {t === 'Free' ? '🎁 Free' : '🔄 Trade'}
@@ -322,7 +322,7 @@ export default function MarketItemForm({ item = null, onSuccess, onClose }) {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl text-sm font-bold hover:from-indigo-600 hover:to-purple-700 transition-all disabled:opacity-60 flex items-center justify-center gap-2"
+                            className="flex-1 px-4 py-2.5 bg-green-700 hover:bg-green-800 text-white rounded-xl text-sm font-bold transition-all disabled:opacity-60 flex items-center justify-center gap-2"
                         >
                             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                             {loading ? 'Uploading...' : isEdit ? 'Save Changes' : 'List Item'}
