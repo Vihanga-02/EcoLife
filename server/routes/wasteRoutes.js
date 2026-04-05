@@ -8,7 +8,8 @@ import {
   deleteWasteLog,
   updateWasteLog,
   adminGetAllWasteLogs,
-  analyzeWasteImage
+  analyzeWasteImage,
+  getMonthlyWasteBreakdown
 } from '../controllers/wasteController.js';
 import { protect, adminOnly } from '../middleware/authMiddleware.js';
 import upload from '../utils/multer.js';
@@ -22,7 +23,7 @@ router.route('/')
   .post(protect, upload.single('image'), logWaste);
 // AI analysis route
 router.post('/analyze', protect, upload.single('image'), analyzeWasteImage);  
-
+router.get('/monthly-breakdown', protect, getMonthlyWasteBreakdown)
 router.get('/analytics', protect, getWasteAnalytics);
 
 router.route('/:id')
