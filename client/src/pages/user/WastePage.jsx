@@ -225,8 +225,9 @@ export default function WastePage() {
 
         {/* Charts in one row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Monthly waste breakdown chart (last 6 months) */}
           <WasteBreakdownChart data={monthlyData} />
-
+          {/* Waste Quantity by Type Chart */}
           {analytics?.totalByType && Object.keys(analytics.totalByType).length > 0 && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2 mb-2">
