@@ -8,7 +8,7 @@ import {
 import { energyAPI } from '../../api/api'
 
 export default function OverviewPage() {
-  const { user } = useAuth()
+  const { user, refreshUser } = useAuth()
 
   // ─── Energy summary state ───────────────────────────────────────────────
   const [appliances, setAppliances] = useState([])
@@ -17,6 +17,8 @@ export default function OverviewPage() {
   const [energyLoading, setEnergyLoading] = useState(true)
 
   useEffect(() => {
+    // Silently sync green score & profile on every dashboard visit
+    refreshUser()
     const fetchEnergy = async () => {
       setEnergyLoading(true)
       try {
