@@ -92,7 +92,10 @@ export const marketplaceAPI = {
 // WASTE
 // ========================
 export const wasteAPI = {
-  getLogs: (params) => api.get('/waste', { params }),
+  getLogs: (page = 1, limit = 5, wasteType = 'All') =>
+    api.get('/waste', {
+      params: { page, limit, wasteType },
+    }),
   logWaste: (data) => api.post('/waste', data),
   updateLog: (id, data) => api.put(`/waste/${id}`, data),
   analyzeImage: (formData) => api.post('/waste/analyze', formData, {
