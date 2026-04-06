@@ -61,10 +61,10 @@ export default function Sidebar({ mode = 'user', sidebarItems = [], onClose, onL
         ) : (
           <Link to="/home" className="flex items-center gap-2">
             <img
-    src="/ecolife-logo.png"
-    alt="EcoLife"
-    className="h-10 w-auto object-contain mx-auto"
-  />
+              src="/ecolife-logo.png"
+              alt="EcoLife"
+              className="h-10 w-auto object-contain mx-auto"
+            />
           </Link>
         )}
       </div>
@@ -111,8 +111,8 @@ export default function Sidebar({ mode = 'user', sidebarItems = [], onClose, onL
               to={item.path}
               onClick={onClose}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all cursor-pointer text-sm ${active
-                  ? 'text-green-600 bg-green-100 border-l-2 border-green-500'
-                  : 'text-gray-600 hover:text-black hover:bg-green-50'
+                ? 'text-green-600 bg-green-100 border-l-2 border-green-500'
+                : 'text-gray-600 hover:text-black hover:bg-green-50'
                 }`}
             >
               {item.icon}
