@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { authAPI } from '../api/api'
 
 const AuthContext = createContext(null)
 
@@ -31,11 +32,24 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('ecolife_user')
   }
 
+  // Fetch the latest user from the server and sync state + localStorage.
+  // Call this after any action that changes greenScore on the backend.
+  const refreshUser = async () => {
+    try {
+      const res = await authAPI.getMe()
+      const freshUser = res.data.user
+      setUser(freshUser)
+      localStorage.setItem('ecolife_user', JSON.stringify(freshUser))
+    } catch {
+      // silently ignore — user stays as-is
+    }
+  }
+
   const isAdmin = () => user?.role === 'admin'
   const isAuthenticated = () => !!token
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout, isAdmin, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, token, loading, login, logout, isAdmin, isAuthenticated, refreshUser }}>
       {children}
     </AuthContext.Provider>
   )
