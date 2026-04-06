@@ -60,10 +60,11 @@ export default function Sidebar({ mode = 'user', sidebarItems = [], onClose, onL
           </div>
         ) : (
           <Link to="/home" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-              <Leaf className="text-green-600" />
-            </div>
-            <span className="font-bold text-black">EcoLife</span>
+            <img
+    src="/ecolife-logo.png"
+    alt="EcoLife"
+    className="h-10 w-auto object-contain mx-auto"
+  />
           </Link>
         )}
       </div>
