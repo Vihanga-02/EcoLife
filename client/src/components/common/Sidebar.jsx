@@ -49,15 +49,16 @@ export default function Sidebar({ mode = 'user', sidebarItems = [], onClose, onL
       {/* ── Brand / Logo ── */}
       <div className="p-5 border-b border-green-300">
         {isAdmin ? (
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-              <Leaf className="text-green-600" />
-            </div>
-            <div>
-              <span className="font-bold text-black">EcoLife</span>
-              <span className="block text-xs text-gray-700">Admin Panel</span>
-            </div>
-          </div>
+          <>
+            <Link to="/admin" className="flex justify-center w-full">
+              <img
+                src="/ecolife-logo.png"
+                alt="EcoLife"
+                className="h-10 object-contain"
+              />
+            </Link>
+            <span className="mt-1 text-xs text-gray-700">Admin Panel</span>
+          </>
         ) : (
           <Link to="/home" className="flex items-center gap-2">
             <img
