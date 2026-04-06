@@ -52,24 +52,67 @@ const logWaste = async (req, res) => {
 // Get all waste logs for current user
 const getMyWasteLogs = async (req, res) => {
   try {
-    const { wasteType, startDate, endDate, page = 1, limit = 20 } = req.query;
+    const page = Math.max(parseInt(req.query.page) || 1, 1)
+    const limit = Math.max(parseInt(req.query.limit) || 5, 1)
+    const { wasteType, startDate, endDate, dateFilter = 'all' } = req.query
 
-    const filter = { userId: req.user._id };
-    if (wasteType) filter.wasteType = wasteType;
-    if (startDate || endDate) {
-      filter.date = {};
-      if (startDate) filter.date.$gte = new Date(startDate);
-      if (endDate) filter.date.$lte = new Date(endDate);
+    const filter = { userId: req.user._id }
+
+    if (wasteType && wasteType !== 'All') {
+      filter.wasteType = wasteType
     }
 
-    const skip = (Number(page) - 1) * Number(limit);
-    const total = await WasteLog.countDocuments(filter);
-    const logs = await WasteLog.find(filter)
-      .sort({ date: -1 })
-      .skip(skip)
-      .limit(Number(limit));
+    if (startDate || endDate) {
+      filter.date = {}
+      if (startDate) filter.date.$gte = new Date(startDate)
+      if (endDate) filter.date.$lte = new Date(endDate)
+    }
 
-    res.status(200).json({ success: true, total, logs });
+    if (dateFilter !== 'all' && !startDate && !endDate) {
+      const now = new Date()
+
+      if (dateFilter === 'today') {
+        const start = new Date()
+        start.setHours(0, 0, 0, 0)
+        filter.date = { $gte: start }
+      }
+
+      if (dateFilter === 'week') {
+        const start = new Date()
+        start.setDate(now.getDate() - 7)
+        start.setHours(0, 0, 0, 0)
+        filter.date = { $gte: start }
+      }
+
+      if (dateFilter === 'month') {
+        const start = new Date()
+        start.setDate(1)
+        start.setHours(0, 0, 0, 0)
+        filter.date = { $gte: start }
+      }
+    }
+
+    const totalItems = await WasteLog.countDocuments(filter)
+    const totalPages = Math.ceil(totalItems / limit)
+    const skip = (page - 1) * limit
+
+    const logs = await WasteLog.find(filter)
+      .sort({ date: -1, createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+
+    res.status(200).json({
+      success: true,
+      logs,
+      pagination: {
+        currentPage: page,
+        pageSize: limit,
+        totalItems,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+    })
   } catch (error) {
     res.status(500).json({ success: false, message: error.message || 'Failed to get waste logs' });
   }

@@ -21,7 +21,7 @@ const TYPE_META = {
 }
 
 const fmt = (n, d = 2) => parseFloat(n || 0).toFixed(d)
-
+const ITEMS_PER_PAGE = 5
 // ─── Confirm Delete ───────────────────────────────────────────────────────
 function ConfirmDialog({ onConfirm, onCancel }) {
   return (
@@ -67,23 +67,42 @@ export default function WastePage() {
   const [deleteTarget, setDeleteTarget] = useState(null)
   const [activeType, setActiveType] = useState('All')
   const [toast, setToast] = useState(null)
-
+  const [dateFilter, setDateFilter] = useState('all')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    pageSize: 5,
+    totalItems: 0,
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
+  })
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type })
     setTimeout(() => setToast(null), 3000)
   }
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (page = currentPage, wasteType = activeType) => {
     setLoading(true)
     try {
       const [logsRes, analyticsRes, monthlyRes] = await Promise.allSettled([
-        wasteAPI.getLogs(),
+        wasteAPI.getLogs(page, ITEMS_PER_PAGE, wasteType, dateFilter),
         wasteAPI.getAnalytics(),
         wasteAPI.getMonthlyBreakdown(),
       ])
 
       if (logsRes.status === 'fulfilled') {
         setLogs(logsRes.value.data.logs || [])
+        setPagination(
+          logsRes.value.data.pagination || {
+            currentPage: 1,
+            pageSize: ITEMS_PER_PAGE,
+            totalItems: 0,
+            totalPages: 1,
+            hasNextPage: false,
+            hasPrevPage: false,
+          }
+        )
       }
 
       if (analyticsRes.status === 'fulfilled') {
@@ -99,18 +118,23 @@ export default function WastePage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [currentPage, activeType, dateFilter])
 
   useEffect(() => {
-    load()
-  }, [load])
+    load(currentPage, activeType)
+  }, [load, currentPage, activeType, dateFilter])
 
   const handleDelete = async () => {
     try {
       await wasteAPI.deleteLog(deleteTarget._id)
       showToast('Log deleted.')
       setDeleteTarget(null)
-      load()
+
+      const shouldGoPrev = logs.length === 1 && currentPage > 1
+      const nextPage = shouldGoPrev ? currentPage - 1 : currentPage
+
+      setCurrentPage(nextPage)
+      load(nextPage, activeType)
     } catch {
       showToast('Delete failed.', 'error')
       setDeleteTarget(null)
@@ -123,15 +147,25 @@ export default function WastePage() {
     setShowForm(false)
     setEditTarget(null)
 
-    await load()
+    setCurrentPage(1)
+    await load(1, activeType)
+
     showToast(wasNew ? 'Waste logged! +2 Green pts 🌿' : 'Log updated!')
 
     if (wasNew) refreshUser()
   }
 
   const types = ['All', ...WASTE_TYPES]
-  const filtered = activeType === 'All' ? logs : logs.filter(l => l.wasteType === activeType)
 
+  const handleFilterChange = (type) => {
+    setActiveType(type)
+    setCurrentPage(1)
+  }
+
+  const goToPage = (page) => {
+    if (page < 1 || page > pagination.totalPages) return
+    setCurrentPage(page)
+  }
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Toast */}
@@ -271,13 +305,15 @@ export default function WastePage() {
           <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-1">
             {types.map(t => {
               const m = t === 'All' ? null : TYPE_META[t]
-              const cnt = t === 'All' ? logs.length : logs.filter(l => l.wasteType === t).length
+              const cnt = t === 'All'
+                ? analytics?.totalLogs || 0
+                : analytics?.totalByType?.[t] || 0
               if (cnt === 0 && t !== 'All') return null
 
               return (
                 <button
                   key={t}
-                  onClick={() => setActiveType(t)}
+                  onClick={() => handleFilterChange(t)}
                   className={`flex items-center gap-1.5 whitespace-nowrap px-3.5 py-2 rounded-xl text-sm font-semibold border transition-all ${activeType === t
                     ? 'bg-green-600 text-white border-green-600 shadow-sm'
                     : 'bg-white text-gray-500 border-gray-200 hover:border-green-300'
@@ -294,12 +330,48 @@ export default function WastePage() {
               )
             })}
           </div>
+          <div className="flex justify-end mb-4">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-gray-400">Date</span>
+
+              <div className="relative">
+                <select
+                  value={dateFilter}
+                  onChange={(e) => {
+                    setDateFilter(e.target.value)
+                    setCurrentPage(1)
+                  }}
+                  className="appearance-none min-w-[170px] rounded-2xl border border-gray-200 bg-white pl-4 pr-10 py-2.5 text-sm font-medium text-gray-700 shadow-sm outline-none transition-all hover:border-gray-300 focus:border-gray-300 focus:ring-2 focus:ring-gray-100"
+                >
+                  <option value="all">All Time</option>
+                  <option value="today">Today</option>
+                  <option value="week">Last 7 Days</option>
+                  <option value="month">This Month</option>
+                </select>
+
+                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
 
           {loading ? (
             <div className="flex items-center justify-center py-20">
               <div className="w-8 h-8 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
             </div>
-          ) : filtered.length === 0 ? (
+          ) : logs.length === 0 ? (
             <div className="bg-white border-2 border-dashed border-gray-200 rounded-2xl p-14 text-center">
               <div className="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Trash2 className="w-8 h-8 text-green-300" />
@@ -319,79 +391,121 @@ export default function WastePage() {
               </button>
             </div>
           ) : (
-            <div className="space-y-3">
-              {filtered.map(log => {
-                const m = TYPE_META[log.wasteType] || TYPE_META.Plastic
+            <>
+              <div className="space-y-3">
+                {logs.map(log => {
+                  const m = TYPE_META[log.wasteType] || TYPE_META.Plastic
 
-                return (
-                  <div
-                    key={log._id}
-                    className={`bg-white rounded-2xl border-2 ${m.border} p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow group`}
-                  >
-                    <div className={`w-12 h-12 ${m.bg} rounded-2xl flex items-center justify-center text-2xl shrink-0`}>
-                      {m.emoji}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className={`text-sm font-bold ${m.color}`}>{log.wasteType}</span>
-                        <span className="text-xs text-gray-400">·</span>
-                        <span className="text-sm font-semibold text-gray-800">
-                          {log.quantity} {log.unit}
-                        </span>
-                        <span className="text-xs text-gray-400">·</span>
-                        <span className="text-xs text-gray-500">
-                          {new Date(log.date).toLocaleDateString('en-LK', {
-                            day: '2-digit',
-                            month: 'short',
-                            year: 'numeric',
-                          })}
-                        </span>
+                  return (
+                    <div
+                      key={log._id}
+                      className={`bg-white rounded-2xl border-2 ${m.border} p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow group`}
+                    >
+                      <div className={`w-12 h-12 ${m.bg} rounded-2xl flex items-center justify-center text-2xl shrink-0`}>
+                        {m.emoji}
                       </div>
 
-                      <div className="flex items-center gap-3 mt-1.5 flex-wrap">
-                        <span className="text-xs text-gray-400 flex items-center gap-1">
-                          <FlaskConical className="w-3 h-3" /> {fmt(log.carbonEquivalent, 2)} kg CO₂e
-                        </span>
-
-                        {log.isRecyclable && (
-                          <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
-                            <Recycle className="w-3 h-3" /> Recyclable
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className={`text-sm font-bold ${m.color}`}>{log.wasteType}</span>
+                          <span className="text-xs text-gray-400">·</span>
+                          <span className="text-sm font-semibold text-gray-800">
+                            {log.quantity} {log.unit}
                           </span>
-                        )}
-
-                        {log.isBiodegradable && (
-                          <span className="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
-                            <Leaf className="w-3 h-3" /> Biodegradable
+                          <span className="text-xs text-gray-400">·</span>
+                          <span className="text-xs text-gray-500">
+                            {new Date(log.date).toLocaleDateString('en-LK', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                            })}
                           </span>
-                        )}
+                        </div>
+
+                        <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+                          <span className="text-xs text-gray-400 flex items-center gap-1">
+                            <FlaskConical className="w-3 h-3" /> {fmt(log.carbonEquivalent, 2)} kg CO₂e
+                          </span>
+
+                          {log.isRecyclable && (
+                            <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
+                              <Recycle className="w-3 h-3" /> Recyclable
+                            </span>
+                          )}
+
+                          {log.isBiodegradable && (
+                            <span className="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
+                              <Leaf className="w-3 h-3" /> Biodegradable
+                            </span>
+                          )}
+                        </div>
+
+                        {log.notes && <p className="text-xs text-gray-400 mt-1 truncate">{log.notes}</p>}
                       </div>
 
-                      {log.notes && <p className="text-xs text-gray-400 mt-1 truncate">{log.notes}</p>}
-                    </div>
+                      <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                        <button
+                          onClick={() => {
+                            setEditTarget(log)
+                            setShowForm(true)
+                          }}
+                          className="w-8 h-8 rounded-xl bg-gray-50 hover:bg-blue-50 text-gray-400 hover:text-blue-500 border border-gray-200 flex items-center justify-center transition-colors"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
 
-                    <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                      <button
-                        onClick={() => {
-                          setEditTarget(log)
-                          setShowForm(true)
-                        }}
-                        className="w-8 h-8 rounded-xl bg-gray-50 hover:bg-blue-50 text-gray-400 hover:text-blue-500 border border-gray-200 flex items-center justify-center transition-colors"
-                      >
-                        <Pencil className="w-3.5 h-3.5" />
-                      </button>
-
-                      <button
-                        onClick={() => setDeleteTarget(log)}
-                        className="w-8 h-8 rounded-xl bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-500 border border-gray-200 flex items-center justify-center transition-colors"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                        <button
+                          onClick={() => setDeleteTarget(log)}
+                          className="w-8 h-8 rounded-xl bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-500 border border-gray-200 flex items-center justify-center transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
+                  )
+                })}
+              </div>
+
+              {pagination.totalPages > 1 && (
+                <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <p className="text-sm text-gray-500">
+                    Showing page <span className="font-semibold text-gray-800">{pagination.currentPage}</span> of{' '}
+                    <span className="font-semibold text-gray-800">{pagination.totalPages}</span>
+                  </p>
+
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <button
+                      onClick={() => goToPage(currentPage - 1)}
+                      disabled={!pagination.hasPrevPage}
+                      className="px-4 py-2 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                    >
+                      &lt;
+                    </button>
+
+                    {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(page => (
+                      <button
+                        key={page}
+                        onClick={() => goToPage(page)}
+                        className={`w-10 h-10 rounded-xl text-sm font-bold border transition-all ${currentPage === page
+                          ? 'bg-green-600 text-white border-green-600 shadow-sm'
+                          : 'bg-white text-gray-600 border-gray-200 hover:border-green-300'
+                          }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+
+                    <button
+                      onClick={() => goToPage(currentPage + 1)}
+                      disabled={!pagination.hasNextPage}
+                      className="px-4 py-2 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                    >
+                      &gt;
+                    </button>
                   </div>
-                )
-              })}
-            </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
