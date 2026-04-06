@@ -54,7 +54,7 @@ const getMyWasteLogs = async (req, res) => {
   try {
     const page = Math.max(parseInt(req.query.page) || 1, 1)
     const limit = Math.max(parseInt(req.query.limit) || 5, 1)
-    const { wasteType, startDate, endDate } = req.query
+    const { wasteType, startDate, endDate, dateFilter = 'all' } = req.query
 
     const filter = { userId: req.user._id }
 
@@ -66,6 +66,30 @@ const getMyWasteLogs = async (req, res) => {
       filter.date = {}
       if (startDate) filter.date.$gte = new Date(startDate)
       if (endDate) filter.date.$lte = new Date(endDate)
+    }
+
+    if (dateFilter !== 'all' && !startDate && !endDate) {
+      const now = new Date()
+
+      if (dateFilter === 'today') {
+        const start = new Date()
+        start.setHours(0, 0, 0, 0)
+        filter.date = { $gte: start }
+      }
+
+      if (dateFilter === 'week') {
+        const start = new Date()
+        start.setDate(now.getDate() - 7)
+        start.setHours(0, 0, 0, 0)
+        filter.date = { $gte: start }
+      }
+
+      if (dateFilter === 'month') {
+        const start = new Date()
+        start.setDate(1)
+        start.setHours(0, 0, 0, 0)
+        filter.date = { $gte: start }
+      }
     }
 
     const totalItems = await WasteLog.countDocuments(filter)

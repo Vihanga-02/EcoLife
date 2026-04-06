@@ -92,9 +92,9 @@ export const marketplaceAPI = {
 // WASTE
 // ========================
 export const wasteAPI = {
-  getLogs: (page = 1, limit = 5, wasteType = 'All') =>
+  getLogs: (page = 1, limit = 5, wasteType = 'All', dateFilter = 'all') =>
     api.get('/waste', {
-      params: { page, limit, wasteType },
+      params: { page, limit, wasteType, dateFilter },
     }),
   logWaste: (data) => api.post('/waste', data),
   updateLog: (id, data) => api.put(`/waste/${id}`, data),

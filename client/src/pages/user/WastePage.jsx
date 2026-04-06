@@ -67,6 +67,7 @@ export default function WastePage() {
   const [deleteTarget, setDeleteTarget] = useState(null)
   const [activeType, setActiveType] = useState('All')
   const [toast, setToast] = useState(null)
+  const [dateFilter, setDateFilter] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
   const [pagination, setPagination] = useState({
     currentPage: 1,
@@ -85,7 +86,7 @@ export default function WastePage() {
     setLoading(true)
     try {
       const [logsRes, analyticsRes, monthlyRes] = await Promise.allSettled([
-        wasteAPI.getLogs(page, ITEMS_PER_PAGE, wasteType),
+        wasteAPI.getLogs(page, ITEMS_PER_PAGE, wasteType, dateFilter),
         wasteAPI.getAnalytics(),
         wasteAPI.getMonthlyBreakdown(),
       ])
@@ -117,11 +118,11 @@ export default function WastePage() {
     } finally {
       setLoading(false)
     }
-  }, [currentPage, activeType])
+  }, [currentPage, activeType, dateFilter])
 
   useEffect(() => {
     load(currentPage, activeType)
-  }, [load, currentPage, activeType])
+  }, [load, currentPage, activeType, dateFilter])
 
   const handleDelete = async () => {
     try {
@@ -329,6 +330,21 @@ export default function WastePage() {
               )
             })}
           </div>
+          <div className="flex justify-end mb-4">
+            <select
+              value={dateFilter}
+              onChange={(e) => {
+                setDateFilter(e.target.value)
+                setCurrentPage(1)
+              }}
+              className="px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white text-gray-600"
+            >
+              <option value="all">All Time</option>
+              <option value="today">Today</option>
+              <option value="week">Last 7 Days</option>
+              <option value="month">This Month</option>
+            </select>
+          </div>
 
           {loading ? (
             <div className="flex items-center justify-center py-20">
@@ -450,8 +466,8 @@ export default function WastePage() {
                         key={page}
                         onClick={() => goToPage(page)}
                         className={`w-10 h-10 rounded-xl text-sm font-bold border transition-all ${currentPage === page
-                            ? 'bg-green-600 text-white border-green-600 shadow-sm'
-                            : 'bg-white text-gray-600 border-gray-200 hover:border-green-300'
+                          ? 'bg-green-600 text-white border-green-600 shadow-sm'
+                          : 'bg-white text-gray-600 border-gray-200 hover:border-green-300'
                           }`}
                       >
                         {page}
