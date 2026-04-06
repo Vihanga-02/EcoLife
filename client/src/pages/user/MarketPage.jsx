@@ -311,10 +311,10 @@ export default function MarketPage() {
   const handleReview = async (txnId, action) => {
     try {
       await marketplaceAPI.reviewTransaction(txnId, action)
-      showToast(action === 'approve' ? 'Request approved successfully.' : 'Request rejected.')
+      showToast(action === 'approve' ? 'Request approved! +10 Green pts 🌿' : 'Request rejected.')
       loadItems()
       loadTxns()
-      if (action === 'approve') await refreshUser()
+      if (action === 'approve') await refreshUser() // sync green score in sidebar/profile
     } catch {
       showToast('Action failed.', 'error')
     }
