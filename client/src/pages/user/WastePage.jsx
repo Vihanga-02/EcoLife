@@ -442,7 +442,7 @@ export default function WastePage() {
                       disabled={!pagination.hasPrevPage}
                       className="px-4 py-2 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
                     >
-                      Prev
+                      &lt;
                     </button>
 
                     {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(page => (
@@ -463,7 +463,7 @@ export default function WastePage() {
                       disabled={!pagination.hasNextPage}
                       className="px-4 py-2 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
                     >
-                      Next
+                      &gt;
                     </button>
                   </div>
                 </div>
