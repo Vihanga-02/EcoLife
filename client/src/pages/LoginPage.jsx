@@ -35,7 +35,7 @@ export default function LoginPage() {
   return (
     <div className="relative min-h-screen flex items-center justify-center px-4">
       {/* Background Image with less blur */}
-      <div 
+      <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: "url('/login.jpg')",
