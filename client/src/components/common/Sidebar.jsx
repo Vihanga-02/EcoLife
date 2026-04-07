@@ -49,7 +49,7 @@ export default function Sidebar({ mode = 'user', sidebarItems = [], onClose, onL
       {/* ── Brand / Logo ── */}
       <div className="p-5 border-b border-green-300">
         {isAdmin ? (
-          <>
+          <div className="flex flex-col items-center gap-2">
             <Link to="/admin" className="flex justify-center w-full">
               <img
                 src="/ecolife-logo.png"
@@ -57,8 +57,10 @@ export default function Sidebar({ mode = 'user', sidebarItems = [], onClose, onL
                 className="h-10 object-contain"
               />
             </Link>
-            <span className="mt-1 text-xs text-gray-700">Admin Panel</span>
-          </>
+            <span className="text-xs font-medium text-green-900 bg-green-50 px-2 py-1 rounded-full border border-green-500">
+              Admin Panel
+            </span>
+          </div>
         ) : (
           <Link to="/home" className="flex items-center gap-2">
             <img
