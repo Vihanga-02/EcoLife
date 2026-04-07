@@ -33,24 +33,35 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-500 to-white flex items-center justify-center px-4">
+    <div className="relative min-h-screen flex items-center justify-center px-4">
+      {/* Background Image with less blur */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: "url('/login.jpg')",
+        }}
+      >
+        {/* Less blur overlay - reduced from backdrop-blur-md to backdrop-blur-sm */}
+        <div className="absolute inset-0 backdrop-blur-sm bg-black/20"></div>
+      </div>
+
       {/* Background glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-green-500/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-green-500/20 rounded-full blur-3xl pointer-events-none z-0" />
 
       <div className="w-full max-w-md z-10">
         {/* Logo */}
         <div className="text-center mb-8">
           <Link to="/home" className="inline-block">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-green-500/30 rounded-2xl mb-4 hover:bg-green-500/50 transition-colors cursor-pointer">
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-green-500/30 rounded-2xl mb-4 hover:bg-green-500/50 transition-colors cursor-pointer ">
               <Leaf className="text-green-700 text-2xl" />
             </div>
-            <h1 className="text-3xl font-bold text-black hover:text-green-600 transition-colors cursor-pointer">EcoLife</h1>
+            <h1 className="text-3xl font-bold text-white hover:text-green-600 transition-colors cursor-pointer ">EcoLife</h1>
           </Link>
-          <p className="text-gray-700 mt-1 text-sm">Smart Sustainable Living Platform</p>
+          <p className="text-white/90 mt-1 text-sm ">Smart Sustainable Living Platform</p>
         </div>
 
         {/* Card */}
-        <div className="bg-white border border-green-300 rounded-2xl p-8 shadow-lg">
+        <div className="bg-white/95 backdrop-blur-sm border border-green-300 rounded-2xl p-8 shadow-lg">
           <h2 className="text-xl font-semibold text-black mb-6">Sign in to your account</h2>
 
           {error && (
@@ -114,11 +125,10 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <p className="text-center text-gray-700 text-xs mt-4">
+        <p className="text-center text-white/90 text-xs mt-4 drop-shadow">
           Admin? Use your admin credentials above.
         </p>
       </div>
     </div>
   )
 }
-
