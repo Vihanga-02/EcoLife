@@ -40,10 +40,12 @@ export default function LoginPage() {
       <div className="w-full max-w-md z-10">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-green-500/30 rounded-2xl mb-4">
-            <Leaf className="text-green-700 text-2xl" />
-          </div>
-          <h1 className="text-3xl font-bold text-black">EcoLife</h1>
+          <Link to="/home" className="inline-block">
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-green-500/30 rounded-2xl mb-4 hover:bg-green-500/50 transition-colors cursor-pointer">
+              <Leaf className="text-green-700 text-2xl" />
+            </div>
+            <h1 className="text-3xl font-bold text-black hover:text-green-600 transition-colors cursor-pointer">EcoLife</h1>
+          </Link>
           <p className="text-gray-700 mt-1 text-sm">Smart Sustainable Living Platform</p>
         </div>
 
