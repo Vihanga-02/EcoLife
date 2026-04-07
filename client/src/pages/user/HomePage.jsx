@@ -268,14 +268,14 @@ export default function HomePage() {
 
                 <div className="mt-10 flex flex-wrap gap-4">
                   <Link
-                    to="/register"
+                    to="/signup"
                     className="inline-flex items-center justify-center rounded-2xl bg-emerald-700 px-7 py-4 text-base font-semibold text-white shadow-[0_10px_30px_rgba(5,150,105,0.28)] transition hover:-translate-y-0.5 hover:bg-emerald-800"
                   >
                     Get Started
                   </Link>
 
                   <Link
-                    to="/marketplace"
+                    to="/about"
                     className="inline-flex items-center justify-center rounded-2xl bg-[#efc9aa] px-7 py-4 text-base font-semibold text-[#6f513d] transition hover:-translate-y-0.5 hover:opacity-90"
                   >
                     Learn More
@@ -377,14 +377,14 @@ export default function HomePage() {
 
                   <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
                     <Link
-                      to="/register"
+                      to="/Signup"
                       className="inline-flex min-w-[190px] items-center justify-center rounded-2xl bg-white px-7 py-4 text-base font-semibold text-emerald-700 shadow-lg transition duration-300 hover:-translate-y-0.5 hover:bg-emerald-50"
                     >
                       Get Started Free
                     </Link>
 
                     <Link
-                      to="/marketplace"
+                      to="/about"
                       className="inline-flex min-w-[190px] items-center justify-center rounded-2xl border border-white/30 bg-white/10 px-7 py-4 text-base font-semibold text-white backdrop-blur-sm transition duration-300 hover:-translate-y-0.5 hover:bg-white/15"
                     >
                       Explore EcoLife
