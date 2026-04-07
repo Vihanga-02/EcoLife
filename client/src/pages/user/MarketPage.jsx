@@ -345,9 +345,8 @@ export default function MarketPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {toast && (
-        <div className={`fixed right-5 top-5 z-50 flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-medium text-white shadow-xl ${
-          toast.type === 'error' ? 'bg-red-500' : 'bg-emerald-600'
-        }`}>
+        <div className={`fixed right-5 top-5 z-50 flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-medium text-white shadow-xl ${toast.type === 'error' ? 'bg-red-500' : 'bg-emerald-600'
+          }`}>
           {toast.type === 'error' ? (
             <XCircle className="h-4 w-4" />
           ) : (
@@ -407,20 +406,18 @@ export default function MarketPage() {
                 <button
                   key={t.id}
                   onClick={() => setTab(t.id)}
-                  className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
-                    isActive
+                  className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${isActive
                       ? 'border border-emerald-200 bg-emerald-50 text-emerald-700'
                       : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-                  }`}
+                    }`}
                 >
                   <Icon className="h-4 w-4" />
                   {t.label}
                   {t.count > 0 && (
-                    <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${
-                      isActive
+                    <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${isActive
                         ? 'bg-emerald-100 text-emerald-700'
                         : 'bg-gray-100 text-gray-500'
-                    }`}>
+                      }`}>
                       {t.count}
                     </span>
                   )}
