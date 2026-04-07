@@ -12,11 +12,11 @@ import {
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 const CATEGORIES = ['All', 'Electronics', 'Furniture', 'Clothing', 'Books', 'Tools', 'Toys', 'Sports', 'Other']
-const CONDITIONS  = ['All', 'New', 'Good', 'Fair']
+const CONDITIONS = ['All', 'New', 'Good', 'Fair']
 
 const CONDITION_META = {
-  New:  { color: 'text-green-800', bg: 'bg-green-100', dot: 'bg-green-500' },
-  Good: { color: 'text-green-700', bg: 'bg-green-50',  dot: 'bg-green-400' },
+  New: { color: 'text-green-800', bg: 'bg-green-100', dot: 'bg-green-500' },
+  Good: { color: 'text-green-700', bg: 'bg-green-50', dot: 'bg-green-400' },
   Fair: { color: 'text-yellow-700', bg: 'bg-yellow-50', dot: 'bg-yellow-400' },
 }
 
@@ -29,7 +29,7 @@ function HowItWorksModal({ onClose }) {
         <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
           <X className="w-5 h-5" />
         </button>
-        
+
         <div className="flex items-center gap-3 mb-6">
           <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
             <Info className="w-6 h-6 text-green-600" />
@@ -118,11 +118,10 @@ function ItemCard({ item, onRequest, requesting }) {
 
         {/* Type Badge */}
         <div className="absolute top-2.5 left-2.5">
-          <span className={`text-[11px] px-2 py-0.5 rounded font-bold tracking-wide uppercase ${
-            isFree
+          <span className={`text-[11px] px-2 py-0.5 rounded font-bold tracking-wide uppercase ${isFree
               ? 'bg-green-600 text-white'
               : 'bg-gray-800 text-white'
-          }`}>
+            }`}>
             {isFree ? 'Free' : 'Trade'}
           </span>
         </div>
@@ -181,9 +180,8 @@ function ItemCard({ item, onRequest, requesting }) {
 // ─── Toast ───────────────────────────────────────────────────────────────────
 function Toast({ msg, type }) {
   return (
-    <div className={`fixed top-5 right-5 z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm font-medium flex items-center gap-2 ${
-      type === 'error' ? 'bg-red-600' : 'bg-green-700'
-    }`}>
+    <div className={`fixed top-5 right-5 z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm font-medium flex items-center gap-2 ${type === 'error' ? 'bg-red-600' : 'bg-green-700'
+      }`}>
       {type === 'error' ? <XCircle className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
       {msg}
     </div>
@@ -195,13 +193,13 @@ export default function MarketplacePage() {
   const { user, isAuthenticated } = useAuth()
   const navigate = useNavigate()
 
-  const [items,      setItems]      = useState([])
-  const [loading,    setLoading]    = useState(true)
-  const [search,     setSearch]     = useState('')
-  const [category,   setCategory]   = useState('All')
-  const [condition,  setCondition]  = useState('All')
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [category, setCategory] = useState('All')
+  const [condition, setCondition] = useState('All')
   const [requesting, setRequesting] = useState(null)
-  const [toast,      setToast]      = useState(null)
+  const [toast, setToast] = useState(null)
   const [showFilter, setShowFilter] = useState(false)
   const [showHowItWorks, setShowHowItWorks] = useState(false)
 
@@ -235,15 +233,15 @@ export default function MarketplacePage() {
         i.title?.toLowerCase().includes(q) ||
         i.category?.toLowerCase().includes(q) ||
         i.description?.toLowerCase().includes(q)
-      const matchCat  = category  === 'All' || i.category  === category
+      const matchCat = category === 'All' || i.category === category
       const matchCond = condition === 'All' || i.condition === condition
       return matchSearch && matchCat && matchCond
     })
 
   const handleRequest = async (item) => {
-    if (!isAuthenticated()) { 
+    if (!isAuthenticated()) {
       navigate('/login')
-      return 
+      return
     }
     setRequesting(item._id)
     try {
@@ -291,13 +289,13 @@ export default function MarketplacePage() {
                 Browse free and tradeable items listed by your community. Reduce waste, earn green points, and help the planet — one item at a time.
               </p>
               <div className="flex gap-4 mt-8 justify-center">
-                <button 
+                <button
                   onClick={() => setShowHowItWorks(true)}
                   className="bg-white text-green-700 hover:bg-green-50 transition-colors px-6 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2"
                 >
                   <Info className="w-4 h-4" /> How It Works
                 </button>
-                <button 
+                <button
                   onClick={handleListItem}
                   className="border-2 border-white text-white hover:bg-white hover:text-green-700 transition-colors px-6 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2"
                 >
@@ -345,11 +343,10 @@ export default function MarketplacePage() {
           {/* Filter toggle */}
           <button
             onClick={() => setShowFilter(b => !b)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-medium transition-all ${
-              showFilter || activeFilters > 0
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-medium transition-all ${showFilter || activeFilters > 0
                 ? 'bg-green-600 text-white border-green-600'
                 : 'bg-white text-gray-600 border-gray-200 hover:border-green-400 hover:text-green-700'
-            }`}
+              }`}
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
             Filters
@@ -380,11 +377,10 @@ export default function MarketplacePage() {
                 <button
                   key={c}
                   onClick={() => setCategory(c)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                    category === c
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${category === c
                       ? 'bg-green-600 text-white border-green-600'
                       : 'bg-white text-gray-500 border-gray-200 hover:border-green-400 hover:text-green-700'
-                  }`}
+                    }`}
                 >
                   {c}
                 </button>
