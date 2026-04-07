@@ -37,8 +37,17 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-500 to-white flex items-center justify-center px-4">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-green-500/20 rounded-full blur-3xl pointer-events-none" />
+    <div className="relative min-h-screen flex items-center justify-center px-4">
+      {/* Background Image with less blur */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: "url('/login.jpg')",
+        }}
+      >
+        {/* Less blur overlay */}
+        <div className="absolute inset-0 backdrop-blur-sm bg-black/20"></div>
+      </div>
 
       <div className="w-full max-w-md z-10">
         {/* Logo */}
@@ -47,12 +56,12 @@ export default function SignupPage() {
             <div className="inline-flex items-center justify-center w-14 h-14 bg-green-500/30 rounded-2xl mb-4 hover:bg-green-500/50 transition-colors cursor-pointer">
               <Leaf className="text-green-700 text-2xl" />
             </div>
-            <h1 className="text-3xl font-bold text-black hover:text-green-600 transition-colors cursor-pointer">EcoLife</h1>
+            <h1 className="text-3xl font-bold text-white hover:text-green-600 transition-colors cursor-pointer">EcoLife</h1>
           </Link>
-          <p className="text-gray-700 mt-1 text-sm">Start your sustainable journey</p>
+          <p className="text-white/90 mt-1 text-sm">Start your sustainable journey</p>
         </div>
 
-        <div className="bg-white border border-green-300 rounded-2xl p-8 shadow-lg">
+        <div className="bg-white/95 backdrop-blur-sm border border-green-300 rounded-2xl p-8 shadow-lg">
           <h2 className="text-xl font-semibold text-black mb-6">Create your account</h2>
 
           {error && (
