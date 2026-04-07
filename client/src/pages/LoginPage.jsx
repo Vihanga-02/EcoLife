@@ -45,8 +45,6 @@ export default function LoginPage() {
         <div className="absolute inset-0 backdrop-blur-sm bg-black/20"></div>
       </div>
 
-      {/* Background glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-green-500/20 rounded-full blur-3xl pointer-events-none z-0" />
 
       <div className="w-full max-w-md z-10">
         {/* Logo */}
