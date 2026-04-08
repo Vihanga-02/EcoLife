@@ -50,8 +50,8 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link to="/home" className="inline-block">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-green-500/30 rounded-2xl mb-4 hover:bg-green-500/50 transition-colors cursor-pointer ">
-              <Leaf className="text-green-700 text-2xl" />
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-gray-300/90 rounded-2xl mb-4 hover:bg-gray-400/80 transition-colors cursor-pointer">
+              <Leaf className="text-green-500 text-2xl" />
             </div>
             <h1 className="text-3xl font-bold text-white hover:text-green-600 transition-colors cursor-pointer ">EcoLife</h1>
           </Link>
