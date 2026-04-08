@@ -243,7 +243,7 @@ function ItemCard({ item, onRequest, requesting, onViewDetails }) {
 
   return (
     <div className="group bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-green-400 hover:shadow-lg transition-all duration-200 flex flex-col w-[280px] flex-shrink-0">
-      {/* Image */}
+      {/* Image with Quick View Overlay */}
       <div className="relative h-44 bg-gray-50 overflow-hidden cursor-pointer" onClick={() => onViewDetails(item)}>
         {item.imageUrl ? (
           <img
@@ -265,6 +265,17 @@ function ItemCard({ item, onRequest, requesting, onViewDetails }) {
               : 'bg-gray-800 text-white'
             }`}>
             {isFree ? 'Free' : 'Trade'}
+          </span>
+        </div>
+
+        {/* Quick View Overlay */}
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+          <span className="bg-white/90 backdrop-blur-sm text-gray-800 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1">
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            Quick View
           </span>
         </div>
       </div>
@@ -298,29 +309,21 @@ function ItemCard({ item, onRequest, requesting, onViewDetails }) {
           </div>
         </div>
 
-        {/* Buttons */}
-        <div className="flex gap-2">
-          <button
-            onClick={() => onViewDetails(item)}
-            className="flex-1 py-2 rounded-lg text-xs font-semibold transition-all border border-gray-200 bg-white text-gray-700 hover:border-green-400 hover:text-green-600"
-          >
-            View Details
-          </button>
-          <button
-            onClick={() => onRequest(item)}
-            disabled={requesting === item._id}
-            className={`flex-1 py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 border
-              ${requesting === item._id
-                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-                : 'bg-green-600 hover:bg-green-700 text-white border-green-600 hover:border-green-700 active:scale-95'
-              }`}
-          >
-            {requesting === item._id
-              ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /></>
-              : <><ShoppingBag className="w-3.5 h-3.5" /> Request</>
-            }
-          </button>
-        </div>
+        {/* Buttons  */}
+        <button
+          onClick={() => onRequest(item)}
+          disabled={requesting === item._id}
+          className={`w-full py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 border
+            ${requesting === item._id
+              ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+              : 'bg-green-600 hover:bg-green-700 text-white border-green-600 hover:border-green-700 active:scale-95'
+            }`}
+        >
+          {requesting === item._id
+            ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Sending...</>
+            : <><ShoppingBag className="w-3.5 h-3.5" /> Request Item</>
+          }
+        </button>
       </div>
     </div>
   )
