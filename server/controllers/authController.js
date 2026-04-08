@@ -28,6 +28,7 @@ const registerUser = async (req, res) => {
         email: user.email,
         role: user.role,
         greenScore: user.greenScore,
+        totalTransactions: user.totalTransactions,
         profileImage: user.profileImage,
       },
     });
@@ -67,6 +68,7 @@ const loginUser = async (req, res) => {
         email: user.email,
         role: user.role,
         greenScore: user.greenScore,
+        totalTransactions: user.totalTransactions,
         profileImage: user.profileImage,
       },
     });
@@ -127,6 +129,7 @@ const registerAdmin = async (req, res) => {
         email: user.email,
         role: user.role,
         greenScore: user.greenScore,
+        totalTransactions: user.totalTransactions,
         profileImage: user.profileImage,
       },
     });

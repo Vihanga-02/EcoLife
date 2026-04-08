@@ -8,12 +8,27 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null)
   const [loading, setLoading] = useState(true)
 
+  const refreshUser = async () => {
+    try {
+      const res = await authAPI.getMe()
+      const freshUser = res.data.user
+      setUser(freshUser)
+      localStorage.setItem('ecolife_user', JSON.stringify(freshUser))
+    } catch {
+      // silently ignore — user stays as-is
+    }
+  }
+
   useEffect(() => {
     const storedToken = localStorage.getItem('ecolife_token')
     const storedUser = localStorage.getItem('ecolife_user')
     if (storedToken && storedUser) {
+      const parsedUser = JSON.parse(storedUser)
       setToken(storedToken)
-      setUser(JSON.parse(storedUser))
+      setUser(parsedUser)
+      if (parsedUser?.totalTransactions === undefined) {
+        refreshUser()
+      }
     }
     setLoading(false)
   }, [])
@@ -30,19 +45,6 @@ export const AuthProvider = ({ children }) => {
     setToken(null)
     localStorage.removeItem('ecolife_token')
     localStorage.removeItem('ecolife_user')
-  }
-
-  // Fetch the latest user from the server and sync state + localStorage.
-  // Call this after any action that changes greenScore on the backend.
-  const refreshUser = async () => {
-    try {
-      const res = await authAPI.getMe()
-      const freshUser = res.data.user
-      setUser(freshUser)
-      localStorage.setItem('ecolife_user', JSON.stringify(freshUser))
-    } catch {
-      // silently ignore — user stays as-is
-    }
   }
 
   const isAdmin = () => user?.role === 'admin'
