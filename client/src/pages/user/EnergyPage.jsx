@@ -32,7 +32,7 @@ const hms = (hrs) => {
 function Toast({ toast }) {
   if (!toast) return null
   return (
-    <div className={`fixed top-5 right-5 z-50 px-5 py-3 rounded-2xl shadow-xl text-white text-sm font-medium flex items-center gap-2.5 transition-all ${toast.type === 'error' ? 'bg-red-500' : 'bg-emerald-500'
+    <div className={`fixed top-4 left-4 right-4 sm:left-auto sm:right-5 sm:top-5 z-50 px-4 sm:px-5 py-3 rounded-2xl shadow-xl text-white text-sm font-medium flex items-center gap-2.5 transition-all ${toast.type === 'error' ? 'bg-red-500' : 'bg-emerald-500'
       }`}>
       {toast.type === 'error'
         ? <XCircle className="w-4 h-4 shrink-0" />
@@ -115,12 +115,12 @@ function LiveMeter({ appliances }) {
         {/* Big watt display */}
         <div className="mb-4">
           <div className="flex items-baseline gap-2 mb-1">
-            <span className="text-6xl font-black text-white tabular-nums leading-none">
+            <span className="text-5xl sm:text-6xl font-black text-white tabular-nums leading-none">
               {totalWatts.toLocaleString()}
             </span>
             <span className="text-2xl font-bold text-emerald-400 mb-1">W</span>
           </div>
-          <div className="flex items-center gap-4 text-sm text-slate-400">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-400">
             <span>{kw.toFixed(3)} kW</span>
             <span className="w-1 h-1 bg-slate-600 rounded-full" />
             <span>{sessionKwh.toFixed(4)} kWh this session</span>
@@ -140,7 +140,7 @@ function LiveMeter({ appliances }) {
                     <Icon className="w-3.5 h-3.5 text-emerald-400" />
                   </div>
                   <span className="text-slate-200 text-sm flex-1 truncate font-medium">{a.name}</span>
-                  <span className="text-slate-400 text-xs font-mono">{hms(hrs)}</span>
+                  <span className="text-slate-400 text-xs font-mono hidden sm:inline">{hms(hrs)}</span>
                   <span className="text-emerald-400 text-xs font-mono font-semibold">{a.wattage}W</span>
                 </div>
               )
@@ -163,7 +163,7 @@ function BillSection({ realTimeBill, estimateBill, rtLoading, estLoading, onRefr
       {/* Real-Time Bill */}
       <div className="relative rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)' }}>
         <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10" style={{ background: 'radial-gradient(circle, #34d399, transparent)' }} />
-        <div className="relative z-10 p-5">
+        <div className="relative z-10 p-4 sm:p-5">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-emerald-400/20 rounded-xl flex items-center justify-center">
@@ -186,7 +186,7 @@ function BillSection({ realTimeBill, estimateBill, rtLoading, estLoading, onRefr
           <div className="mb-3">
             <div className="flex items-end gap-1.5">
               <span className="text-emerald-300 text-base font-semibold">Rs</span>
-              <span className="text-4xl font-black text-white tabular-nums leading-none">{fmt(realTimeBill?.realTimeBill)}</span>
+              <span className="text-3xl sm:text-4xl font-black text-white tabular-nums leading-none">{fmt(realTimeBill?.realTimeBill)}</span>
             </div>
             <p className="text-emerald-300 text-xs mt-1">{fmt(realTimeBill?.totalKwh, 3)} kWh tracked</p>
           </div>
@@ -207,7 +207,7 @@ function BillSection({ realTimeBill, estimateBill, rtLoading, estLoading, onRefr
       {/* Estimated Bill */}
       <div className="relative rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(135deg, #78350f 0%, #92400e 100%)' }}>
         <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10" style={{ background: 'radial-gradient(circle, #fbbf24, transparent)' }} />
-        <div className="relative z-10 p-5">
+        <div className="relative z-10 p-4 sm:p-5">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-amber-400/20 rounded-xl flex items-center justify-center">
@@ -230,7 +230,7 @@ function BillSection({ realTimeBill, estimateBill, rtLoading, estLoading, onRefr
           <div className="mb-3">
             <div className="flex items-end gap-1.5">
               <span className="text-amber-300 text-base font-semibold">Rs</span>
-              <span className="text-4xl font-black text-white tabular-nums leading-none">{fmt(estimateBill?.totalEstimatedBill)}</span>
+              <span className="text-3xl sm:text-4xl font-black text-white tabular-nums leading-none">{fmt(estimateBill?.totalEstimatedBill)}</span>
             </div>
             <p className="text-amber-300 text-xs mt-1">{fmt(estimateBill?.totalEstimatedKwh, 3)} kWh estimated</p>
           </div>
@@ -343,7 +343,7 @@ function StatsBar({ appliances }) {
         <div key={s.label} className={`${s.bg} rounded-2xl p-4 flex items-center gap-3`}>
           <div className="shrink-0">{s.icon}</div>
           <div className="min-w-0">
-            <p className={`text-xl font-black ${s.color} leading-none`}>
+            <p className={`text-lg sm:text-xl font-black ${s.color} leading-none`}>
               {s.value}<span className="text-xs font-normal opacity-60 ml-0.5">{s.suffix}</span>
             </p>
             <p className="text-xs text-gray-500 mt-0.5">{s.label}</p>
@@ -386,22 +386,22 @@ function ApplianceCard({ appliance, onToggle, onEdit, onDelete, toggling, estima
       {/* Colour accent bar */}
       <div className={`h-1 w-full ${isOn ? 'bg-emerald-400' : m.bar}`} />
 
-      <div className="p-5">
+      <div className="p-4 sm:p-5">
         {/* ── Top row: icon + name + actions ── */}
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-colors ${isOn ? 'bg-emerald-100' : m.bg}`}>
+        <div className="flex items-start justify-between gap-3 mb-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-colors shrink-0 ${isOn ? 'bg-emerald-100' : m.bg}`}>
               <Icon className={`w-5 h-5 ${isOn ? 'text-emerald-600' : m.color}`} />
             </div>
-            <div>
-              <h3 className="text-gray-900 font-bold text-sm leading-tight">{appliance.name}</h3>
-              <span className={`inline-block text-xs px-2 py-0.5 rounded-full font-medium mt-0.5 ${m.bg} ${m.color}`}>
+            <div className="min-w-0">
+              <h3 className="text-gray-900 font-bold text-sm leading-tight truncate">{appliance.name}</h3>
+              <span className={`inline-block text-[11px] sm:text-xs px-2 py-0.5 rounded-full font-medium mt-1 ${m.bg} ${m.color}`}>
                 {appliance.category}
               </span>
             </div>
           </div>
 
-          <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex gap-1.5 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0">
             <button
               onClick={() => onEdit(appliance)}
               className="w-7 h-7 rounded-lg bg-gray-50 hover:bg-blue-50 text-gray-400 hover:text-blue-500 border border-gray-200 flex items-center justify-center transition-colors"
@@ -418,16 +418,16 @@ function ApplianceCard({ appliance, onToggle, onEdit, onDelete, toggling, estima
         </div>
 
         {/* ── Stats ── */}
-        <div className="grid grid-cols-2 gap-2 mb-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
           <div className="bg-gray-50 rounded-xl p-3">
             <p className="text-xs text-gray-400 mb-1">Wattage</p>
-            <p className="text-lg font-black text-gray-800 leading-none">
+            <p className="text-base sm:text-lg font-black text-gray-800 leading-none">
               {appliance.wattage}<span className="text-xs font-normal text-gray-400 ml-0.5">W</span>
             </p>
           </div>
           <div className="bg-gray-50 rounded-xl p-3">
             <p className="text-xs text-gray-400 mb-1">Real kWh</p>
-            <p className="text-lg font-black text-gray-800 leading-none">
+            <p className="text-base sm:text-lg font-black text-gray-800 leading-none">
               {fmt(appliance.totalKwhThisMonth, 3)}<span className="text-xs font-normal text-gray-400 ml-0.5">kWh</span>
             </p>
           </div>
@@ -435,14 +435,14 @@ function ApplianceCard({ appliance, onToggle, onEdit, onDelete, toggling, estima
 
         {/* ── Estimated cost badge ── */}
         {appEst && appEst.estimatedKwhPerMonth > 0 && (
-          <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 mb-3">
-            <div className="flex items-center gap-1.5">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 mb-3">
+            <div className="flex items-start sm:items-center gap-1.5 min-w-0">
               <FlaskConical className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-              <span className="text-xs text-amber-700">
+              <span className="text-xs text-amber-700 wrap-break-word">
                 {appEst.noOfHoursForDay}h × {appEst.noOfDaysForMonth}d = {appEst.estimatedKwhPerMonth} kWh
               </span>
             </div>
-            <span className="text-xs font-bold text-amber-700 shrink-0 ml-2">
+            <span className="text-xs font-bold text-amber-700 shrink-0">
               Rs {fmt(appEst.estimatedCostPerMonth)}
             </span>
           </div>
@@ -566,7 +566,7 @@ export default function EnergyPage() {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-md">
+              <div className="w-10 h-10 bg-linear-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-md">
                 <Zap className="text-white w-5 h-5" />
               </div>
               <div>
@@ -574,7 +574,7 @@ export default function EnergyPage() {
                 <p className="text-gray-400 text-xs">Track usage · Monitor bills · Control appliances</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={() => { loadAppliances(); loadRt(); loadEst() }}
                 className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-500 text-sm transition-colors"
@@ -583,7 +583,7 @@ export default function EnergyPage() {
               </button>
               <button
                 onClick={() => { setEditTarget(null); setShowForm(true); setTab('appliances') }}
-                className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl text-sm font-bold shadow-md transition-all"
+                className="flex items-center gap-1.5 px-4 py-2 bg-linear-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl text-sm font-bold shadow-md transition-all"
               >
                 <Plus className="w-4 h-4" /> Add Appliance
               </button>
@@ -591,7 +591,7 @@ export default function EnergyPage() {
           </div>
 
           {/* ── Tabs ── */}
-          <div className="flex gap-0 border-b border-gray-100">
+          <div className="flex gap-0 border-b border-gray-100 overflow-x-auto md:overflow-x-visible no-scrollbar">
             {[
               { id: 'overview', label: 'Overview', icon: LayoutDashboard },
               {
@@ -605,7 +605,7 @@ export default function EnergyPage() {
                 <button
                   key={t.id}
                   onClick={() => setTab(t.id)}
-                  className={`flex items-center gap-2 px-5 py-3.5 text-sm font-semibold border-b-2 transition-all -mb-px ${tab === t.id
+                  className={`flex items-center gap-2 px-3 sm:px-5 py-3.5 text-sm font-semibold border-b-2 transition-all -mb-px whitespace-nowrap ${tab === t.id
                       ? 'border-emerald-500 text-emerald-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-200'
                     }`}
@@ -713,7 +713,7 @@ export default function EnergyPage() {
                 </p>
                 <button
                   onClick={() => { setEditTarget(null); setShowForm(true) }}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-xl text-sm font-bold shadow-md"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-emerald-500 to-green-600 text-white rounded-xl text-sm font-bold shadow-md"
                 >
                   <Plus className="w-4 h-4" /> Add First Appliance
                 </button>
