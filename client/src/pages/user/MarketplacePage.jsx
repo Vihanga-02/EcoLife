@@ -123,12 +123,12 @@ function ItemDetailsModal({ item, onClose, onRequest, requesting }) {
                   <span className="text-xs text-gray-300 font-medium">No image</span>
                 </div>
               )}
-              
+
               {/* Type Badge */}
               <div className="absolute top-3 left-3">
                 <span className={`text-[10px] px-2 py-0.5 rounded-md font-bold tracking-wide uppercase shadow-md ${isFree
-                    ? 'bg-green-600 text-white'
-                    : 'bg-gray-800 text-white'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-gray-800 text-white'
                   }`}>
                   {isFree ? 'Free' : 'Trade'}
                 </span>
@@ -261,8 +261,8 @@ function ItemCard({ item, onRequest, requesting, onViewDetails }) {
         {/* Type Badge */}
         <div className="absolute top-2.5 left-2.5">
           <span className={`text-[11px] px-2 py-0.5 rounded font-bold tracking-wide uppercase ${isFree
-              ? 'bg-green-600 text-white'
-              : 'bg-gray-800 text-white'
+            ? 'bg-green-600 text-white'
+            : 'bg-gray-800 text-white'
             }`}>
             {isFree ? 'Free' : 'Trade'}
           </span>
@@ -363,7 +363,7 @@ function ScrollableItemsSection({ title, items, onRequest, requesting, onViewDet
             {items.length} items
           </span>
         </div>
-        
+
         {/* Scroll Buttons */}
         {items.length > 3 && (
           <div className="flex gap-2">
@@ -509,9 +509,9 @@ export default function MarketplacePage() {
       {toast && <Toast msg={toast.msg} type={toast.type} />}
       {showHowItWorks && <HowItWorksModal onClose={() => setShowHowItWorks(false)} />}
       {selectedItem && (
-        <ItemDetailsModal 
-          item={selectedItem} 
-          onClose={() => setSelectedItem(null)} 
+        <ItemDetailsModal
+          item={selectedItem}
+          onClose={() => setSelectedItem(null)}
           onRequest={handleRequest}
           requesting={requesting}
         />
@@ -590,8 +590,8 @@ export default function MarketplacePage() {
           <button
             onClick={() => setShowFilter(b => !b)}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-medium transition-all ${showFilter || activeFilters > 0
-                ? 'bg-green-600 text-white border-green-600'
-                : 'bg-white text-gray-600 border-gray-200 hover:border-green-400 hover:text-green-700'
+              ? 'bg-green-600 text-white border-green-600'
+              : 'bg-white text-gray-600 border-gray-200 hover:border-green-400 hover:text-green-700'
               }`}
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -624,8 +624,8 @@ export default function MarketplacePage() {
                   key={c}
                   onClick={() => setCategory(c)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${category === c
-                      ? 'bg-green-600 text-white border-green-600'
-                      : 'bg-white text-gray-500 border-gray-200 hover:border-green-400 hover:text-green-700'
+                    ? 'bg-green-600 text-white border-green-600'
+                    : 'bg-white text-gray-500 border-gray-200 hover:border-green-400 hover:text-green-700'
                     }`}
                 >
                   {c}
