@@ -184,7 +184,7 @@ export default function WastePage() {
       <div className="bg-white border-b border-gray-100 px-4 md:px-6 py-5">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-linear-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center shadow-md">
+            <div className="w-10 h-10 bg-linear-to-br from-green-500 to-green-700 rounded-2xl flex items-center justify-center shadow-md">
               <Trash2 className="text-white w-5 h-5" />
             </div>
             <div>
