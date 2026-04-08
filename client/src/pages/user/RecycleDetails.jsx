@@ -35,15 +35,15 @@ export default function RecycleDetails() {
   const totalWeight = submissions.filter(s => s.status === 'approved').reduce((acc, curr) => acc + curr.estimatedWeight, 0)
 
   return (
-    <div className="p-5 md:p-6 max-w-5xl mx-auto space-y-6 min-h-screen">
-      
-      {/* Header */}
-      <div>
-        <h2 className="text-xl font-bold text-black flex items-center gap-2">
-          <Recycle className="w-6 h-6 text-green-600" /> My Recycling
-        </h2>
-        <p className="text-gray-500 text-sm mt-1">Track your green drop-offs and earned points</p>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="p-5 md:p-6 max-w-5xl mx-auto space-y-6">
+        {/* Header */}
+        <div>
+          <h2 className="text-xl font-bold text-black flex items-center gap-2">
+            <Recycle className="w-6 h-6 text-green-600" /> My Recycling
+          </h2>
+          <p className="text-gray-500 text-sm mt-1">Track your green drop-offs and earned points</p>
+        </div>
 
       {/* Stats row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -78,14 +78,14 @@ export default function RecycleDetails() {
         </div>
       </div>
 
-      {/* Main List */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-gray-50 flex items-center justify-between">
-          <h3 className="text-sm font-bold text-gray-800">Recent Drop-off Requests</h3>
-          <button onClick={fetchSubmissions} disabled={loading} className="text-green-600 text-xs font-semibold flex items-center gap-1 hover:bg-green-50 px-2 py-1 rounded">
-            {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Refresh'}
-          </button>
-        </div>
+        {/* Main List */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="px-5 py-4 border-b border-gray-50 flex items-center justify-between">
+            <h3 className="text-sm font-bold text-gray-800">Recent Drop-off Requests</h3>
+            <button onClick={fetchSubmissions} disabled={loading} className="text-green-600 text-xs font-semibold flex items-center gap-1 hover:bg-green-50 px-2 py-1 rounded">
+              {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Refresh'}
+            </button>
+          </div>
 
         {loading ? (
           <div className="flex items-center justify-center py-16">
@@ -143,8 +143,8 @@ export default function RecycleDetails() {
             </tbody>
           </table>
         )}
+        </div>
       </div>
-
     </div>
   )
 }
