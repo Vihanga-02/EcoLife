@@ -76,35 +76,36 @@ export default function ApplianceForm({ appliance = null, onSuccess, onClose }) 
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal card */}
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden max-h-[95vh] flex flex-col">
+      <div className="relative bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl w-full max-w-md max-h-[92dvh] sm:max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-5 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center">
+        <div className="bg-linear-to-r from-green-500 to-emerald-600 px-4 sm:px-6 py-4 sm:py-5 flex items-start sm:items-center justify-between gap-3 shrink-0">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
               <Zap className="text-white w-5 h-5" />
             </div>
-            <div>
-              <h2 className="text-white font-bold text-lg leading-tight">
+            <div className="min-w-0">
+              <h2 className="text-white font-bold text-base sm:text-lg leading-tight">
                 {isEdit ? 'Edit Appliance' : 'Add Appliance'}
               </h2>
-              <p className="text-green-100 text-xs">Track your energy usage</p>
+              <p className="text-green-100 text-xs mt-0.5">Track your energy usage</p>
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
+            className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors shrink-0"
           >
             <X className="text-white w-4 h-4" />
           </button>
         </div>
 
         {/* Form — scrollable */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 min-h-0">
 
           {/* Name */}
           <div>
@@ -166,14 +167,14 @@ export default function ApplianceForm({ appliance = null, onSuccess, onClose }) 
 
           {/* ─── Usage schedule for estimated bill ─── */}
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-3">
-            <div className="flex items-center gap-2">
-              <Info className="w-4 h-4 text-amber-600 shrink-0" />
-              <p className="text-xs text-amber-700 font-medium">
+            <div className="flex items-start gap-2">
+              <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+              <p className="text-xs text-amber-700 font-medium min-w-0">
                 Set typical usage schedule to enable <strong>Estimated Bill</strong> calculation
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {/* Hours per day */}
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">Hours / Day</label>
@@ -214,9 +215,9 @@ export default function ApplianceForm({ appliance = null, onSuccess, onClose }) 
 
             {/* Live preview */}
             {estimatedKwh !== null ? (
-              <div className="bg-white rounded-lg px-3 py-2 flex items-center justify-between">
+              <div className="bg-white rounded-lg px-3 py-2 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                 <span className="text-xs text-gray-500">Estimated monthly usage</span>
-                <span className="text-sm font-bold text-amber-700">{estimatedKwh} kWh</span>
+                <span className="text-sm font-bold text-amber-700 tabular-nums">{estimatedKwh} kWh</span>
               </div>
             ) : (
               <p className="text-xs text-gray-400 text-center">Fill wattage + hours + days to see preview</p>
@@ -231,18 +232,18 @@ export default function ApplianceForm({ appliance = null, onSuccess, onClose }) 
           )}
 
           {/* Actions */}
-          <div className="flex gap-3 pt-1">
+          <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+              className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors min-h-[44px] sm:min-h-0"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl text-sm font-medium hover:from-green-600 hover:to-emerald-700 transition-all disabled:opacity-60 flex items-center justify-center gap-2"
+              className="flex-1 px-4 py-2.5 bg-linear-to-r from-green-500 to-emerald-600 text-white rounded-xl text-sm font-medium hover:from-green-600 hover:to-emerald-700 transition-all disabled:opacity-60 flex items-center justify-center gap-2 min-h-[44px] sm:min-h-0"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
               {isEdit ? 'Save Changes' : 'Add Appliance'}
