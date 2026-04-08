@@ -367,7 +367,7 @@ export default function MarketPage() {
         <div className="mx-auto max-w-6xl px-4 py-6 md:px-6">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div className="max-w-2xl">
-              <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-600 shadow-sm">
+              <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-sm">
                 <ShoppingBag className="h-5 w-5 text-white" />
               </div>
 
