@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../../components/common/Navbar'
 import Footer from '../../components/common/Footer'
@@ -234,6 +234,7 @@ function ItemDetailsModal({ item, onClose, onRequest, requesting }) {
     </div>
   )
 }
+
 // ─── Item Card ───────────────────────────────────────────────────────────────
 function ItemCard({ item, onRequest, requesting, onViewDetails }) {
   const cm = CONDITION_META[item.condition] || CONDITION_META.Good
@@ -241,7 +242,7 @@ function ItemCard({ item, onRequest, requesting, onViewDetails }) {
   const isFree = item.listingType === 'Free'
 
   return (
-    <div className="group bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-green-400 hover:shadow-lg transition-all duration-200 flex flex-col">
+    <div className="group bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-green-400 hover:shadow-lg transition-all duration-200 flex flex-col w-[280px] flex-shrink-0">
       {/* Image */}
       <div className="relative h-44 bg-gray-50 overflow-hidden cursor-pointer" onClick={() => onViewDetails(item)}>
         {item.imageUrl ? (
@@ -336,6 +337,81 @@ function Toast({ msg, type }) {
   )
 }
 
+// ─── Scrollable Items Section ───────────────────────────────────────────────
+function ScrollableItemsSection({ title, items, onRequest, requesting, onViewDetails, icon: Icon }) {
+  const scrollContainerRef = useRef(null)
+
+  const scroll = (direction) => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = direction === 'left' ? -400 : 400
+      scrollContainerRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' })
+    }
+  }
+
+  if (items.length === 0) return null
+
+  return (
+    <div className="mb-10">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          {Icon && <Icon className="w-5 h-5 text-green-600" />}
+          <h2 className="text-xl font-bold text-gray-800">{title}</h2>
+          <span className="text-sm text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+            {items.length} items
+          </span>
+        </div>
+        
+        {/* Scroll Buttons */}
+        {items.length > 3 && (
+          <div className="flex gap-2">
+            <button
+              onClick={() => scroll('left')}
+              className="p-2 rounded-full bg-white border border-gray-200 hover:border-green-400 hover:text-green-600 transition-all"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              onClick={() => scroll('right')}
+              className="p-2 rounded-full bg-white border border-gray-200 hover:border-green-400 hover:text-green-600 transition-all"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Scrollable Container */}
+      <div
+        ref={scrollContainerRef}
+        className="overflow-x-auto scrollbar-hide pb-4"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        <div className="flex gap-5" style={{ minWidth: 'min-content' }}>
+          {items.map(item => (
+            <ItemCard
+              key={item._id}
+              item={item}
+              onRequest={onRequest}
+              requesting={requesting}
+              onViewDetails={onViewDetails}
+            />
+          ))}
+        </div>
+      </div>
+
+      <style jsx>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
+    </div>
+  )
+}
+
 // ─── Main Page ───────────────────────────────────────────────────────────────
 export default function MarketplacePage() {
   const { user, isAuthenticated } = useAuth()
@@ -371,21 +447,27 @@ export default function MarketplacePage() {
     fetchItems()
   }, [])
 
-  const filtered = items
-    .filter(i => {
-      if (user && (i.ownerId?._id === user._id || i.ownerId === user._id)) return false
-      return true
-    })
-    .filter(i => {
-      const q = search.toLowerCase()
-      const matchSearch = !q ||
-        i.title?.toLowerCase().includes(q) ||
-        i.category?.toLowerCase().includes(q) ||
-        i.description?.toLowerCase().includes(q)
-      const matchCat = category === 'All' || i.category === category
-      const matchCond = condition === 'All' || i.condition === condition
-      return matchSearch && matchCat && matchCond
-    })
+  // Filter out user's own items
+  const availableItems = items.filter(i => {
+    if (user && (i.ownerId?._id === user._id || i.ownerId === user._id)) return false
+    return true
+  })
+
+  // Apply search and filters
+  const filtered = availableItems.filter(i => {
+    const q = search.toLowerCase()
+    const matchSearch = !q ||
+      i.title?.toLowerCase().includes(q) ||
+      i.category?.toLowerCase().includes(q) ||
+      i.description?.toLowerCase().includes(q)
+    const matchCat = category === 'All' || i.category === category
+    const matchCond = condition === 'All' || i.condition === condition
+    return matchSearch && matchCat && matchCond
+  })
+
+  // Separate Free and Trade items
+  const freeItems = filtered.filter(i => i.listingType === 'Free')
+  const tradeItems = filtered.filter(i => i.listingType !== 'Free')
 
   const handleRequest = async (item) => {
     if (!isAuthenticated()) {
@@ -397,7 +479,7 @@ export default function MarketplacePage() {
       await marketplaceAPI.claimItem(item._id)
       showToast(`Request sent for "${item.title}". The owner has been notified.`)
       setItems(prev => prev.filter(i => i._id !== item._id))
-      setSelectedItem(null) // Close modal if open
+      setSelectedItem(null)
     } catch (err) {
       showToast(err.response?.data?.message || 'Failed to send request. Please try again.', 'error')
     } finally {
@@ -438,7 +520,6 @@ export default function MarketplacePage() {
       <div className="bg-green-700 text-white">
         <div className="max-w-7xl mx-auto px-6 py-14">
           <div className="flex flex-col items-center text-center">
-            {/* Left */}
             <div className="max-w-2xl">
               <div className="flex items-center justify-center gap-2 mb-4">
                 <Leaf className="w-4 h-4 text-green-300" />
@@ -551,45 +632,14 @@ export default function MarketplacePage() {
           </div>
         )}
 
-        {/* Results header */}
-        {!loading && (
-          <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">
-                <span className="font-semibold text-gray-800">{filtered.length}</span> item{filtered.length !== 1 ? 's' : ''} available
-              </span>
-              {category !== 'All' && (
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded font-medium flex items-center gap-1">
-                  {category}
-                  <button onClick={() => setCategory('All')} className="ml-1 hover:text-green-900">
-                    <X className="w-2.5 h-2.5" />
-                  </button>
-                </span>
-              )}
-              {condition !== 'All' && (
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded font-medium flex items-center gap-1">
-                  {condition}
-                  <button onClick={() => setCondition('All')} className="ml-1 hover:text-green-900">
-                    <X className="w-2.5 h-2.5" />
-                  </button>
-                </span>
-              )}
-            </div>
-            {!isAuthenticated() && (
-              <button onClick={() => navigate('/login')} className="text-xs text-green-600 hover:underline font-medium">
-                Sign in to request items →
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* Grid */}
+        {/* Loading State */}
         {loading ? (
           <div className="flex flex-col items-center justify-center py-32 gap-3">
             <Loader2 className="w-8 h-8 text-green-600 animate-spin" />
             <p className="text-gray-400 text-sm">Loading marketplace...</p>
           </div>
         ) : filtered.length === 0 ? (
+          /* Empty State */
           <div className="text-center py-24 bg-white rounded-xl border border-gray-200">
             <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-5">
               <ShoppingBag className="w-7 h-7 text-gray-400" />
@@ -610,16 +660,31 @@ export default function MarketplacePage() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {filtered.map(item => (
-              <ItemCard
-                key={item._id}
-                item={item}
+          /* Only Free and Trade Sections */
+          <div className="space-y-8">
+            {/* Free Items Section */}
+            {freeItems.length > 0 && (
+              <ScrollableItemsSection
+                title="✨ Free Items"
+                items={freeItems}
                 onRequest={handleRequest}
                 requesting={requesting}
                 onViewDetails={handleViewDetails}
+                icon={CheckCircle}
               />
-            ))}
+            )}
+
+            {/* Trade Items Section */}
+            {tradeItems.length > 0 && (
+              <ScrollableItemsSection
+                title="🔄 Available for Trade"
+                items={tradeItems}
+                onRequest={handleRequest}
+                requesting={requesting}
+                onViewDetails={handleViewDetails}
+                icon={ArrowRight}
+              />
+            )}
           </div>
         )}
       </div>
