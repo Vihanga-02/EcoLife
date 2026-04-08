@@ -157,7 +157,7 @@ export default function WastePage() {
   }
 
   const types = ['All', ...WASTE_TYPES]
-// Reset pagination to first page when waste type filter changes
+  // Reset pagination to first page when waste type filter changes
   const handleFilterChange = (type) => {
     setActiveType(type)
     setCurrentPage(1)
@@ -467,7 +467,7 @@ export default function WastePage() {
                   )
                 })}
               </div>
-{/* Show pagination buttons if more than 1 page */}
+              {/* Show pagination buttons if more than 1 page */}
               {pagination.totalPages > 1 && (
                 <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <p className="text-sm text-gray-500">
