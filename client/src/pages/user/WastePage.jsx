@@ -23,6 +23,59 @@ const TYPE_META = {
 const fmt = (n, d = 2) => parseFloat(n || 0).toFixed(d)
 // Number of items displayed per page
 const ITEMS_PER_PAGE = 5
+// Generate a smart suggestion based on the most logged waste type
+const getSmartSuggestion = (analytics) => {
+  if (!analytics?.totalByType) return null
+
+  const totalByType = analytics.totalByType
+  const plasticQty = totalByType.Plastic || 0
+  const organicQty = totalByType.Organic || 0
+  const paperQty = totalByType.Paper || 0
+  const glassQty = totalByType.Glass || 0
+  const ewasteQty = totalByType['E-waste'] || 0
+
+  const values = Object.values(totalByType)
+  const maxQty = values.length ? Math.max(...values) : 0
+
+  if (maxQty === 0) return null
+
+  if (plasticQty === maxQty && plasticQty > 0) {
+    return {
+      title: 'Smart Suggestion',
+      message: 'You logged high plastic waste this week. Try switching to reusable items ♻️',
+    }
+  }
+
+  if (organicQty === maxQty && organicQty > 0) {
+    return {
+      title: 'Nice Progress',
+      message: 'Most of your waste is organic. Composting can help reduce landfill waste 🌿',
+    }
+  }
+
+  if (paperQty === maxQty && paperQty > 0) {
+    return {
+      title: 'Smart Suggestion',
+      message: 'You are logging more paper waste. Try reusing notebooks or recycling clean paper 📄',
+    }
+  }
+
+  if (glassQty === maxQty && glassQty > 0) {
+    return {
+      title: 'Smart Suggestion',
+      message: 'Glass waste is high. Reuse jars and bottles when possible before recycling 🍶',
+    }
+  }
+
+  if (ewasteQty === maxQty && ewasteQty > 0) {
+    return {
+      title: 'Important Reminder',
+      message: 'E-waste should be handled carefully. Use certified recycling centers for safe disposal 🔌',
+    }
+  }
+
+  return null
+}
 // Confirm Delete 
 function ConfirmDialog({ onConfirm, onCancel }) {
   return (
@@ -157,6 +210,7 @@ export default function WastePage() {
   }
 
   const types = ['All', ...WASTE_TYPES]
+  const smartSuggestion = getSmartSuggestion(analytics)
   // Reset pagination to first page when waste type filter changes
   const handleFilterChange = (type) => {
     setActiveType(type)
@@ -256,6 +310,18 @@ export default function WastePage() {
             </div>
           ))}
         </div>
+
+        {/* Smart suggestion based on waste type trends */}
+        {smartSuggestion && (
+          <div className="bg-green-50 border border-green-200 rounded-2xl p-4 shadow-sm">
+            <h3 className="text-sm font-bold text-green-800 mb-1">
+              {smartSuggestion.title}
+            </h3>
+            <p className="text-sm text-green-700">
+              {smartSuggestion.message}
+            </p>
+          </div>
+        )}
 
         {/* Charts in one row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
