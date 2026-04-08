@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
+import { uploadToFirebase, deleteFromFirebase } from '../utils/firebaseUpload.js';
 
 // Register a new user
 const registerUser = async (req, res) => {
@@ -90,15 +91,81 @@ const getMe = async (req, res) => {
 // Update user profile
 const updateProfile = async (req, res) => {
   try {
-    const { name, profileImage } = req.body;
-    const user = await User.findByIdAndUpdate(
-      req.user._id,
-      { name, profileImage },
-      { new: true, runValidators: true }
-    );
+    const { name } = req.body;
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    // Only apply changed fields (supports JSON or multipart/form-data)
+    const updates = {};
+    if (typeof name === 'string' && name.trim() && name.trim() !== user.name) {
+      updates.name = name.trim();
+    }
+
+    if (req.file) {
+      const newUrl = await uploadToFirebase(req.file, 'profiles');
+      if (newUrl) {
+        if (user.profileImage) {
+          await deleteFromFirebase(user.profileImage);
+        }
+        updates.profileImage = newUrl;
+      }
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(200).json({ success: true, message: 'No changes to update', user });
+    }
+
+    Object.assign(user, updates);
+    await user.save();
+
     res.status(200).json({ success: true, message: 'Profile updated', user });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message || 'Failed to update profile' });
+  }
+};
+
+// Update password (requires current password)
+const updatePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ success: false, message: 'Please provide currentPassword and newPassword' });
+    }
+    if (String(newPassword).length < 6) {
+      return res.status(400).json({ success: false, message: 'New password must be at least 6 characters' });
+    }
+
+    const user = await User.findById(req.user._id).select('+password');
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    const isMatch = await user.matchPassword(currentPassword);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: 'Current password is incorrect' });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({ success: true, message: 'Password updated successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message || 'Failed to update password' });
+  }
+};
+
+// Delete current user account
+const deleteMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    if (user.profileImage) {
+      await deleteFromFirebase(user.profileImage);
+    }
+
+    await user.deleteOne();
+    res.status(200).json({ success: true, message: 'Account deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message || 'Failed to delete account' });
   }
 };
 
@@ -138,4 +205,4 @@ const registerAdmin = async (req, res) => {
   }
 };
 
-export { registerUser, loginUser, getMe, updateProfile, registerAdmin };
+export { registerUser, loginUser, getMe, updateProfile, updatePassword, deleteMe, registerAdmin };
