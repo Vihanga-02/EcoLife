@@ -44,10 +44,13 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-3 sm:px-4 flex items-center justify-between h-16">
         {/* Logo */}
         <Link to="/home" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-            <Leaf className="text-green-600" />
-          </div>
-          <span className="font-bold text-black text-lg hidden sm:inline">EcoLife</span>
+          
+            <img
+                src="/ecolife-logo.png"
+                alt="EcoLife"
+                className="h-10 object-contain"
+              />
+          
         </Link>
 
         {/* Nav links */}

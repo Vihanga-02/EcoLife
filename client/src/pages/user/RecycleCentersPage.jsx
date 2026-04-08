@@ -248,7 +248,7 @@ export default function RecycleCentersPage() {
             ) : (
               <GoogleMap 
                 mapContainerStyle={MAP_CONTAINER_STYLE} 
-                zoom={7} 
+                zoom={8} 
                 center={DEFAULT_CENTER}
                 onLoad={map => { mapRef.current = map }}
                 options={{ disableDefaultUI: true, zoomControl: true, mapTypeControl: false, streetViewControl: false }}
