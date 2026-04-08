@@ -40,7 +40,7 @@ const createItem = async (req, res) => {
 // Get all available marketplace items (optionally exclude current user)
 const getAllItems = async (req, res) => {
   try {
-    const { category, condition, listingType, page = 1, limit = 12 } = req.query;
+    const { category, condition, listingType, page = 1, limit = 100 } = req.query;
 
     const filter = { status: 'available' };
     if (category) filter.category = category;

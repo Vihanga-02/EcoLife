@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../../components/common/Navbar'
 import Footer from '../../components/common/Footer'
@@ -7,7 +7,7 @@ import { useAuth } from '../../context/AuthContext'
 import {
   Search, ShoppingBag, Tag, CheckCircle, XCircle,
   Loader2, Package, SlidersHorizontal, X,
-  Leaf, ArrowRight, Heart, Info, PlusCircle
+  Leaf, ArrowRight, Heart, Info, PlusCircle, Calendar, User, MapPin
 } from 'lucide-react'
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -93,16 +93,158 @@ function HowItWorksModal({ onClose }) {
   )
 }
 
-// ─── Item Card ───────────────────────────────────────────────────────────────
-function ItemCard({ item, onRequest, requesting }) {
+// ─── Item Details Modal ─────────────────────────────────────────────────────
+function ItemDetailsModal({ item, onClose, onRequest, requesting }) {
   const cm = CONDITION_META[item.condition] || CONDITION_META.Good
   const seller = item.ownerId?.name || 'EcoUser'
   const isFree = item.listingType === 'Free'
 
   return (
-    <div className="group bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-green-400 hover:shadow-lg transition-all duration-200 flex flex-col">
-      {/* Image */}
-      <div className="relative h-44 bg-gray-50 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-white rounded-2xl shadow-2xl max-w-3xl w-full overflow-hidden">
+        <button onClick={onClose} className="absolute top-3 right-3 z-10 bg-white rounded-full p-1.5 shadow-md text-gray-400 hover:text-gray-600">
+          <X className="w-4 h-4" />
+        </button>
+
+        <div className="flex flex-col md:flex-row">
+          {/* Left Side - Image (Smaller) */}
+          <div className="md:w-1/3 bg-gray-100">
+            <div className="h-48 md:h-64 relative">
+              {item.imageUrl ? (
+                <img
+                  src={item.imageUrl}
+                  alt={item.title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center gap-2">
+                  <Package className="w-12 h-12 text-gray-300" />
+                  <span className="text-xs text-gray-300 font-medium">No image</span>
+                </div>
+              )}
+
+              {/* Type Badge */}
+              <div className="absolute top-3 left-3">
+                <span className={`text-[10px] px-2 py-0.5 rounded-md font-bold tracking-wide uppercase shadow-md ${isFree
+                  ? 'bg-green-600 text-white'
+                  : 'bg-gray-800 text-white'
+                  }`}>
+                  {isFree ? 'Free' : 'Trade'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Side - Details */}
+          <div className="md:w-2/3 p-5">
+            {/* Condition Badge */}
+            <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold ${cm.bg} ${cm.color} mb-3`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${cm.dot}`} />
+              Condition: {item.condition}
+            </div>
+
+            {/* Title */}
+            <h2 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h2>
+
+            {/* Description */}
+            {item.description && (
+              <p className="text-gray-600 text-xs leading-relaxed mb-4">{item.description}</p>
+            )}
+
+            {/* Details Grid - 2 Column Layout */}
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2 mb-4">
+              <div>
+                <p className="text-[10px] text-gray-400 uppercase tracking-wide">Category</p>
+                <p className="text-sm font-medium text-gray-800">{item.category}</p>
+              </div>
+
+              <div>
+                <p className="text-[10px] text-gray-400 uppercase tracking-wide">Listed by</p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <div className="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center">
+                    <span className="text-white text-[9px] font-bold">{seller[0]?.toUpperCase()}</span>
+                  </div>
+                  <span className="text-sm font-medium text-gray-800">{seller}</span>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-[10px] text-gray-400 uppercase tracking-wide">Listed on</p>
+                <p className="text-sm font-medium text-gray-800">
+                  {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : '4/8/2026'}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-[10px] text-gray-400 uppercase tracking-wide">Listing Type</p>
+                <p className="text-sm font-medium text-gray-800">{item.listingType || (isFree ? 'Free' : 'Trade')}</p>
+              </div>
+            </div>
+
+            {/* Trade Info (if applicable) */}
+            {!isFree && item.tradeFor && (
+              <div className="mb-4 p-2.5 bg-blue-50 rounded-lg border border-blue-100">
+                <p className="text-[10px] font-semibold text-blue-800 mb-0.5 flex items-center gap-1">
+                  <ArrowRight className="w-3 h-3" />
+                  Looking to trade for:
+                </p>
+                <p className="text-blue-700 text-xs">{item.tradeFor}</p>
+              </div>
+            )}
+
+            {/* Location Info */}
+            <div className="mb-4 p-2.5 bg-gray-50 rounded-lg">
+              <div className="flex items-start gap-2">
+                <MapPin className="w-3 h-3 text-gray-500 mt-0.5" />
+                <div>
+                  <p className="text-[10px] text-gray-500 mb-0.5">Location</p>
+                  <p className="text-xs text-gray-600">Available for pickup/delivery in your area</p>
+                  <p className="text-[10px] text-gray-400 mt-0.5">Contact owner after request approval</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100">
+              <button
+                onClick={() => onRequest(item)}
+                disabled={requesting === item._id}
+                className={`flex-1 py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5
+                  ${requesting === item._id
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-green-600 hover:bg-green-700 text-white active:scale-95'
+                  }`}
+              >
+                {requesting === item._id
+                  ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Sending...</>
+                  : <><ShoppingBag className="w-3.5 h-3.5" /> Request Item</>
+                }
+              </button>
+              <button
+                onClick={onClose}
+                className="px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 text-xs font-semibold transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Item Card ───────────────────────────────────────────────────────────────
+function ItemCard({ item, onRequest, requesting, onViewDetails }) {
+  const cm = CONDITION_META[item.condition] || CONDITION_META.Good
+  const seller = item.ownerId?.name || 'EcoUser'
+  const isFree = item.listingType === 'Free'
+
+  return (
+    <div className="group bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-green-400 hover:shadow-lg transition-all duration-200 flex flex-col w-[280px] flex-shrink-0">
+      {/* Image with Quick View Overlay */}
+      <div className="relative h-44 bg-gray-50 overflow-hidden cursor-pointer" onClick={() => onViewDetails(item)}>
         {item.imageUrl ? (
           <img
             src={item.imageUrl}
@@ -119,13 +261,23 @@ function ItemCard({ item, onRequest, requesting }) {
         {/* Type Badge */}
         <div className="absolute top-2.5 left-2.5">
           <span className={`text-[11px] px-2 py-0.5 rounded font-bold tracking-wide uppercase ${isFree
-              ? 'bg-green-600 text-white'
-              : 'bg-gray-800 text-white'
+            ? 'bg-green-600 text-white'
+            : 'bg-gray-800 text-white'
             }`}>
             {isFree ? 'Free' : 'Trade'}
           </span>
         </div>
 
+        {/* Quick View Overlay */}
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+          <span className="bg-white/90 backdrop-blur-sm text-gray-800 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1">
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            Quick View
+          </span>
+        </div>
       </div>
 
       {/* Body */}
@@ -136,7 +288,7 @@ function ItemCard({ item, onRequest, requesting }) {
           {item.condition}
         </div>
 
-        <h3 className="font-semibold text-gray-900 text-sm truncate mb-1 leading-snug">
+        <h3 className="font-semibold text-gray-900 text-sm truncate mb-1 leading-snug cursor-pointer hover:text-green-600 transition-colors" onClick={() => onViewDetails(item)}>
           {item.title}
         </h3>
         {item.description && (
@@ -157,7 +309,7 @@ function ItemCard({ item, onRequest, requesting }) {
           </div>
         </div>
 
-        {/* Button */}
+        {/* Buttons  */}
         <button
           onClick={() => onRequest(item)}
           disabled={requesting === item._id}
@@ -168,7 +320,7 @@ function ItemCard({ item, onRequest, requesting }) {
             }`}
         >
           {requesting === item._id
-            ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Requesting...</>
+            ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Sending...</>
             : <><ShoppingBag className="w-3.5 h-3.5" /> Request Item</>
           }
         </button>
@@ -188,6 +340,81 @@ function Toast({ msg, type }) {
   )
 }
 
+// ─── Scrollable Items Section ───────────────────────────────────────────────
+function ScrollableItemsSection({ title, items, onRequest, requesting, onViewDetails, icon: Icon }) {
+  const scrollContainerRef = useRef(null)
+
+  const scroll = (direction) => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = direction === 'left' ? -400 : 400
+      scrollContainerRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' })
+    }
+  }
+
+  if (items.length === 0) return null
+
+  return (
+    <div className="mb-10">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          {Icon && <Icon className="w-5 h-5 text-green-600" />}
+          <h2 className="text-xl font-bold text-gray-800">{title}</h2>
+          <span className="text-sm text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+            {items.length} items
+          </span>
+        </div>
+
+        {/* Scroll Buttons */}
+        {items.length > 3 && (
+          <div className="flex gap-2">
+            <button
+              onClick={() => scroll('left')}
+              className="p-2 rounded-full bg-white border border-gray-200 hover:border-green-400 hover:text-green-600 transition-all"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              onClick={() => scroll('right')}
+              className="p-2 rounded-full bg-white border border-gray-200 hover:border-green-400 hover:text-green-600 transition-all"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Scrollable Container */}
+      <div
+        ref={scrollContainerRef}
+        className="overflow-x-auto scrollbar-hide pb-4"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        <div className="flex gap-5" style={{ minWidth: 'min-content' }}>
+          {items.map(item => (
+            <ItemCard
+              key={item._id}
+              item={item}
+              onRequest={onRequest}
+              requesting={requesting}
+              onViewDetails={onViewDetails}
+            />
+          ))}
+        </div>
+      </div>
+
+      <style jsx>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
+    </div>
+  )
+}
+
 // ─── Main Page ───────────────────────────────────────────────────────────────
 export default function MarketplacePage() {
   const { user, isAuthenticated } = useAuth()
@@ -202,6 +429,7 @@ export default function MarketplacePage() {
   const [toast, setToast] = useState(null)
   const [showFilter, setShowFilter] = useState(false)
   const [showHowItWorks, setShowHowItWorks] = useState(false)
+  const [selectedItem, setSelectedItem] = useState(null)
 
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type })
@@ -222,21 +450,27 @@ export default function MarketplacePage() {
     fetchItems()
   }, [])
 
-  const filtered = items
-    .filter(i => {
-      if (user && (i.ownerId?._id === user._id || i.ownerId === user._id)) return false
-      return true
-    })
-    .filter(i => {
-      const q = search.toLowerCase()
-      const matchSearch = !q ||
-        i.title?.toLowerCase().includes(q) ||
-        i.category?.toLowerCase().includes(q) ||
-        i.description?.toLowerCase().includes(q)
-      const matchCat = category === 'All' || i.category === category
-      const matchCond = condition === 'All' || i.condition === condition
-      return matchSearch && matchCat && matchCond
-    })
+  // Filter out user's own items
+  const availableItems = items.filter(i => {
+    if (user && (i.ownerId?._id === user._id || i.ownerId === user._id)) return false
+    return true
+  })
+
+  // Apply search and filters
+  const filtered = availableItems.filter(i => {
+    const q = search.toLowerCase()
+    const matchSearch = !q ||
+      i.title?.toLowerCase().includes(q) ||
+      i.category?.toLowerCase().includes(q) ||
+      i.description?.toLowerCase().includes(q)
+    const matchCat = category === 'All' || i.category === category
+    const matchCond = condition === 'All' || i.condition === condition
+    return matchSearch && matchCat && matchCond
+  })
+
+  // Separate Free and Trade items
+  const freeItems = filtered.filter(i => i.listingType === 'Free')
+  const tradeItems = filtered.filter(i => i.listingType !== 'Free')
 
   const handleRequest = async (item) => {
     if (!isAuthenticated()) {
@@ -248,6 +482,7 @@ export default function MarketplacePage() {
       await marketplaceAPI.claimItem(item._id)
       showToast(`Request sent for "${item.title}". The owner has been notified.`)
       setItems(prev => prev.filter(i => i._id !== item._id))
+      setSelectedItem(null)
     } catch (err) {
       showToast(err.response?.data?.message || 'Failed to send request. Please try again.', 'error')
     } finally {
@@ -263,12 +498,24 @@ export default function MarketplacePage() {
     navigate('/dashboard/market')
   }
 
+  const handleViewDetails = (item) => {
+    setSelectedItem(item)
+  }
+
   const activeFilters = (category !== 'All' ? 1 : 0) + (condition !== 'All' ? 1 : 0)
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col" style={{ fontFamily: "'DM Sans', sans-serif" }}>
       {toast && <Toast msg={toast.msg} type={toast.type} />}
       {showHowItWorks && <HowItWorksModal onClose={() => setShowHowItWorks(false)} />}
+      {selectedItem && (
+        <ItemDetailsModal
+          item={selectedItem}
+          onClose={() => setSelectedItem(null)}
+          onRequest={handleRequest}
+          requesting={requesting}
+        />
+      )}
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono&display=swap" rel="stylesheet" />
       <Navbar />
 
@@ -276,7 +523,6 @@ export default function MarketplacePage() {
       <div className="bg-green-700 text-white">
         <div className="max-w-7xl mx-auto px-6 py-14">
           <div className="flex flex-col items-center text-center">
-            {/* Left */}
             <div className="max-w-2xl">
               <div className="flex items-center justify-center gap-2 mb-4">
                 <Leaf className="w-4 h-4 text-green-300" />
@@ -344,8 +590,8 @@ export default function MarketplacePage() {
           <button
             onClick={() => setShowFilter(b => !b)}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-medium transition-all ${showFilter || activeFilters > 0
-                ? 'bg-green-600 text-white border-green-600'
-                : 'bg-white text-gray-600 border-gray-200 hover:border-green-400 hover:text-green-700'
+              ? 'bg-green-600 text-white border-green-600'
+              : 'bg-white text-gray-600 border-gray-200 hover:border-green-400 hover:text-green-700'
               }`}
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -378,8 +624,8 @@ export default function MarketplacePage() {
                   key={c}
                   onClick={() => setCategory(c)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${category === c
-                      ? 'bg-green-600 text-white border-green-600'
-                      : 'bg-white text-gray-500 border-gray-200 hover:border-green-400 hover:text-green-700'
+                    ? 'bg-green-600 text-white border-green-600'
+                    : 'bg-white text-gray-500 border-gray-200 hover:border-green-400 hover:text-green-700'
                     }`}
                 >
                   {c}
@@ -389,45 +635,14 @@ export default function MarketplacePage() {
           </div>
         )}
 
-        {/* Results header */}
-        {!loading && (
-          <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">
-                <span className="font-semibold text-gray-800">{filtered.length}</span> item{filtered.length !== 1 ? 's' : ''} available
-              </span>
-              {category !== 'All' && (
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded font-medium flex items-center gap-1">
-                  {category}
-                  <button onClick={() => setCategory('All')} className="ml-1 hover:text-green-900">
-                    <X className="w-2.5 h-2.5" />
-                  </button>
-                </span>
-              )}
-              {condition !== 'All' && (
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded font-medium flex items-center gap-1">
-                  {condition}
-                  <button onClick={() => setCondition('All')} className="ml-1 hover:text-green-900">
-                    <X className="w-2.5 h-2.5" />
-                  </button>
-                </span>
-              )}
-            </div>
-            {!isAuthenticated() && (
-              <button onClick={() => navigate('/login')} className="text-xs text-green-600 hover:underline font-medium">
-                Sign in to request items →
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* Grid */}
+        {/* Loading State */}
         {loading ? (
           <div className="flex flex-col items-center justify-center py-32 gap-3">
             <Loader2 className="w-8 h-8 text-green-600 animate-spin" />
             <p className="text-gray-400 text-sm">Loading marketplace...</p>
           </div>
         ) : filtered.length === 0 ? (
+          /* Empty State */
           <div className="text-center py-24 bg-white rounded-xl border border-gray-200">
             <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-5">
               <ShoppingBag className="w-7 h-7 text-gray-400" />
@@ -448,15 +663,31 @@ export default function MarketplacePage() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {filtered.map(item => (
-              <ItemCard
-                key={item._id}
-                item={item}
+          /* Only Free and Trade Sections */
+          <div className="space-y-8">
+            {/* Free Items Section */}
+            {freeItems.length > 0 && (
+              <ScrollableItemsSection
+                title="✨ Free Items"
+                items={freeItems}
                 onRequest={handleRequest}
                 requesting={requesting}
+                onViewDetails={handleViewDetails}
+                icon={CheckCircle}
               />
-            ))}
+            )}
+
+            {/* Trade Items Section */}
+            {tradeItems.length > 0 && (
+              <ScrollableItemsSection
+                title="🔄 Available for Trade"
+                items={tradeItems}
+                onRequest={handleRequest}
+                requesting={requesting}
+                onViewDetails={handleViewDetails}
+                icon={ArrowRight}
+              />
+            )}
           </div>
         )}
       </div>
