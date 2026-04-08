@@ -24,8 +24,15 @@ export const uploadToFirebase = async (file, folder = 'uploads') => {
 export const deleteFromFirebase = async (fileUrl) => {
   try {
     const bucket = getStorageBucket();
-    const fileName = fileUrl.split('/').pop();
-    const file = bucket.file(fileName);
+    if (!fileUrl) return;
+
+    // Works with our public URLs: https://storage.googleapis.com/<bucket>/<path>
+    // We need the full object path (including folders) after the bucket name.
+    const marker = `https://storage.googleapis.com/${bucket.name}/`;
+    const objectPath = fileUrl.startsWith(marker) ? fileUrl.slice(marker.length) : null;
+    if (!objectPath) return;
+
+    const file = bucket.file(objectPath);
     await file.delete();
   } catch (error) {
     console.error('Firebase delete error:', error);
