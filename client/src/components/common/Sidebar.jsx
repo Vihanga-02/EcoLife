@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import ProfileForm from '../forms/profileForm'
+import { Menu, X } from 'lucide-react'
 
 // ─── Sidebar nav configs (edit labels/paths/icons here) ───────────────────────
 
@@ -46,6 +47,7 @@ export default function Sidebar({ mode = 'user', sidebarItems = [], onClose, onL
   const [profileOpen, setProfileOpen] = useState(false)
 
   const isAdmin = mode === 'admin'
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
     <div className="flex flex-col h-full">

@@ -46,7 +46,7 @@ export default function LoginPage() {
       </div>
 
 
-      <div className="w-full max-w-md z-10">
+      <div className="w-full max-w-lg z-10">
         {/* Logo */}
         <div className="text-center mb-8">
           <Link to="/home" className="inline-block">
@@ -59,8 +59,8 @@ export default function LoginPage() {
         </div>
 
         {/* Card */}
-        <div className="bg-white/95 backdrop-blur-sm border border-green-300 rounded-2xl p-8 shadow-lg">
-          <h2 className="text-xl font-semibold text-black mb-6">Sign in to your account</h2>
+        <div className="bg-white/95 backdrop-blur-sm border border-green-300 rounded-2xl p-7 md:p-8 shadow-lg">
+          <h2 className="text-2xl font-semibold text-black text-center mb-8">Sign in to your account</h2>
 
           {error && (
             <div className="bg-red-100 border border-red-300 text-red-700 text-sm rounded-lg px-4 py-3 mb-4">
