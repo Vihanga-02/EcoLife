@@ -301,7 +301,7 @@ export default function WastePage() {
               txt: 'text-teal-700',
             },
           ].map(s => (
-            <div key={s.label} className={`${s.bg} rounded-2xl p-4 flex items-center gap-3`}>
+            <div key={s.label} className={`${s.bg} rounded-2xl p-4 flex items-center gap-3 border border-gray-200 shadow-sm hover:shadow-md transition-all`}>
               <div className="shrink-0">{s.icon}</div>
               <div className="min-w-0">
                 <p className={`text-xl font-black ${s.txt} leading-none truncate`}>{s.value}</p>
