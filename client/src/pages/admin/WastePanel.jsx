@@ -73,11 +73,11 @@ export default function WastePanel() {
   }, [logs, search])
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center shadow-md">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-10 h-10 bg-linear-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center shadow-md shrink-0">
             <Trash2 className="text-white w-5 h-5" />
           </div>
           <div>
@@ -85,7 +85,7 @@ export default function WastePanel() {
             <p className="text-gray-400 text-xs">Monitor platform-wide waste entries & environmental impact</p>
           </div>
         </div>
-        <button onClick={fetchLogs} disabled={loading} className="flex items-center gap-1.5 px-4 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 rounded-xl text-sm font-semibold shadow-sm transition-all disabled:opacity-50 w-fit">
+        <button onClick={fetchLogs} disabled={loading} className="flex items-center justify-center gap-1.5 px-4 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 rounded-xl text-sm font-semibold shadow-sm transition-all disabled:opacity-50 w-full sm:w-fit">
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-orange-500' : ''}`} /> Refresh Data
         </button>
       </div>
@@ -103,36 +103,36 @@ export default function WastePanel() {
       ) : (
         <div className="space-y-6">
           {/* Top Stat Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-center gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-sm flex items-center gap-3 sm:gap-4 min-w-0">
               <div className="w-14 h-14 bg-gray-50 text-gray-500 rounded-2xl flex items-center justify-center shrink-0 border border-gray-100"><Trash2 className="w-6 h-6" /></div>
               <div><p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Total Logs</p><p className="text-2xl font-black text-gray-800">{stats.totalLogs}</p></div>
             </div>
 
-            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-center gap-4">
+            <div className="bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-sm flex items-center gap-3 sm:gap-4 min-w-0">
               <div className="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center shrink-0 border border-purple-100"><FlaskConical className="w-6 h-6" /></div>
               <div><p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Carbon Saved</p><p className="text-2xl font-black text-purple-700">{fmt(stats.carbonSum, 1)} <span className="text-sm font-medium">kg CO₂</span></p></div>
             </div>
 
-            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-center gap-4">
+            <div className="bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-sm flex items-center gap-3 sm:gap-4 min-w-0">
               <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shrink-0 border border-blue-100"><Recycle className="w-6 h-6" /></div>
               <div><p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Recyclable Logs</p><p className="text-2xl font-black text-blue-700">{stats.recyclableCt}</p></div>
             </div>
 
-            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-center gap-4">
+            <div className="bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-sm flex items-center gap-3 sm:gap-4 min-w-0">
               <div className="w-14 h-14 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center shrink-0 border border-green-100"><Leaf className="w-6 h-6" /></div>
               <div><p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Biodegradable</p><p className="text-2xl font-black text-green-700">{stats.biodegradableCt}</p></div>
             </div>
           </div>
 
           {/* Chart Section */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-            <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2 mb-6">
-              <BarChart3 className="w-4 h-4 text-orange-500" /> Aggregate Waste Quantities by Type
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-6">
+            <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2 mb-4 sm:mb-6">
+              <BarChart3 className="w-4 h-4 text-orange-500 shrink-0" /> Aggregate Waste Quantities by Type
             </h3>
-            <div className="h-[250px] w-full">
+            <div className="h-[220px] sm:h-[250px] w-full min-w-0">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={stats.chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <BarChart data={stats.chartData} margin={{ top: 10, right: 8, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
                   <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#6B7280' }} tickLine={false} axisLine={false} />
                   <YAxis tick={{ fontSize: 12, fill: '#6B7280' }} tickLine={false} axisLine={false} />
@@ -153,9 +153,9 @@ export default function WastePanel() {
 
           {/* Table Section */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col">
-            <div className="p-5 border-b border-gray-100 flex flex-col sm:flex-row justify-between gap-4 items-center bg-gray-50/50">
-              <h3 className="text-sm font-bold text-gray-800">Global Submission Logs</h3>
-              <div className="relative w-full sm:max-w-xs">
+            <div className="p-4 sm:p-5 border-b border-gray-100 flex flex-col sm:flex-row justify-between gap-3 sm:gap-4 items-stretch sm:items-center bg-gray-50/50">
+              <h3 className="text-sm font-bold text-gray-800 shrink-0">Global Submission Logs</h3>
+              <div className="relative w-full sm:max-w-xs min-w-0">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text" placeholder="Search by user or type..."
