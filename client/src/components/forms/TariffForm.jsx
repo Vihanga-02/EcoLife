@@ -82,18 +82,18 @@ export default function TariffForm({ tariff = null, nextBlock = 'Block 1', onSuc
   )
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+      <div className="relative bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl w-full max-w-md max-h-[92dvh] sm:max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="bg-gradient-to-r from-yellow-400 to-orange-500 px-6 py-5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="bg-linear-to-r from-yellow-400 to-orange-500 px-4 sm:px-6 py-4 sm:py-5 flex items-start sm:items-center justify-between gap-3 shrink-0">
+          <div className="flex items-center gap-3 min-w-0">
             <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center">
               <Zap className="text-white w-5 h-5" />
             </div>
-            <div>
-              <h2 className="text-white font-bold text-lg leading-tight">
+            <div className="min-w-0">
+              <h2 className="text-white font-bold text-base sm:text-lg leading-tight">
                 {isEdit ? 'Edit Tariff Block' : 'Add Tariff Block'}
               </h2>
               <p className="text-yellow-100 text-xs">Configure electricity pricing tier</p>
@@ -101,14 +101,14 @@ export default function TariffForm({ tariff = null, nextBlock = 'Block 1', onSuc
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
+            className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors shrink-0"
           >
             <X className="text-white w-4 h-4" />
           </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 min-h-0">
           {/* Block Name - auto suggestion shown read-only in create mode */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -130,7 +130,7 @@ export default function TariffForm({ tariff = null, nextBlock = 'Block 1', onSuc
           </div>
 
           {/* Units range */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Min Units" name="minUnits" placeholder="0" suffix="kWh" hint="Starting unit" />
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">Max Units</label>
@@ -151,7 +151,7 @@ export default function TariffForm({ tariff = null, nextBlock = 'Block 1', onSuc
           </div>
 
           {/* Rate & Fixed charge */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Unit Rate" name="unitRate" placeholder="0.00" suffix="Rs/kWh" />
             <Field label="Fixed Charge" name="fixedCharge" placeholder="0.00" suffix="Rs" />
           </div>
@@ -176,7 +176,7 @@ export default function TariffForm({ tariff = null, nextBlock = 'Block 1', onSuc
             <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-red-600 text-sm">{error}</div>
           )}
 
-          <div className="flex gap-3 pt-2">
+          <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
@@ -187,7 +187,7 @@ export default function TariffForm({ tariff = null, nextBlock = 'Block 1', onSuc
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2.5 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-xl text-sm font-medium hover:from-yellow-500 hover:to-orange-600 transition-all disabled:opacity-60 flex items-center justify-center gap-2"
+              className="flex-1 px-4 py-2.5 bg-linear-to-r from-yellow-400 to-orange-500 text-white rounded-xl text-sm font-medium hover:from-yellow-500 hover:to-orange-600 transition-all disabled:opacity-60 flex items-center justify-center gap-2"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
               {isEdit ? 'Save Changes' : 'Create Block'}
