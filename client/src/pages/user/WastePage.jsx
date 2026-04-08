@@ -9,7 +9,7 @@ import { useAuth } from '../../context/AuthContext'
 import WasteLogForm from '../../components/forms/WasteLogForm'
 import WasteBreakdownChart from '../../components/WasteBreakdownChart'
 
-// ─── Constants ────────────────────────────────────────────────────────────
+// Constants
 const WASTE_TYPES = ['Plastic', 'Paper', 'Glass', 'Organic', 'E-waste']
 
 const TYPE_META = {
@@ -19,10 +19,64 @@ const TYPE_META = {
   Organic: { color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200', bar: 'bg-green-400', emoji: '🌿' },
   'E-waste': { color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200', bar: 'bg-red-400', emoji: '🔌' },
 }
-
+// Format numbers to fixed decimal places
 const fmt = (n, d = 2) => parseFloat(n || 0).toFixed(d)
+// Number of items displayed per page
 const ITEMS_PER_PAGE = 5
-// ─── Confirm Delete ───────────────────────────────────────────────────────
+// Generate a smart suggestion based on the most logged waste type
+const getSmartSuggestion = (analytics) => {
+  if (!analytics?.totalByType) return null
+
+  const totalByType = analytics.totalByType
+  const plasticQty = totalByType.Plastic || 0
+  const organicQty = totalByType.Organic || 0
+  const paperQty = totalByType.Paper || 0
+  const glassQty = totalByType.Glass || 0
+  const ewasteQty = totalByType['E-waste'] || 0
+
+  const values = Object.values(totalByType)
+  const maxQty = values.length ? Math.max(...values) : 0
+
+  if (maxQty === 0) return null
+
+  if (plasticQty === maxQty && plasticQty > 0) {
+    return {
+      title: 'Smart Suggestion',
+      message: 'You logged high plastic waste this week. Try switching to reusable items ♻️',
+    }
+  }
+
+  if (organicQty === maxQty && organicQty > 0) {
+    return {
+      title: 'Nice Progress',
+      message: 'Most of your waste is organic. Composting can help reduce landfill waste 🌿',
+    }
+  }
+
+  if (paperQty === maxQty && paperQty > 0) {
+    return {
+      title: 'Smart Suggestion',
+      message: 'You are logging more paper waste. Try reusing notebooks or recycling clean paper 📄',
+    }
+  }
+
+  if (glassQty === maxQty && glassQty > 0) {
+    return {
+      title: 'Smart Suggestion',
+      message: 'Glass waste is high. Reuse jars and bottles when possible before recycling 🍶',
+    }
+  }
+
+  if (ewasteQty === maxQty && ewasteQty > 0) {
+    return {
+      title: 'Important Reminder',
+      message: 'E-waste should be handled carefully. Use certified recycling centers for safe disposal 🔌',
+    }
+  }
+
+  return null
+}
+// Confirm Delete 
 function ConfirmDialog({ onConfirm, onCancel }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -54,7 +108,7 @@ function ConfirmDialog({ onConfirm, onCancel }) {
   )
 }
 
-// ─── Main WastePage ───────────────────────────────────────────────────────
+//  Main WastePage 
 export default function WastePage() {
   const { refreshUser } = useAuth()
 
@@ -156,7 +210,8 @@ export default function WastePage() {
   }
 
   const types = ['All', ...WASTE_TYPES]
-
+  const smartSuggestion = getSmartSuggestion(analytics)
+  // Reset pagination to first page when waste type filter changes
   const handleFilterChange = (type) => {
     setActiveType(type)
     setCurrentPage(1)
@@ -183,7 +238,7 @@ export default function WastePage() {
       <div className="bg-white border-b border-gray-100 px-4 md:px-6 py-5">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-linear-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center shadow-md">
+            <div className="w-10 h-10 bg-linear-to-br from-green-500 to-green-700 rounded-2xl flex items-center justify-center shadow-md">
               <Trash2 className="text-white w-5 h-5" />
             </div>
             <div>
@@ -255,6 +310,18 @@ export default function WastePage() {
             </div>
           ))}
         </div>
+
+        {/* Smart suggestion based on waste type trends */}
+        {smartSuggestion && (
+          <div className="bg-green-50 border border-green-200 rounded-2xl p-4 shadow-sm">
+            <h3 className="text-sm font-bold text-green-800 mb-1">
+              {smartSuggestion.title}
+            </h3>
+            <p className="text-sm text-green-700">
+              {smartSuggestion.message}
+            </p>
+          </div>
+        )}
 
         {/* Charts in one row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -335,6 +402,7 @@ export default function WastePage() {
               <span className="text-xs font-medium text-gray-400">Date</span>
 
               <div className="relative">
+                {/* Change date filter and reset to first page */}
                 <select
                   value={dateFilter}
                   onChange={(e) => {
@@ -465,7 +533,7 @@ export default function WastePage() {
                   )
                 })}
               </div>
-
+              {/* Show pagination buttons if more than 1 page */}
               {pagination.totalPages > 1 && (
                 <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <p className="text-sm text-gray-500">
