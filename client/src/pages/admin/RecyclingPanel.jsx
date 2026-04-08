@@ -12,7 +12,7 @@ const STATUS_META = {
 function Spinner() {
   return (
     <div className="flex items-center justify-center py-20">
-      <div className="w-8 h-a8 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
+      <div className="w-8 h-8 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
     </div>
   )
 }
@@ -20,7 +20,7 @@ function Spinner() {
 function Toast({ msg, type = 'success' }) {
   if (!msg) return null
   return (
-    <div className={`fixed top-5 right-5 z-50 px-5 py-3 rounded-2xl shadow-xl text-white text-sm font-medium flex items-center gap-2 animate-fade-in ${type === 'error' ? 'bg-red-500' : 'bg-emerald-500'}`}>
+    <div className={`fixed top-4 left-4 right-4 sm:left-auto sm:right-5 sm:top-5 z-50 px-4 sm:px-5 py-3 rounded-2xl shadow-xl text-white text-sm font-medium flex items-center gap-2 animate-fade-in ${type === 'error' ? 'bg-red-500' : 'bg-emerald-500'}`}>
       {type === 'error' ? <XCircle className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
       {msg}
     </div>
@@ -113,13 +113,13 @@ export default function RecyclingPanel() {
   })
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
       <Toast msg={toast?.msg} type={toast?.type} />
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-md">
+          <div className="w-10 h-10 bg-linear-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-md shrink-0">
             <Package className="text-white w-5 h-5" />
           </div>
           <div>
@@ -127,9 +127,9 @@ export default function RecyclingPanel() {
             <p className="text-gray-400 text-xs">Manage centers and user submissions</p>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full sm:w-auto">
           {tab === 'centers' && (
-            <button onClick={() => { setEditCenterTarget(null); setShowCenterForm(true) }} className="flex items-center gap-1.5 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm font-bold shadow-sm transition-all">
+            <button onClick={() => { setEditCenterTarget(null); setShowCenterForm(true) }} className="flex items-center justify-center gap-1.5 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm font-bold shadow-sm transition-all w-full sm:w-auto">
               <Plus className="w-4 h-4" /> Add Center
             </button>
           )}
@@ -137,12 +137,12 @@ export default function RecyclingPanel() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-white border border-gray-200 rounded-2xl p-1 shadow-sm mb-6 w-fit">
-        <button onClick={() => { setTab('centers'); setSearch('') }} className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${tab === 'centers' ? 'bg-green-500 text-white shadow-md' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}>
-          <MapPin className="w-4 h-4" /> Centers ({centers.length})
+      <div className="flex gap-1 bg-white border border-gray-200 rounded-2xl p-1 shadow-sm mb-6 w-full max-w-full overflow-x-auto md:overflow-x-visible">
+        <button onClick={() => { setTab('centers'); setSearch('') }} className={`flex items-center gap-2 px-3 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap shrink-0 ${tab === 'centers' ? 'bg-green-500 text-white shadow-md' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}>
+          <MapPin className="w-4 h-4 shrink-0" /> Centers ({centers.length})
         </button>
-        <button onClick={() => { setTab('submissions'); setSearch('') }} className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${tab === 'submissions' ? 'bg-green-500 text-white shadow-md' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}>
-          <Package className="w-4 h-4" /> Submissions ({submissions.length})
+        <button onClick={() => { setTab('submissions'); setSearch('') }} className={`flex items-center gap-2 px-3 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap shrink-0 ${tab === 'submissions' ? 'bg-green-500 text-white shadow-md' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}>
+          <Package className="w-4 h-4 shrink-0" /> Submissions ({submissions.length})
         </button>
       </div>
 
@@ -172,7 +172,8 @@ export default function RecyclingPanel() {
             <div className="text-center py-20 text-gray-400 text-sm">No centers found.</div>
           ) : (
             <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-              <table className="w-full text-sm">
+              <div className="overflow-x-auto -mx-px">
+              <table className="w-full text-sm min-w-[700px]">
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-4 py-3 text-left font-bold text-gray-500">Name</th>
@@ -206,6 +207,7 @@ export default function RecyclingPanel() {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           )
         )}
@@ -216,7 +218,8 @@ export default function RecyclingPanel() {
             <div className="text-center py-20 text-gray-400 text-sm">No submissions found.</div>
           ) : (
             <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-              <table className="w-full text-sm">
+              <div className="overflow-x-auto -mx-px">
+              <table className="w-full text-sm min-w-[720px]">
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-4 py-3 text-left font-bold text-gray-500">User</th>
@@ -260,6 +263,7 @@ export default function RecyclingPanel() {
                   })}
                 </tbody>
               </table>
+              </div>
             </div>
           )
         )}
