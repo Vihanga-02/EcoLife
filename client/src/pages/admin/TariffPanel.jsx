@@ -94,10 +94,10 @@ export default function TariffPanel() {
   const totalBlocks = tariffs.length
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
       {/* ─── Toast ─── */}
       {toast && (
-        <div className={`fixed top-5 right-5 z-50 px-5 py-3 rounded-xl shadow-lg text-white text-sm font-medium flex items-center gap-2 transition-all ${toast.type === 'error' ? 'bg-red-500' : 'bg-green-500'
+        <div className={`fixed top-4 left-4 right-4 sm:left-auto sm:right-5 sm:top-5 z-50 px-4 sm:px-5 py-3 rounded-xl shadow-lg text-white text-sm font-medium flex items-center gap-2 transition-all ${toast.type === 'error' ? 'bg-red-500' : 'bg-green-500'
           }`}>
           {toast.type === 'error' ? <XCircle className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
           {toast.msg}
@@ -107,7 +107,7 @@ export default function TariffPanel() {
       {/* ─── Header ─── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-md">
+          <div className="w-10 h-10 bg-linear-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-md shrink-0">
             <Zap className="text-white w-5 h-5" />
           </div>
           <div>
@@ -115,17 +115,17 @@ export default function TariffPanel() {
             <p className="text-gray-400 text-xs">Configure electricity pricing blocks for bill calculation</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
           <button
             onClick={load}
-            className="flex items-center gap-1.5 px-4 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 rounded-xl text-sm font-semibold shadow-sm transition-all"
+            className="flex items-center justify-center gap-1.5 px-4 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 rounded-xl text-sm font-semibold shadow-sm transition-all"
             title="Refresh"
           >
             <RefreshCw className="w-4 h-4" /> Refresh
           </button>
           <button
             onClick={() => { setEditTarget(null); setShowForm(true) }}
-            className="flex items-center gap-2 px-4 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl text-sm font-semibold transition-all shadow-sm"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl text-sm font-semibold transition-all shadow-sm"
           >
             <Plus className="w-4 h-4" /> Add Block
           </button>
@@ -133,17 +133,17 @@ export default function TariffPanel() {
       </div>
 
       {/* ─── Summary Cards ─── */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6">
         {[
           { label: 'Total Blocks', value: totalBlocks, iconEl: <Layers className="w-6 h-6 text-purple-600" />, ibg: 'bg-purple-50 border-purple-100', txt: 'text-purple-700' },
           { label: 'Active Blocks', value: activeTariffs, iconEl: <CheckCircle className="w-6 h-6 text-green-600" />, ibg: 'bg-green-50 border-green-100', txt: 'text-green-700' },
           { label: 'Max Rate', value: `Rs ${maxRate}/kWh`, iconEl: <TrendingUp className="w-6 h-6 text-orange-500" />, ibg: 'bg-orange-50 border-orange-100', txt: 'text-orange-600' },
         ].map(s => (
-          <div key={s.label} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-center gap-4">
-            <div className={`w-14 h-14 ${s.ibg} rounded-2xl flex items-center justify-center shrink-0 border`}>{s.iconEl}</div>
-            <div>
+          <div key={s.label} className="bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-sm flex items-center gap-3 sm:gap-4 min-w-0">
+            <div className={`w-12 h-12 sm:w-14 sm:h-14 ${s.ibg} rounded-2xl flex items-center justify-center shrink-0 border`}>{s.iconEl}</div>
+            <div className="min-w-0">
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{s.label}</p>
-              <p className={`text-2xl font-black ${s.txt}`}>{s.value}</p>
+              <p className={`text-xl sm:text-2xl font-black ${s.txt} wrap-break-word`}>{s.value}</p>
             </div>
           </div>
         ))}
@@ -171,19 +171,19 @@ export default function TariffPanel() {
       ) : (
         <div className="space-y-4">
           {/* Visual stair chart */}
-          <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm mb-2">
+          <div className="bg-white border border-gray-100 rounded-2xl p-4 sm:p-5 shadow-sm mb-2">
             <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Rate Overview</p>
             <div className="space-y-2.5">
               {tariffs.map((t, i) => {
                 const c = BLOCK_COLOURS[i % BLOCK_COLOURS.length]
                 const pct = maxRate > 0 ? Math.round((t.unitRate / maxRate) * 100) : 0
                 return (
-                  <div key={t._id} className="flex items-center gap-3">
-                    <span className="text-xs text-gray-500 w-14 shrink-0">{t.blockName}</span>
-                    <div className="flex-1 bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                  <div key={t._id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                    <span className="text-xs text-gray-500 sm:w-14 shrink-0 font-medium">{t.blockName}</span>
+                    <div className="flex-1 bg-gray-100 rounded-full h-2.5 overflow-hidden min-w-0 order-3 sm:order-0">
                       <div className={`${c.bar} h-2.5 rounded-full transition-all duration-700`} style={{ width: `${pct}%` }} />
                     </div>
-                    <span className="text-xs font-semibold text-gray-700 w-20 text-right shrink-0">Rs {t.unitRate}/kWh</span>
+                    <span className="text-xs font-semibold text-gray-700 sm:w-20 sm:text-right shrink-0 order-2 sm:order-0">Rs {t.unitRate}/kWh</span>
                   </div>
                 )
               })}
@@ -195,14 +195,14 @@ export default function TariffPanel() {
             {tariffs.map((t, i) => {
               const c = BLOCK_COLOURS[i % BLOCK_COLOURS.length]
               return (
-                <div key={t._id} className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm relative overflow-hidden hover:shadow-md transition-shadow">
+                <div key={t._id} className="bg-white border border-gray-100 rounded-2xl p-4 sm:p-5 shadow-sm relative overflow-hidden hover:shadow-md transition-shadow">
                   {/* Block number watermark */}
                   <div className="absolute -right-3 -top-3 text-7xl font-black text-black/5 select-none pointer-events-none">
                     {i + 1}
                   </div>
 
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+                    <div className="min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <span className={`text-xs px-2.5 py-0.5 rounded-full font-semibold ${c.badge}`}>{t.blockName}</span>
                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${t.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
@@ -213,7 +213,7 @@ export default function TariffPanel() {
                         {t.minUnits} – {t.maxUnits != null ? t.maxUnits : '∞'} kWh
                       </p>
                     </div>
-                    <div className="flex gap-1.5">
+                    <div className="flex gap-1.5 shrink-0 self-end sm:self-auto">
                       <button
                         onClick={() => { setEditTarget(t); setShowForm(true) }}
                         className="p-2 rounded-xl bg-gray-50 hover:bg-blue-50 border border-gray-100 text-gray-400 hover:text-blue-600 transition-colors"
