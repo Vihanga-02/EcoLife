@@ -13,8 +13,8 @@ export default function AboutUsPage() {
       <div className="max-w-7xl mx-auto px-4 py-12 flex-1">
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-30 h-20 bg-green-100 rounded-2xl mb-6">
-            {/* <Leaf className="text-green-700 text-4xl" /> */}
+          <div className="inline-flex items-center justify-center w-40 h-20 bg-green-100 rounded-2xl mb-6">
+            
              <img
                 src="/ecolife-logo.png"
                 alt="EcoLife"
