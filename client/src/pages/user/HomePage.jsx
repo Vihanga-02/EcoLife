@@ -14,6 +14,7 @@ import {
   Target,
 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { wasteAPI } from '../../api/api'
 
 const RevealOnScroll = ({ children, className = '', delay = 0 }) => {
   const ref = useRef(null)
@@ -156,6 +157,25 @@ const FeatureCard = ({
 export default function HomePage() {
   const { user, isAuthenticated } = useAuth()
   const authenticated = isAuthenticated()
+  const [wasteSummary, setWasteSummary] = useState({ totalLogs: 0, totalCarbonEquivalent: 0 })
+
+  useEffect(() => {
+    if (!authenticated) return
+
+    const loadWasteSummary = async () => {
+      try {
+        const res = await wasteAPI.getAnalytics()
+        setWasteSummary({
+          totalLogs: res.data.totalLogs ?? 0,
+          totalCarbonEquivalent: res.data.totalCarbonEquivalent ?? 0,
+        })
+      } catch {
+        setWasteSummary({ totalLogs: 0, totalCarbonEquivalent: 0 })
+      }
+    }
+
+    loadWasteSummary()
+  }, [authenticated])
 
   const serviceCards = [
     {
@@ -460,8 +480,12 @@ export default function HomePage() {
             {[
               { label: 'Green Score', value: user?.greenScore || 0, unit: 'pts' },
               { label: 'Transactions', value: user?.totalTransactions || 0, unit: 'trades' },
-              { label: 'Waste Logged', value: '—', unit: 'entries' },
-              { label: 'Carbon Saved', value: '—', unit: 'kg CO₂' },
+              { label: 'Waste Logged', value: wasteSummary.totalLogs, unit: 'entries' },
+              {
+                label: 'Carbon Saved',
+                value: wasteSummary.totalCarbonEquivalent?.toFixed(1) || '0.0',
+                unit: 'kg CO₂',
+              },
             ].map((item) => (
               <div
                 key={item.label}

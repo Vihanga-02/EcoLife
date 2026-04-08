@@ -94,7 +94,7 @@ export default function TariffPanel() {
   const totalBlocks = tariffs.length
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-6 bg-gray-50 min-h-screen">
       {/* ─── Toast ─── */}
       {toast && (
         <div className={`fixed top-5 right-5 z-50 px-5 py-3 rounded-xl shadow-lg text-white text-sm font-medium flex items-center gap-2 transition-all ${toast.type === 'error' ? 'bg-red-500' : 'bg-green-500'
@@ -106,23 +106,26 @@ export default function TariffPanel() {
 
       {/* ─── Header ─── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div>
-          <h2 className="text-2xl font-bold text-black flex items-center gap-2">
-            <Zap className="text-yellow-500 w-6 h-6" /> Tariff Management
-          </h2>
-          <p className="text-gray-500 text-sm mt-0.5">Configure electricity pricing blocks for bill calculation</p>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-md">
+            <Zap className="text-white w-5 h-5" />
+          </div>
+          <div>
+            <h2 className="text-xl font-black text-gray-900 leading-tight">Tariff Management</h2>
+            <p className="text-gray-400 text-xs">Configure electricity pricing blocks for bill calculation</p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={load}
-            className="p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-500 hover:text-gray-700 transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 rounded-xl text-sm font-semibold shadow-sm transition-all"
             title="Refresh"
           >
-            <RefreshCw className="w-4 h-4" />
+            <RefreshCw className="w-4 h-4" /> Refresh
           </button>
           <button
             onClick={() => { setEditTarget(null); setShowForm(true) }}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white rounded-xl text-sm font-medium transition-all shadow-md"
+            className="flex items-center gap-2 px-4 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl text-sm font-semibold transition-all shadow-sm"
           >
             <Plus className="w-4 h-4" /> Add Block
           </button>
@@ -132,33 +135,35 @@ export default function TariffPanel() {
       {/* ─── Summary Cards ─── */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         {[
-          { label: 'Total Blocks', value: totalBlocks, icon: <Layers className="w-5 h-5 text-purple-500" />, bg: 'bg-purple-50', txt: 'text-purple-700' },
-          { label: 'Active Blocks', value: activeTariffs, icon: <CheckCircle className="w-5 h-5 text-green-500" />, bg: 'bg-green-50', txt: 'text-green-700' },
-          { label: 'Max Rate', value: `Rs ${maxRate}/kWh`, icon: <TrendingUp className="w-5 h-5 text-orange-500" />, bg: 'bg-orange-50', txt: 'text-orange-700' },
+          { label: 'Total Blocks', value: totalBlocks, iconEl: <Layers className="w-6 h-6 text-purple-600" />, ibg: 'bg-purple-50 border-purple-100', txt: 'text-purple-700' },
+          { label: 'Active Blocks', value: activeTariffs, iconEl: <CheckCircle className="w-6 h-6 text-green-600" />, ibg: 'bg-green-50 border-green-100', txt: 'text-green-700' },
+          { label: 'Max Rate', value: `Rs ${maxRate}/kWh`, iconEl: <TrendingUp className="w-6 h-6 text-orange-500" />, ibg: 'bg-orange-50 border-orange-100', txt: 'text-orange-600' },
         ].map(s => (
-          <div key={s.label} className={`${s.bg} rounded-xl p-4 border border-white shadow-sm`}>
-            <div className="flex items-center gap-2 mb-1">{s.icon}</div>
-            <p className={`text-xl font-bold ${s.txt}`}>{s.value}</p>
-            <p className="text-gray-500 text-xs mt-0.5">{s.label}</p>
+          <div key={s.label} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-center gap-4">
+            <div className={`w-14 h-14 ${s.ibg} rounded-2xl flex items-center justify-center shrink-0 border`}>{s.iconEl}</div>
+            <div>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{s.label}</p>
+              <p className={`text-2xl font-black ${s.txt}`}>{s.value}</p>
+            </div>
           </div>
         ))}
       </div>
 
       {/* ─── Tariff blocks ─── */}
       {loading ? (
-        <div className="flex items-center justify-center py-24">
-          <div className="w-8 h-8 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
+        <div className="flex items-center justify-center py-32">
+          <div className="w-10 h-10 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : tariffs.length === 0 ? (
-        <div className="bg-white border border-dashed border-yellow-300 rounded-2xl p-12 text-center">
+        <div className="bg-white border border-dashed border-gray-200 rounded-2xl p-12 text-center shadow-sm">
           <div className="w-16 h-16 bg-yellow-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Zap className="text-yellow-400 w-8 h-8" />
           </div>
-          <h3 className="text-black font-semibold text-lg mb-1">No tariff blocks yet</h3>
-          <p className="text-gray-500 text-sm mb-5">Add your first pricing block to enable bill estimation for users.</p>
+          <h3 className="text-gray-800 font-bold text-lg mb-1">No tariff blocks yet</h3>
+          <p className="text-gray-400 text-sm mb-5">Add your first pricing block to enable bill estimation for users.</p>
           <button
             onClick={() => { setEditTarget(null); setShowForm(true) }}
-            className="px-5 py-2.5 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-xl text-sm font-medium"
+            className="px-5 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl text-sm font-semibold transition-colors"
           >
             + Add First Block
           </button>
@@ -167,7 +172,7 @@ export default function TariffPanel() {
         <div className="space-y-4">
           {/* Visual stair chart */}
           <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm mb-2">
-            <p className="text-xs text-gray-500 uppercase font-medium mb-3 tracking-wide">Rate Overview</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Rate Overview</p>
             <div className="space-y-2.5">
               {tariffs.map((t, i) => {
                 const c = BLOCK_COLOURS[i % BLOCK_COLOURS.length]
@@ -190,7 +195,7 @@ export default function TariffPanel() {
             {tariffs.map((t, i) => {
               const c = BLOCK_COLOURS[i % BLOCK_COLOURS.length]
               return (
-                <div key={t._id} className={`${c.bg} border ${c.border} rounded-2xl p-5 shadow-sm relative overflow-hidden`}>
+                <div key={t._id} className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm relative overflow-hidden hover:shadow-md transition-shadow">
                   {/* Block number watermark */}
                   <div className="absolute -right-3 -top-3 text-7xl font-black text-black/5 select-none pointer-events-none">
                     {i + 1}
@@ -204,21 +209,21 @@ export default function TariffPanel() {
                           {t.isActive ? '● Active' : '○ Inactive'}
                         </span>
                       </div>
-                      <p className="text-gray-500 text-xs">
+                      <p className="text-gray-400 text-xs">
                         {t.minUnits} – {t.maxUnits != null ? t.maxUnits : '∞'} kWh
                       </p>
                     </div>
                     <div className="flex gap-1.5">
                       <button
                         onClick={() => { setEditTarget(t); setShowForm(true) }}
-                        className="p-2 rounded-xl bg-white/70 hover:bg-white border border-white/50 text-gray-500 hover:text-blue-600 transition-colors"
+                        className="p-2 rounded-xl bg-gray-50 hover:bg-blue-50 border border-gray-100 text-gray-400 hover:text-blue-600 transition-colors"
                         title="Edit"
                       >
                         <Pencil className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => setDeleteTarget(t)}
-                        className="p-2 rounded-xl bg-white/70 hover:bg-white border border-white/50 text-gray-500 hover:text-red-500 transition-colors"
+                        className="p-2 rounded-xl bg-gray-50 hover:bg-red-50 border border-gray-100 text-gray-400 hover:text-red-500 transition-colors"
                         title="Delete"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -228,14 +233,14 @@ export default function TariffPanel() {
 
                   {/* Pricing details */}
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-white/60 rounded-xl p-3">
-                      <p className="text-xs text-gray-500 mb-0.5">Unit Rate</p>
-                      <p className="text-lg font-bold text-gray-800">Rs {t.unitRate}</p>
+                    <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
+                      <p className="text-xs text-gray-400 mb-0.5">Unit Rate</p>
+                      <p className="text-lg font-black text-gray-800">Rs {t.unitRate}</p>
                       <p className="text-xs text-gray-400">per kWh</p>
                     </div>
-                    <div className="bg-white/60 rounded-xl p-3">
-                      <p className="text-xs text-gray-500 mb-0.5">Fixed Charge</p>
-                      <p className="text-lg font-bold text-gray-800">Rs {t.fixedCharge}</p>
+                    <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
+                      <p className="text-xs text-gray-400 mb-0.5">Fixed Charge</p>
+                      <p className="text-lg font-black text-gray-800">Rs {t.fixedCharge}</p>
                       <p className="text-xs text-gray-400">monthly</p>
                     </div>
                   </div>

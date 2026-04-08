@@ -74,6 +74,8 @@ function ItemCard({ item, onEdit, onDelete }) {
 
   return (
     <div className="group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+
+      {/* Image */}
       <div className="relative h-44 overflow-hidden bg-gray-100">
         {item.imageUrl ? (
           <img
@@ -95,6 +97,7 @@ function ItemCard({ item, onEdit, onDelete }) {
             {item.listingType === 'Free' ? 'Free' : 'Trade'}
           </span>
         </div>
+        {/* Hover overlay + actions */}
 
         <div className="absolute right-3 top-3 flex gap-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
           <button
@@ -112,6 +115,7 @@ function ItemCard({ item, onEdit, onDelete }) {
         </div>
       </div>
 
+      {/* Body */}
       <div className="p-4">
         <h3 className="mb-1 truncate text-sm font-bold text-gray-900">
           {item.title}
@@ -285,7 +289,7 @@ export default function MarketPage() {
     try {
       setTransactions((await marketplaceAPI.getMyTransactions()).data.transactions || [])
     } catch {
-      //
+      /* silent */
     } finally {
       setTxnLoading(false)
     }
@@ -344,10 +348,11 @@ export default function MarketPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+
+      {/* Toast */}
       {toast && (
-        <div className={`fixed right-5 top-5 z-50 flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-medium text-white shadow-xl ${
-          toast.type === 'error' ? 'bg-red-500' : 'bg-emerald-600'
-        }`}>
+        <div className={`fixed right-5 top-5 z-50 flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-medium text-white shadow-xl ${toast.type === 'error' ? 'bg-red-500' : 'bg-emerald-600'
+          }`}>
           {toast.type === 'error' ? (
             <XCircle className="h-4 w-4" />
           ) : (
@@ -357,11 +362,12 @@ export default function MarketPage() {
         </div>
       )}
 
+      {/* ── Header ── */}
       <div className="border-b border-gray-200 bg-white">
         <div className="mx-auto max-w-6xl px-4 py-6 md:px-6">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div className="max-w-2xl">
-              <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-600 shadow-sm">
+              <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-sm">
                 <ShoppingBag className="h-5 w-5 text-white" />
               </div>
 
@@ -398,6 +404,7 @@ export default function MarketPage() {
             </div>
           </div>
 
+          {/* Tabs */}
           <div className="mt-6 flex flex-wrap gap-2">
             {tabs.map((t) => {
               const Icon = t.icon
@@ -407,20 +414,18 @@ export default function MarketPage() {
                 <button
                   key={t.id}
                   onClick={() => setTab(t.id)}
-                  className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
-                    isActive
-                      ? 'border border-emerald-200 bg-emerald-50 text-emerald-700'
-                      : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-                  }`}
+                  className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${isActive
+                    ? 'border border-emerald-200 bg-emerald-50 text-emerald-700'
+                    : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                    }`}
                 >
                   <Icon className="h-4 w-4" />
                   {t.label}
                   {t.count > 0 && (
-                    <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${
-                      isActive
-                        ? 'bg-emerald-100 text-emerald-700'
-                        : 'bg-gray-100 text-gray-500'
-                    }`}>
+                    <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${isActive
+                      ? 'bg-emerald-100 text-emerald-700'
+                      : 'bg-gray-100 text-gray-500'
+                      }`}>
                       {t.count}
                     </span>
                   )}
@@ -431,7 +436,11 @@ export default function MarketPage() {
         </div>
       </div>
 
+
+      {/* ── Content ── */}
       <div className="mx-auto max-w-6xl px-4 py-6 md:px-6">
+
+        {/* LISTINGS TAB */}
         {tab === 'listings' && (
           <div className="space-y-6">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -493,6 +502,7 @@ export default function MarketPage() {
           </div>
         )}
 
+        {/* REQUESTS TAB */}
         {tab === 'requests' && (
           <div>
             {txnLoading ? (
@@ -521,6 +531,7 @@ export default function MarketPage() {
           </div>
         )}
 
+        {/* MY REQUESTS TAB */}
         {tab === 'transactions' && (
           <div>
             {txnLoading ? (

@@ -64,14 +64,14 @@ export default function BillingStats({ onFinalizeSuccess }) {
       {successMsg && <div className="bg-emerald-50 text-emerald-600 px-4 py-3 rounded-2xl border border-emerald-100 text-sm font-medium">{successMsg}</div>}
 
       {/* ── AI Energy Tips Section ── */}
-      <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 shadow-md border border-indigo-400 relative overflow-hidden">
+      <div className="bg-linear-to-br from-indigo-500 to-purple-600 rounded-2xl p-5 sm:p-6 shadow-md border border-indigo-400 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10" />
         <div className="relative z-10 flex flex-col md:flex-row gap-6">
           <div className="shrink-0 flex flex-col md:items-center">
             <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center mb-2 shadow-inner">
               <Sparkles className="text-white w-6 h-6" />
             </div>
-            <h3 className="text-white font-bold text-lg leading-tight">AI Energy<br className="hidden md:block" /> Advisor</h3>
+            <h3 className="text-white font-bold text-lg leading-tight">AI Energy Advisor</h3>
           </div>
 
           <div className="flex-1">
@@ -103,7 +103,7 @@ export default function BillingStats({ onFinalizeSuccess }) {
             <CalendarCheck className="w-5 h-5 text-emerald-500" />
             End of Month Cycle
           </h3>
-          <p className="text-sm text-gray-500 mt-1 max-w-lg">
+          <p className="text-sm text-gray-500 mt-1 max-w-lg leading-relaxed">
             Finalize the current month to permanently save your live tracked usage. This will lock in your real-time bill for the month and reset all appliance usage tracking to 0 kWh.
           </p>
         </div>
