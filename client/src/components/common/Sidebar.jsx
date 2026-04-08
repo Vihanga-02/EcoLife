@@ -9,8 +9,6 @@ import { useAuth } from '../../context/AuthContext'
 import ProfileForm from '../forms/profileForm'
 
 
-// ─── Sidebar nav configs (edit labels/paths/icons here) ───────────────────────
-
 /** Navigation items for the User dashboard (/dashboard/*) */
 export const userSidebarItems = [
   { path: '/dashboard', label: 'Overview', icon: <BarChart2 />, exact: true },
@@ -30,7 +28,6 @@ export const adminSidebarItems = [
   { path: '/admin/tariffs', label: 'Tariffs', icon: <Zap /> },
 ]
 
-// ──────────────────────────────────────────────────────────────────────────────
 
 /**
  * Shared Sidebar component used by both UserDashboard and AdminDashboard.
