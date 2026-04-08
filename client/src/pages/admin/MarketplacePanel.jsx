@@ -23,13 +23,13 @@ const TXN_STATUS_META = {
 // ─── Stat Card ────────────────────────────────────────────────────────────────
 function StatCard({ label, value, icon: Icon, color, bg }) {
   return (
-    <div className={`${bg} rounded-2xl p-5 flex items-center gap-4`}>
-      <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${color.replace('text', 'bg').replace('-600', '-100').replace('-500', '-100')}`}>
-        <Icon className={`w-5 h-5 ${color}`} />
+    <div className={`${bg} rounded-2xl p-4 sm:p-5 flex items-center gap-3 sm:gap-4 min-w-0`}>
+      <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center shrink-0 ${color.replace('text', 'bg').replace('-600', '-100').replace('-500', '-100')}`}>
+        <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${color}`} />
       </div>
-      <div>
-        <p className={`text-2xl font-black ${color}`}>{value}</p>
-        <p className="text-gray-500 text-xs mt-0.5">{label}</p>
+      <div className="min-w-0">
+        <p className={`text-xl sm:text-2xl font-black ${color} truncate`}>{value}</p>
+        <p className="text-gray-500 text-[11px] sm:text-xs mt-0.5 leading-snug">{label}</p>
       </div>
     </div>
   )
@@ -139,10 +139,10 @@ export default function MarketplacePanel() {
   ]
 
   return (
-    <div className="p-6 min-h-screen bg-gray-50">
+    <div className="p-4 sm:p-6 min-h-screen bg-gray-50">
       {/* Toast */}
       {toast && (
-        <div className={`fixed top-5 right-5 z-50 px-5 py-3 rounded-2xl shadow-xl text-white text-sm font-medium flex items-center gap-2 ${toast.type === 'error' ? 'bg-red-500' : 'bg-emerald-500'}`}>
+        <div className={`fixed top-4 left-4 right-4 sm:left-auto sm:right-5 sm:top-5 z-50 px-4 sm:px-5 py-3 rounded-2xl shadow-xl text-white text-sm font-medium flex items-center gap-2 ${toast.type === 'error' ? 'bg-red-500' : 'bg-emerald-500'}`}>
           {toast.type === 'error' ? <XCircle className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
           {toast.msg}
         </div>
@@ -150,37 +150,37 @@ export default function MarketplacePanel() {
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-md">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-10 h-10 bg-linear-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-md shrink-0">
             <ShoppingBag className="text-white w-5 h-5" />
           </div>
-          <div>
+          <div className="min-w-0">
             <h2 className="text-xl font-black text-gray-900">Marketplace Management</h2>
             <p className="text-gray-400 text-xs">Monitor all listings, requests and transactions</p>
           </div>
         </div>
         <button
           onClick={() => { loadItems(); loadTransactions() }}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 bg-white text-gray-500 text-sm hover:bg-gray-50 transition-colors shadow-sm"
+          className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-gray-200 bg-white text-gray-500 text-sm hover:bg-gray-50 transition-colors shadow-sm w-full sm:w-auto"
         >
           <RefreshCw className="w-3.5 h-3.5" /> Refresh
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-white border border-gray-100 rounded-2xl p-1 shadow-sm mb-6 w-fit">
+      <div className="flex gap-1 bg-white border border-gray-100 rounded-2xl p-1 shadow-sm mb-6 w-full max-w-full overflow-x-auto md:overflow-x-visible">
         {tabs.map(t => {
           const Icon = t.icon
           return (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${tab === t.id
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap shrink-0 ${tab === t.id
                   ? 'bg-indigo-500 text-white shadow-md'
                   : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                 }`}
             >
-              <Icon className="w-4 h-4" />
+              <Icon className="w-4 h-4 shrink-0" />
               {t.label}
             </button>
           )
@@ -193,7 +193,7 @@ export default function MarketplacePanel() {
           {/* Item Stats */}
           <div>
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Listings Overview</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               <StatCard label="Total Listings" value={totalItems} icon={ShoppingBag} color="text-indigo-600" bg="bg-indigo-50" />
               <StatCard label="Available" value={availableItems} icon={CheckCircle} color="text-emerald-600" bg="bg-emerald-50" />
               <StatCard label="Reserved" value={reservedItems} icon={Clock} color="text-amber-600" bg="bg-amber-50" />
@@ -204,7 +204,7 @@ export default function MarketplacePanel() {
           {/* Transaction Stats */}
           <div>
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Transaction Summary</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               <StatCard label="Total Transactions" value={totalTxns} icon={ArrowLeftRight} color="text-indigo-600" bg="bg-indigo-50" />
               <StatCard label="Completed" value={completedTxns} icon={CheckCircle} color="text-emerald-600" bg="bg-emerald-50" />
               <StatCard label="Pending" value={pendingTxns} icon={Clock} color="text-amber-600" bg="bg-amber-50" />
@@ -215,7 +215,7 @@ export default function MarketplacePanel() {
           {/* Community Stats */}
           <div>
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Community Activity</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               <StatCard label="Active Sellers" value={uniqueSellers} icon={Users} color="text-purple-600" bg="bg-purple-50" />
               <StatCard label="Active Buyers" value={uniqueBuyers} icon={TrendingUp} color="text-pink-600" bg="bg-pink-50" />
               <StatCard label="Green Points Awarded" value={completedTxns * 15} icon={Tag} color="text-emerald-600" bg="bg-emerald-50" />
@@ -229,7 +229,8 @@ export default function MarketplacePanel() {
               <Empty icon={ArrowLeftRight} text="No transactions yet." />
             ) : (
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <table className="w-full text-sm">
+                <div className="overflow-x-auto -mx-px">
+                <table className="w-full text-sm min-w-[640px]">
                   <thead className="bg-gray-50 border-b border-gray-100">
                     <tr>
                       {['Item', 'Buyer', 'Seller', 'Status', 'Date'].map(h => (
@@ -269,6 +270,7 @@ export default function MarketplacePanel() {
                     })}
                   </tbody>
                 </table>
+                </div>
                 {transactions.length > 8 && (
                   <div className="px-4 py-3 border-t border-gray-50 text-center">
                     <button onClick={() => setTab('transactions')} className="text-indigo-500 text-xs font-semibold hover:underline">
@@ -286,7 +288,7 @@ export default function MarketplacePanel() {
       {tab === 'items' && (
         <div className="space-y-4">
           {/* Search */}
-          <div className="relative max-w-sm">
+          <div className="relative w-full sm:max-w-sm">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
@@ -301,7 +303,8 @@ export default function MarketplacePanel() {
             <Empty icon={Package} text="No listings found." />
           ) : (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              <table className="w-full text-sm">
+              <div className="overflow-x-auto -mx-px">
+              <table className="w-full text-sm min-w-[720px]">
                 <thead className="bg-gray-50 border-b border-gray-100">
                   <tr>
                     {['Item', 'Category', 'Condition', 'Type', 'Status', 'Seller', 'Listed'].map(h => (
@@ -350,6 +353,7 @@ export default function MarketplacePanel() {
                   })}
                 </tbody>
               </table>
+              </div>
             </div>
           )}
         </div>
@@ -359,8 +363,8 @@ export default function MarketplacePanel() {
       {tab === 'transactions' && (
         <div className="space-y-4">
           {/* Search + filter row */}
-          <div className="flex flex-wrap gap-3">
-            <div className="relative max-w-sm flex-1">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3">
+            <div className="relative w-full sm:flex-1 sm:max-w-sm min-w-0">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
@@ -370,7 +374,7 @@ export default function MarketplacePanel() {
                 className="w-full bg-white border border-gray-200 text-gray-900 placeholder-gray-400 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 shadow-sm"
               />
             </div>
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-2 flex-wrap w-full sm:w-auto">
               {['all', 'pending', 'completed', 'rejected'].map(s => (
                 <button
                   key={s}
@@ -390,7 +394,8 @@ export default function MarketplacePanel() {
             <Empty icon={ArrowLeftRight} text="No transactions found." />
           ) : (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              <table className="w-full text-sm">
+              <div className="overflow-x-auto -mx-px">
+              <table className="w-full text-sm min-w-[800px]">
                 <thead className="bg-gray-50 border-b border-gray-100">
                   <tr>
                     {['Item', 'Buyer', 'Seller', 'Status', 'Date', 'Completed'].map(h => (
@@ -444,6 +449,7 @@ export default function MarketplacePanel() {
                   })}
                 </tbody>
               </table>
+              </div>
               <div className="px-4 py-3 border-t border-gray-50">
                 <p className="text-xs text-gray-400">
                   Showing {filteredTxns.length} of {transactions.length} transactions
