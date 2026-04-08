@@ -9,7 +9,7 @@ import { useAuth } from '../../context/AuthContext'
 import WasteLogForm from '../../components/forms/WasteLogForm'
 import WasteBreakdownChart from '../../components/WasteBreakdownChart'
 
-// ─── Constants ────────────────────────────────────────────────────────────
+// Constants
 const WASTE_TYPES = ['Plastic', 'Paper', 'Glass', 'Organic', 'E-waste']
 
 const TYPE_META = {
@@ -19,10 +19,11 @@ const TYPE_META = {
   Organic: { color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200', bar: 'bg-green-400', emoji: '🌿' },
   'E-waste': { color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200', bar: 'bg-red-400', emoji: '🔌' },
 }
-
+// Format numbers to fixed decimal places
 const fmt = (n, d = 2) => parseFloat(n || 0).toFixed(d)
+// Number of items displayed per page
 const ITEMS_PER_PAGE = 5
-// ─── Confirm Delete ───────────────────────────────────────────────────────
+// Confirm Delete 
 function ConfirmDialog({ onConfirm, onCancel }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -54,7 +55,7 @@ function ConfirmDialog({ onConfirm, onCancel }) {
   )
 }
 
-// ─── Main WastePage ───────────────────────────────────────────────────────
+//  Main WastePage 
 export default function WastePage() {
   const { refreshUser } = useAuth()
 
@@ -156,7 +157,7 @@ export default function WastePage() {
   }
 
   const types = ['All', ...WASTE_TYPES]
-
+// Reset pagination to first page when waste type filter changes
   const handleFilterChange = (type) => {
     setActiveType(type)
     setCurrentPage(1)
@@ -335,6 +336,7 @@ export default function WastePage() {
               <span className="text-xs font-medium text-gray-400">Date</span>
 
               <div className="relative">
+                {/* Change date filter and reset to first page */}
                 <select
                   value={dateFilter}
                   onChange={(e) => {
@@ -465,7 +467,7 @@ export default function WastePage() {
                   )
                 })}
               </div>
-
+{/* Show pagination buttons if more than 1 page */}
               {pagination.totalPages > 1 && (
                 <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <p className="text-sm text-gray-500">
