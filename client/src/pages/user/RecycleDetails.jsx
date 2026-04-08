@@ -36,7 +36,7 @@ export default function RecycleDetails() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="p-5 md:p-6 max-w-5xl mx-auto space-y-6">
+      <div className="p-4 sm:p-5 md:p-6 max-w-5xl mx-auto space-y-6">
         {/* Header */}
         <div>
           <h2 className="text-xl font-bold text-black flex items-center gap-2">
@@ -46,7 +46,7 @@ export default function RecycleDetails() {
         </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
         <div className="bg-green-50 rounded-2xl p-5 border border-green-100 flex items-center gap-4">
           <div className="w-12 h-12 bg-green-200 text-green-700 rounded-xl flex items-center justify-center shrink-0">
             <Package className="w-6 h-6" />
@@ -98,50 +98,99 @@ export default function RecycleDetails() {
             <p className="text-xs">Find a center on the Recycling map to start.</p>
           </div>
         ) : (
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-5 py-3 text-left font-bold text-gray-500">Center</th>
-                <th className="px-5 py-3 text-left font-bold text-gray-500">Material</th>
-                <th className="px-5 py-3 text-left font-bold text-gray-500">Weight</th>
-                <th className="px-5 py-3 text-left font-bold text-gray-500">Submitted</th>
-                <th className="px-5 py-3 text-right font-bold text-gray-500">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
+          <>
+            {/* Mobile cards */}
+            <div className="md:hidden p-4 space-y-3">
               {submissions.map(sub => {
                 const meta = STATUS_META[sub.status] || STATUS_META.pending
                 const Icon = meta.icon
                 return (
-                  <tr key={sub._id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-5 py-4">
-                      <p className="font-semibold text-gray-900">{sub.centerId?.name || 'Unknown Center'}</p>
-                      <p className="text-xs text-gray-400 truncate max-w-[200px]">{sub.centerId?.address || ''}</p>
-                    </td>
-                    <td className="px-5 py-4 text-gray-700 font-medium">{sub.materialType}</td>
-                    <td className="px-5 py-4 text-gray-700">{sub.estimatedWeight} kg</td>
-                    <td className="px-5 py-4 text-xs text-gray-400">
-                      {new Date(sub.submittedAt).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}
-                    </td>
-                    <td className="px-5 py-4 text-right">
-                      <div className="flex justify-end">
-                        <span className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full font-bold ${meta.bg} ${meta.color}`}>
-                          <Icon className="w-3.5 h-3.5" />
-                          {meta.label}
-                        </span>
+                  <div key={sub._id} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="font-bold text-gray-900 truncate">{sub.centerId?.name || 'Unknown Center'}</p>
+                        <p className="text-xs text-gray-400 mt-0.5 line-clamp-2">{sub.centerId?.address || ''}</p>
                       </div>
-                      {sub.status === 'rejected' && sub.reviewNotes && (
-                        <p className="text-[10px] text-red-400 mt-1 max-w-[150px] truncate ml-auto">{sub.reviewNotes}</p>
-                      )}
+                      <span className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full font-bold ${meta.bg} ${meta.color} shrink-0`}>
+                        <Icon className="w-3.5 h-3.5" />
+                        {meta.label}
+                      </span>
+                    </div>
+
+                    <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                      <div className="rounded-xl bg-gray-50 p-3">
+                        <p className="text-[11px] text-gray-500 font-semibold">Material</p>
+                        <p className="text-gray-900 font-bold truncate">{sub.materialType}</p>
+                      </div>
+                      <div className="rounded-xl bg-gray-50 p-3">
+                        <p className="text-[11px] text-gray-500 font-semibold">Weight</p>
+                        <p className="text-gray-900 font-bold">{sub.estimatedWeight} kg</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 flex items-center justify-between gap-3">
+                      <p className="text-xs text-gray-400">
+                        {new Date(sub.submittedAt).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}
+                      </p>
                       {sub.status === 'approved' && (
-                        <p className="text-[10px] text-green-500 mt-1 font-bold">+{Math.round(sub.estimatedWeight * 3)} pts</p>
+                        <p className="text-xs text-green-600 font-bold">+{Math.round(sub.estimatedWeight * 3)} pts</p>
                       )}
-                    </td>
-                  </tr>
+                    </div>
+
+                    {sub.status === 'rejected' && sub.reviewNotes && (
+                      <p className="text-xs text-red-500 mt-2 line-clamp-2">{sub.reviewNotes}</p>
+                    )}
+                  </div>
                 )
               })}
-            </tbody>
-          </table>
+            </div>
+
+            {/* Desktop table */}
+            <table className="hidden md:table w-full text-sm">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-5 py-3 text-left font-bold text-gray-500">Center</th>
+                  <th className="px-5 py-3 text-left font-bold text-gray-500">Material</th>
+                  <th className="px-5 py-3 text-left font-bold text-gray-500">Weight</th>
+                  <th className="px-5 py-3 text-left font-bold text-gray-500">Submitted</th>
+                  <th className="px-5 py-3 text-right font-bold text-gray-500">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {submissions.map(sub => {
+                  const meta = STATUS_META[sub.status] || STATUS_META.pending
+                  const Icon = meta.icon
+                  return (
+                    <tr key={sub._id} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-5 py-4">
+                        <p className="font-semibold text-gray-900">{sub.centerId?.name || 'Unknown Center'}</p>
+                        <p className="text-xs text-gray-400 truncate max-w-[200px]">{sub.centerId?.address || ''}</p>
+                      </td>
+                      <td className="px-5 py-4 text-gray-700 font-medium">{sub.materialType}</td>
+                      <td className="px-5 py-4 text-gray-700">{sub.estimatedWeight} kg</td>
+                      <td className="px-5 py-4 text-xs text-gray-400">
+                        {new Date(sub.submittedAt).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}
+                      </td>
+                      <td className="px-5 py-4 text-right">
+                        <div className="flex justify-end">
+                          <span className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full font-bold ${meta.bg} ${meta.color}`}>
+                            <Icon className="w-3.5 h-3.5" />
+                            {meta.label}
+                          </span>
+                        </div>
+                        {sub.status === 'rejected' && sub.reviewNotes && (
+                          <p className="text-[10px] text-red-400 mt-1 max-w-[150px] truncate ml-auto">{sub.reviewNotes}</p>
+                        )}
+                        {sub.status === 'approved' && (
+                          <p className="text-[10px] text-green-500 mt-1 font-bold">+{Math.round(sub.estimatedWeight * 3)} pts</p>
+                        )}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </>
         )}
         </div>
       </div>

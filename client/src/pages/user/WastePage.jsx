@@ -171,7 +171,7 @@ export default function WastePage() {
       {/* Toast */}
       {toast && (
         <div
-          className={`fixed top-5 right-5 z-50 px-5 py-3 rounded-2xl shadow-xl text-white text-sm font-medium flex items-center gap-2 ${toast.type === 'error' ? 'bg-red-500' : 'bg-emerald-500'
+          className={`fixed top-4 left-4 right-4 sm:left-auto sm:right-5 sm:top-5 z-50 px-4 sm:px-5 py-3 rounded-2xl shadow-xl text-white text-sm font-medium flex items-center gap-2 ${toast.type === 'error' ? 'bg-red-500' : 'bg-emerald-500'
             }`}
         >
           {toast.type === 'error' ? <XCircle className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
@@ -183,7 +183,7 @@ export default function WastePage() {
       <div className="bg-white border-b border-gray-100 px-4 md:px-6 py-5">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center shadow-md">
+            <div className="w-10 h-10 bg-linear-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center shadow-md">
               <Trash2 className="text-white w-5 h-5" />
             </div>
             <div>

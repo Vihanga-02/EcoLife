@@ -19,7 +19,7 @@ export default function UserDashboard() {
   const handleLogout = () => { logout(); navigate('/login') }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-500 to-white flex">
+    <div className="min-h-screen bg-linear-to-b from-green-500 to-white flex overflow-x-hidden">
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex w-60 bg-white border-r border-green-300 flex-col fixed left-0 top-0 bottom-0 z-40 shadow-lg">
         <Sidebar
@@ -46,7 +46,7 @@ export default function UserDashboard() {
       )}
 
       {/* Main content */}
-      <main className="flex-1 md:ml-60 min-h-screen">
+      <main className="flex-1 md:ml-60 min-h-screen min-w-0">
         {/* Mobile top bar */}
         <div className="md:hidden flex items-center justify-between px-4 h-14 bg-white border-b border-green-300 sticky top-0 z-30 shadow-md">
           <button onClick={() => setSidebarOpen(true)}>
