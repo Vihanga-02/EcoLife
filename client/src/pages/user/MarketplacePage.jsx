@@ -7,7 +7,7 @@ import { useAuth } from '../../context/AuthContext'
 import {
   Search, ShoppingBag, Tag, CheckCircle, XCircle,
   Loader2, Package, SlidersHorizontal, X,
-  Leaf, ArrowRight, Heart, Info, PlusCircle
+  Leaf, ArrowRight, Heart, Info, PlusCircle, Calendar, User, MapPin
 } from 'lucide-react'
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -93,8 +93,149 @@ function HowItWorksModal({ onClose }) {
   )
 }
 
+// ─── Item Details Modal ─────────────────────────────────────────────────────
+function ItemDetailsModal({ item, onClose, onRequest, requesting }) {
+  const cm = CONDITION_META[item.condition] || CONDITION_META.Good
+  const seller = item.ownerId?.name || 'EcoUser'
+  const isFree = item.listingType === 'Free'
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-white rounded-2xl shadow-2xl max-w-3xl w-full overflow-hidden">
+        <button onClick={onClose} className="absolute top-3 right-3 z-10 bg-white rounded-full p-1.5 shadow-md text-gray-400 hover:text-gray-600">
+          <X className="w-4 h-4" />
+        </button>
+
+        <div className="flex flex-col md:flex-row">
+          {/* Left Side - Image (Smaller) */}
+          <div className="md:w-1/3 bg-gray-100">
+            <div className="h-48 md:h-64 relative">
+              {item.imageUrl ? (
+                <img
+                  src={item.imageUrl}
+                  alt={item.title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center gap-2">
+                  <Package className="w-12 h-12 text-gray-300" />
+                  <span className="text-xs text-gray-300 font-medium">No image</span>
+                </div>
+              )}
+              
+              {/* Type Badge */}
+              <div className="absolute top-3 left-3">
+                <span className={`text-[10px] px-2 py-0.5 rounded-md font-bold tracking-wide uppercase shadow-md ${isFree
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-800 text-white'
+                  }`}>
+                  {isFree ? 'Free' : 'Trade'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Side - Details */}
+          <div className="md:w-2/3 p-5">
+            {/* Condition Badge */}
+            <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold ${cm.bg} ${cm.color} mb-3`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${cm.dot}`} />
+              Condition: {item.condition}
+            </div>
+
+            {/* Title */}
+            <h2 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h2>
+
+            {/* Description */}
+            {item.description && (
+              <p className="text-gray-600 text-xs leading-relaxed mb-4">{item.description}</p>
+            )}
+
+            {/* Details Grid - 2 Column Layout */}
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2 mb-4">
+              <div>
+                <p className="text-[10px] text-gray-400 uppercase tracking-wide">Category</p>
+                <p className="text-sm font-medium text-gray-800">{item.category}</p>
+              </div>
+
+              <div>
+                <p className="text-[10px] text-gray-400 uppercase tracking-wide">Listed by</p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <div className="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center">
+                    <span className="text-white text-[9px] font-bold">{seller[0]?.toUpperCase()}</span>
+                  </div>
+                  <span className="text-sm font-medium text-gray-800">{seller}</span>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-[10px] text-gray-400 uppercase tracking-wide">Listed on</p>
+                <p className="text-sm font-medium text-gray-800">
+                  {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : '4/8/2026'}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-[10px] text-gray-400 uppercase tracking-wide">Listing Type</p>
+                <p className="text-sm font-medium text-gray-800">{item.listingType || (isFree ? 'Free' : 'Trade')}</p>
+              </div>
+            </div>
+
+            {/* Trade Info (if applicable) */}
+            {!isFree && item.tradeFor && (
+              <div className="mb-4 p-2.5 bg-blue-50 rounded-lg border border-blue-100">
+                <p className="text-[10px] font-semibold text-blue-800 mb-0.5 flex items-center gap-1">
+                  <ArrowRight className="w-3 h-3" />
+                  Looking to trade for:
+                </p>
+                <p className="text-blue-700 text-xs">{item.tradeFor}</p>
+              </div>
+            )}
+
+            {/* Location Info */}
+            <div className="mb-4 p-2.5 bg-gray-50 rounded-lg">
+              <div className="flex items-start gap-2">
+                <MapPin className="w-3 h-3 text-gray-500 mt-0.5" />
+                <div>
+                  <p className="text-[10px] text-gray-500 mb-0.5">Location</p>
+                  <p className="text-xs text-gray-600">Available for pickup/delivery in your area</p>
+                  <p className="text-[10px] text-gray-400 mt-0.5">Contact owner after request approval</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100">
+              <button
+                onClick={() => onRequest(item)}
+                disabled={requesting === item._id}
+                className={`flex-1 py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5
+                  ${requesting === item._id
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-green-600 hover:bg-green-700 text-white active:scale-95'
+                  }`}
+              >
+                {requesting === item._id
+                  ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Sending...</>
+                  : <><ShoppingBag className="w-3.5 h-3.5" /> Request Item</>
+                }
+              </button>
+              <button
+                onClick={onClose}
+                className="px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 text-xs font-semibold transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 // ─── Item Card ───────────────────────────────────────────────────────────────
-function ItemCard({ item, onRequest, requesting }) {
+function ItemCard({ item, onRequest, requesting, onViewDetails }) {
   const cm = CONDITION_META[item.condition] || CONDITION_META.Good
   const seller = item.ownerId?.name || 'EcoUser'
   const isFree = item.listingType === 'Free'
@@ -102,7 +243,7 @@ function ItemCard({ item, onRequest, requesting }) {
   return (
     <div className="group bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-green-400 hover:shadow-lg transition-all duration-200 flex flex-col">
       {/* Image */}
-      <div className="relative h-44 bg-gray-50 overflow-hidden">
+      <div className="relative h-44 bg-gray-50 overflow-hidden cursor-pointer" onClick={() => onViewDetails(item)}>
         {item.imageUrl ? (
           <img
             src={item.imageUrl}
@@ -125,7 +266,6 @@ function ItemCard({ item, onRequest, requesting }) {
             {isFree ? 'Free' : 'Trade'}
           </span>
         </div>
-
       </div>
 
       {/* Body */}
@@ -136,7 +276,7 @@ function ItemCard({ item, onRequest, requesting }) {
           {item.condition}
         </div>
 
-        <h3 className="font-semibold text-gray-900 text-sm truncate mb-1 leading-snug">
+        <h3 className="font-semibold text-gray-900 text-sm truncate mb-1 leading-snug cursor-pointer hover:text-green-600 transition-colors" onClick={() => onViewDetails(item)}>
           {item.title}
         </h3>
         {item.description && (
@@ -157,21 +297,29 @@ function ItemCard({ item, onRequest, requesting }) {
           </div>
         </div>
 
-        {/* Button */}
-        <button
-          onClick={() => onRequest(item)}
-          disabled={requesting === item._id}
-          className={`w-full py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 border
-            ${requesting === item._id
-              ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-              : 'bg-green-600 hover:bg-green-700 text-white border-green-600 hover:border-green-700 active:scale-95'
-            }`}
-        >
-          {requesting === item._id
-            ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Requesting...</>
-            : <><ShoppingBag className="w-3.5 h-3.5" /> Request Item</>
-          }
-        </button>
+        {/* Buttons */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => onViewDetails(item)}
+            className="flex-1 py-2 rounded-lg text-xs font-semibold transition-all border border-gray-200 bg-white text-gray-700 hover:border-green-400 hover:text-green-600"
+          >
+            View Details
+          </button>
+          <button
+            onClick={() => onRequest(item)}
+            disabled={requesting === item._id}
+            className={`flex-1 py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 border
+              ${requesting === item._id
+                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                : 'bg-green-600 hover:bg-green-700 text-white border-green-600 hover:border-green-700 active:scale-95'
+              }`}
+          >
+            {requesting === item._id
+              ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /></>
+              : <><ShoppingBag className="w-3.5 h-3.5" /> Request</>
+            }
+          </button>
+        </div>
       </div>
     </div>
   )
@@ -202,6 +350,7 @@ export default function MarketplacePage() {
   const [toast, setToast] = useState(null)
   const [showFilter, setShowFilter] = useState(false)
   const [showHowItWorks, setShowHowItWorks] = useState(false)
+  const [selectedItem, setSelectedItem] = useState(null)
 
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type })
@@ -248,6 +397,7 @@ export default function MarketplacePage() {
       await marketplaceAPI.claimItem(item._id)
       showToast(`Request sent for "${item.title}". The owner has been notified.`)
       setItems(prev => prev.filter(i => i._id !== item._id))
+      setSelectedItem(null) // Close modal if open
     } catch (err) {
       showToast(err.response?.data?.message || 'Failed to send request. Please try again.', 'error')
     } finally {
@@ -263,12 +413,24 @@ export default function MarketplacePage() {
     navigate('/dashboard/market')
   }
 
+  const handleViewDetails = (item) => {
+    setSelectedItem(item)
+  }
+
   const activeFilters = (category !== 'All' ? 1 : 0) + (condition !== 'All' ? 1 : 0)
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col" style={{ fontFamily: "'DM Sans', sans-serif" }}>
       {toast && <Toast msg={toast.msg} type={toast.type} />}
       {showHowItWorks && <HowItWorksModal onClose={() => setShowHowItWorks(false)} />}
+      {selectedItem && (
+        <ItemDetailsModal 
+          item={selectedItem} 
+          onClose={() => setSelectedItem(null)} 
+          onRequest={handleRequest}
+          requesting={requesting}
+        />
+      )}
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono&display=swap" rel="stylesheet" />
       <Navbar />
 
@@ -455,6 +617,7 @@ export default function MarketplacePage() {
                 item={item}
                 onRequest={handleRequest}
                 requesting={requesting}
+                onViewDetails={handleViewDetails}
               />
             ))}
           </div>
