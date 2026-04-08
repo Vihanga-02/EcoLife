@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   Leaf, Home, ChevronRight, LogOut,
@@ -5,6 +6,7 @@ import {
   Grid, Users, MapPin
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
+import ProfileForm from '../forms/profileForm'
 
 // ─── Sidebar nav configs (edit labels/paths/icons here) ───────────────────────
 
@@ -41,6 +43,7 @@ export const adminSidebarItems = [
 export default function Sidebar({ mode = 'user', sidebarItems = [], onClose, onLogout }) {
   const { user } = useAuth()
   const location = useLocation()
+  const [profileOpen, setProfileOpen] = useState(false)
 
   const isAdmin = mode === 'admin'
 
@@ -74,28 +77,46 @@ export default function Sidebar({ mode = 'user', sidebarItems = [], onClose, onL
 
       {/* ── User / Admin info ── */}
       {isAdmin ? (
-        <div className="px-4 py-3 border-b border-green-300 flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold text-sm shrink-0">
-            {user?.name?.charAt(0).toUpperCase()}
+        <button
+          type="button"
+          onClick={() => setProfileOpen(true)}
+          className="px-4 py-3 border-b border-green-300 flex items-center gap-2 text-left hover:bg-green-50 transition-colors"
+        >
+          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center overflow-hidden text-green-600 font-bold text-sm shrink-0 border border-green-200">
+            {user?.profileImage ? (
+              <img src={user.profileImage} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              user?.name?.charAt(0).toUpperCase()
+            )}
           </div>
           <div className="min-w-0">
             <p className="text-black text-sm font-medium truncate">{user?.name}</p>
             <p className="text-xs text-green-700 bg-green-100 px-1.5 py-0.5 rounded inline-block">Admin</p>
           </div>
-        </div>
+        </button>
       ) : (
-        <div className="px-4 py-4 border-b border-green-300">
+        <button
+          type="button"
+          onClick={() => setProfileOpen(true)}
+          className="px-4 py-4 border-b border-green-300 w-full text-left hover:bg-green-50 transition-colors"
+        >
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold shrink-0">
-              {user?.name?.charAt(0).toUpperCase()}
+            <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center overflow-hidden text-green-700 font-bold shrink-0 border border-green-200">
+              {user?.profileImage ? (
+                <img src={user.profileImage} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                user?.name?.charAt(0).toUpperCase()
+              )}
             </div>
             <div className="min-w-0">
               <p className="text-black text-sm font-medium truncate">{user?.name}</p>
               <p className="text-green-600 text-xs">⭐ {user?.greenScore || 0} pts</p>
             </div>
           </div>
-        </div>
+        </button>
       )}
+
+      <ProfileForm open={profileOpen} onClose={() => setProfileOpen(false)} />
 
       {/* ── Navigation ── */}
       <nav className={`flex-1 p-3 ${isAdmin ? 'space-y-0.5' : 'space-y-1'}`}>

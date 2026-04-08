@@ -75,8 +75,12 @@ export default function Navbar() {
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50 transition-colors"
             >
-              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-semibold text-sm">
-                {user?.name?.charAt(0).toUpperCase()}
+              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center overflow-hidden text-green-700 font-semibold text-sm border border-green-200">
+                {user?.profileImage ? (
+                  <img src={user.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  user?.name?.charAt(0).toUpperCase()
+                )}
               </div>
               <span className="hidden sm:block text-black text-sm font-medium">{user?.name}</span>
               <ChevronDown className={`text-gray-600 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} size={16} />
