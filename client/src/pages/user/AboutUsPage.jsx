@@ -13,14 +13,6 @@ export default function AboutUsPage() {
       <div className="max-w-7xl mx-auto px-4 py-12 flex-1">
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-40 h-20 bg-green-100 rounded-2xl mb-6">
-            
-             <img
-                src="/ecolife-logo.png"
-                alt="EcoLife"
-                className="h-10 object-contain"
-              />
-          </div>
           <h1 className="text-4xl md:text-5xl font-bold text-black mb-4">About EcoLife</h1>
           <p className="text-gray-700 text-lg max-w-2xl mx-auto">
             Empowering individuals and communities to live sustainably through smart technology and collective action.
