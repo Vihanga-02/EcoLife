@@ -117,14 +117,6 @@ function ItemCard({ item, onEdit, onDelete }) {
             <Trash2 className="h-3.5 w-3.5" />
           </button>
         </div>
-
-        {/* Quick View Indicator */}
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-          <div className="flex items-center justify-center gap-1 text-[10px] font-semibold text-white">
-            <Eye className="h-3 w-3" />
-            Quick view available
-          </div>
-        </div>
       </div>
 
       {/* Content Section */}
