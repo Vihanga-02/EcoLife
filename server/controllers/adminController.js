@@ -78,7 +78,7 @@ const getAllUsers = async (req, res) => {
     const skip = (Number(page) - 1) * Number(limit);
     const total = await User.countDocuments(filter);
     const users = await User.find(filter)
-      .sort({ createdAt: -1 })
+      .sort({ greenScore: -1})
       .skip(skip)
       .limit(Number(limit));
 
