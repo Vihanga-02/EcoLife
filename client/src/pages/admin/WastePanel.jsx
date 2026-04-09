@@ -18,6 +18,7 @@ export default function WastePanel() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [search, setSearch] = useState('')
+  const [showAll, setShowAll] = useState(false)
 
   const fetchLogs = useCallback(async () => {
     setLoading(true)
@@ -71,6 +72,8 @@ export default function WastePanel() {
       l.wasteType?.toLowerCase().includes(q)
     )
   }, [logs, search])
+
+  const visibleLogs = showAll ? filteredLogs : filteredLogs.slice(0, 8)
 
   return (
     <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
@@ -169,6 +172,7 @@ export default function WastePanel() {
               {filteredLogs.length === 0 ? (
                 <div className="p-10 text-center text-gray-400 text-sm">No waste logs matched your search.</div>
               ) : (
+                <>
                 <table className="w-full text-sm">
                   <thead className="bg-white border-b border-gray-100">
                     <tr>
@@ -180,7 +184,7 @@ export default function WastePanel() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
-                    {filteredLogs.map(log => {
+                    {visibleLogs.map(log => {
                       const m = TYPE_META[log.wasteType] || TYPE_META.Plastic
                       return (
                         <tr key={log._id} className="hover:bg-gray-50/50 transition-colors">
@@ -220,6 +224,17 @@ export default function WastePanel() {
                     })}
                   </tbody>
                 </table>
+                {filteredLogs.length > 10 && (
+                <div className="p-4 text-center border-t border-gray-100 bg-white">
+                  <button
+                    onClick={() => setShowAll(prev => !prev)}
+                    className="text-sm font-semibold text-green-600 hover:text-green-700 transition-colors"
+                  >
+                    {showAll ? 'Show less ↑' : `View all ${filteredLogs.length} logs →`}
+                  </button>
+                </div>
+              )}
+              </>
               )}
             </div>
           </div>
