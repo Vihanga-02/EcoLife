@@ -1,0 +1,35 @@
+import { test, expect } from '@playwright/test';
+
+test('test', async ({ page }) => {
+  await page.goto('http://localhost:5173/home');
+  await page.getByRole('link', { name: 'Login' }).click();
+  await page.getByRole('textbox', { name: 'you@example.com' }).click();
+  await page.getByRole('textbox', { name: 'you@example.com' }).fill('test@gmail.com');
+  await page.getByRole('textbox', { name: '••••••••' }).click();
+  await page.getByRole('textbox', { name: '••••••••' }).fill('password');
+  await page.getByRole('button', { name: 'Sign In' }).click();
+  await page.getByRole('button', { name: 'T Test User' }).click();
+  await page.getByRole('button', { name: 'Dashboard' }).click();
+  await page.getByRole('link', { name: 'Energy Monitor' }).click();
+  await page.getByRole('button', { name: 'Add Appliance' }).click();
+  await page.getByRole('textbox', { name: 'e.g. Samsung Refrigerator' }).click();
+  await page.getByRole('textbox', { name: 'e.g. Samsung Refrigerator' }).press('CapsLock');
+  await page.getByRole('textbox', { name: 'e.g. Samsung Refrigerator' }).fill('S');
+  await page.getByRole('textbox', { name: 'e.g. Samsung Refrigerator' }).press('CapsLock');
+  await page.getByRole('textbox', { name: 'e.g. Samsung Refrigerator' }).fill('');
+  await page.getByRole('textbox', { name: 'e.g. Samsung Refrigerator' }).press('CapsLock');
+  await page.getByRole('textbox', { name: 'e.g. Samsung Refrigerator' }).fill('LED TV');
+  await page.getByRole('textbox', { name: 'e.g. Samsung Refrigerator' }).press('CapsLock');
+  await page.getByPlaceholder('e.g. 150').click();
+  await page.getByPlaceholder('e.g. 150').fill('100');
+  await page.getByRole('button', { name: '🛋️ Living' }).click();
+  await page.getByPlaceholder('e.g. 8').click();
+  await page.getByPlaceholder('e.g. 8').fill('5');
+  await page.getByPlaceholder('e.g. 30').click();
+  await page.getByPlaceholder('e.g. 30').fill('30');
+  await page.locator('form').getByRole('button', { name: 'Add Appliance' }).click();
+  await page.getByRole('button', { name: 'Turn On' }).first().click();
+  await page.getByRole('button', { name: 'Turn Off' }).click();
+  await page.getByRole('button').filter({ hasText: /^$/ }).nth(1).click();
+  await page.getByRole('button', { name: 'Delete' }).click();
+});
