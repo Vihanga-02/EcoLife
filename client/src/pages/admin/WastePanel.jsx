@@ -76,7 +76,7 @@ export default function WastePanel() {
       l.wasteType?.toLowerCase().includes(q)
     )
   }, [logs, search])
-
+// Control visible logs (show limited or all based on toggle)
   const visibleLogs = showAll ? filteredLogs : filteredLogs.slice(0, 8)
 
   return (
@@ -228,6 +228,7 @@ export default function WastePanel() {
                       })}
                     </tbody>
                   </table>
+                  {/* Toggle to expand/collapse full logs list */}
                   {filteredLogs.length > 10 && (
                     <div className="p-4 text-center border-t border-gray-100 bg-white">
                       <button
