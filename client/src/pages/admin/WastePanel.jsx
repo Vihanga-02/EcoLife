@@ -38,6 +38,10 @@ export default function WastePanel() {
     fetchLogs()
   }, [fetchLogs])
 
+  useEffect(() => {
+  setShowAll(false)
+}, [search])
+
   // Process data for charts & stats 
   const stats = useMemo(() => {
     let carbonSum = 0
