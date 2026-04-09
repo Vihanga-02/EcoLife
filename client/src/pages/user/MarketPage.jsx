@@ -263,6 +263,13 @@ function StatCard({ label, value, tone = 'default' }) {
     secondary: 'bg-violet-100 border-violet-300',
   }
 
+  const iconColorMap = {
+    primary: 'text-sky-600',
+    success: 'text-emerald-600',
+    warning: 'text-amber-600',
+    secondary: 'text-violet-600',
+  }
+
   const iconMap = {
     primary: Package,
     success: CheckCircle,
@@ -270,28 +277,21 @@ function StatCard({ label, value, tone = 'default' }) {
     secondary: ShoppingBag,
   }
 
-  const textColorMap = {
-    primary: 'text-sky-800',
-    success: 'text-emerald-800',
-    warning: 'text-amber-800',
-    secondary: 'text-violet-800',
-  }
-
   const Icon = iconMap[tone]
-  const textColor = textColorMap[tone]
+  const iconColor = iconColorMap[tone]
 
   return (
-    <div className={`group relative overflow-hidden rounded-2xl border-2 ${toneMap[tone]} p-5 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5`}>
+    <div className={`group relative overflow-hidden rounded-2xl border ${toneMap[tone]} p-5 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5`}>
       <div className="flex items-center gap-4">
-        {/* Icon on Left */}
-        <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${toneMap[tone]} ${textColor}`}>
-          <Icon className="h-6 w-6" />
+        {/* Icon on Left - Using border color */}
+        <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${toneMap[tone]}`}>
+          <Icon className={`h-6 w-6 ${iconColor}`} />
         </div>
         
         {/* Content */}
         <div className="flex-1">
-          <p className={`text-2xl font-black ${textColor}`}>{value}</p>
-          <p className="text-xs font-semibold text-gray-600">{label}</p>
+          <p className={`text-2xl font-black ${iconColor}`}>{value}</p>
+          <p className="text-xs font-semibold text-gray-500">{label}</p>
         </div>
       </div>
     </div>
