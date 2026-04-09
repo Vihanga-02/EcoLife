@@ -663,7 +663,7 @@ export default function MarketplacePage() {
             )}
           </div>
         ) : (
-          /* Only Free and Trade Sections */
+          /* Free and Trade Sections */
           <div className="space-y-8">
             {/* Free Items Section */}
             {freeItems.length > 0 && (
