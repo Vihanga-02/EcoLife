@@ -257,10 +257,10 @@ function TxnRow({ txn, isIncoming, onApprove, onReject }) {
 // ─── Stat Card ──────────────────────────────────────────────────────────────
 function StatCard({ label, value, tone = 'default' }) {
   const toneMap = {
-    primary: 'from-sky-500 to-blue-600',
-    success: 'from-emerald-500 to-green-600',
-    warning: 'from-amber-500 to-orange-600',
-    secondary: 'from-violet-500 to-purple-600',
+    primary: 'bg-sky-100 border-sky-200',
+    success: 'bg-emerald-100 border-emerald-200',
+    warning: 'bg-amber-100 border-amber-200',
+    secondary: 'bg-violet-100 border-violet-200',
   }
 
   const iconMap = {
@@ -270,16 +270,29 @@ function StatCard({ label, value, tone = 'default' }) {
     secondary: ShoppingBag,
   }
 
+  const textColorMap = {
+    primary: 'text-sky-800',
+    success: 'text-emerald-800',
+    warning: 'text-amber-800',
+    secondary: 'text-violet-800',
+  }
+
   const Icon = iconMap[tone]
+  const textColor = textColorMap[tone]
 
   return (
-    <div className={`group relative overflow-hidden rounded-2xl bg-gradient-to-br ${toneMap[tone]} p-5 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5`}>
-      <div className="absolute right-0 top-0 opacity-10 group-hover:opacity-20 transition-opacity">
-        <Icon className="h-20 w-20 text-white" />
-      </div>
-      <div className="relative z-10">
-        <p className="text-3xl font-black text-white">{value}</p>
-        <p className="mt-1 text-sm font-semibold text-white/90">{label}</p>
+    <div className={`group relative overflow-hidden rounded-2xl border ${toneMap[tone]} p-5 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5`}>
+      <div className="flex items-center gap-4">
+        {/* Icon on Left */}
+        <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${toneMap[tone]} ${textColor}`}>
+          <Icon className="h-6 w-6" />
+        </div>
+        
+        {/* Content */}
+        <div className="flex-1">
+          <p className={`text-2xl font-black ${textColor}`}>{value}</p>
+          <p className="text-xs font-semibold text-gray-600">{label}</p>
+        </div>
       </div>
     </div>
   )
