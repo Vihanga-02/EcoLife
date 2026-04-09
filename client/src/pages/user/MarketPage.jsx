@@ -74,7 +74,7 @@ function ItemCard({ item, onEdit, onDelete }) {
 
   return (
     <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-      
+
       {/* Image Section */}
       <div className="relative h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50">
         {item.imageUrl ? (
@@ -155,7 +155,7 @@ function ItemCard({ item, onEdit, onDelete }) {
               })}
             </span>
           </div>
-          
+
           {/* Request Count (if available) */}
           {item.requestCount > 0 && (
             <div className="flex items-center gap-1">
@@ -279,7 +279,7 @@ function StatCard({ label, value, tone = 'default' }) {
         <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${toneMap[tone]}`}>
           <Icon className={`h-6 w-6 ${iconColor}`} />
         </div>
-        
+
         {/* Content */}
         <div className="flex-1">
           <p className={`text-2xl font-black ${iconColor}`}>{value}</p>
@@ -462,16 +462,16 @@ export default function MarketPage() {
                   key={t.id}
                   onClick={() => setTab(t.id)}
                   className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition-all duration-200 ${isActive
-                      ? 'bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-md'
-                      : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:border-emerald-300'
+                    ? 'bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-md'
+                    : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:border-emerald-300'
                     }`}
                 >
                   <Icon className="h-4 w-4" />
                   {t.label}
                   {t.count > 0 && (
                     <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${isActive
-                        ? 'bg-white/20 text-white'
-                        : 'bg-emerald-100 text-emerald-700'
+                      ? 'bg-white/20 text-white'
+                      : 'bg-emerald-100 text-emerald-700'
                       }`}>
                       {t.count}
                     </span>
