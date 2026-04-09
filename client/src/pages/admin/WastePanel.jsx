@@ -18,6 +18,7 @@ export default function WastePanel() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [search, setSearch] = useState('')
+  const [showAll, setShowAll] = useState(false)
 
   const fetchLogs = useCallback(async () => {
     setLoading(true)
@@ -36,6 +37,10 @@ export default function WastePanel() {
   useEffect(() => {
     fetchLogs()
   }, [fetchLogs])
+
+  useEffect(() => {
+    setShowAll(false)
+  }, [search])
 
   // Process data for charts & stats 
   const stats = useMemo(() => {
@@ -71,6 +76,8 @@ export default function WastePanel() {
       l.wasteType?.toLowerCase().includes(q)
     )
   }, [logs, search])
+// Control visible logs (show limited or all based on toggle)
+  const visibleLogs = showAll ? filteredLogs : filteredLogs.slice(0, 8)
 
   return (
     <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
@@ -169,57 +176,70 @@ export default function WastePanel() {
               {filteredLogs.length === 0 ? (
                 <div className="p-10 text-center text-gray-400 text-sm">No waste logs matched your search.</div>
               ) : (
-                <table className="w-full text-sm">
-                  <thead className="bg-white border-b border-gray-100">
-                    <tr>
-                      <th className="px-5 py-3.5 text-left font-bold text-gray-500 uppercase tracking-wider text-[11px]">User</th>
-                      <th className="px-5 py-3.5 text-left font-bold text-gray-500 uppercase tracking-wider text-[11px]">Waste Entry</th>
-                      <th className="px-5 py-3.5 text-left font-bold text-gray-500 uppercase tracking-wider text-[11px]">Footprint</th>
-                      <th className="px-5 py-3.5 text-left font-bold text-gray-500 uppercase tracking-wider text-[11px]">Flags</th>
-                      <th className="px-5 py-3.5 text-right font-bold text-gray-500 uppercase tracking-wider text-[11px]">Date Logged</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-50">
-                    {filteredLogs.map(log => {
-                      const m = TYPE_META[log.wasteType] || TYPE_META.Plastic
-                      return (
-                        <tr key={log._id} className="hover:bg-gray-50/50 transition-colors">
-                          <td className="px-5 py-3.5">
-                            <p className="font-semibold text-gray-900">{log.userId?.name || 'Unknown'}</p>
-                            <p className="text-xs text-gray-400">{log.userId?.email || 'N/A'}</p>
-                          </td>
-                          <td className="px-5 py-3.5">
-                            <div className="flex items-center gap-2">
-                              <span className="text-lg" title={log.wasteType}>{m.emoji}</span>
-                              <div>
-                                <p className={`font-bold ${m.color}`}>{log.wasteType}</p>
-                                <p className="text-xs text-gray-500 font-medium">{log.quantity} {log.unit}</p>
+                <>
+                  <table className="w-full text-sm">
+                    <thead className="bg-white border-b border-gray-100">
+                      <tr>
+                        <th className="px-5 py-3.5 text-left font-bold text-gray-500 uppercase tracking-wider text-[11px]">User</th>
+                        <th className="px-5 py-3.5 text-left font-bold text-gray-500 uppercase tracking-wider text-[11px]">Waste Entry</th>
+                        <th className="px-5 py-3.5 text-left font-bold text-gray-500 uppercase tracking-wider text-[11px]">Footprint</th>
+                        <th className="px-5 py-3.5 text-left font-bold text-gray-500 uppercase tracking-wider text-[11px]">Flags</th>
+                        <th className="px-5 py-3.5 text-right font-bold text-gray-500 uppercase tracking-wider text-[11px]">Date Logged</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50">
+                      {visibleLogs.map(log => {
+                        const m = TYPE_META[log.wasteType] || TYPE_META.Plastic
+                        return (
+                          <tr key={log._id} className="hover:bg-gray-50/50 transition-colors">
+                            <td className="px-5 py-3.5">
+                              <p className="font-semibold text-gray-900">{log.userId?.name || 'Unknown'}</p>
+                              <p className="text-xs text-gray-400">{log.userId?.email || 'N/A'}</p>
+                            </td>
+                            <td className="px-5 py-3.5">
+                              <div className="flex items-center gap-2">
+                                <span className="text-lg" title={log.wasteType}>{m.emoji}</span>
+                                <div>
+                                  <p className={`font-bold ${m.color}`}>{log.wasteType}</p>
+                                  <p className="text-xs text-gray-500 font-medium">{log.quantity} {log.unit}</p>
+                                </div>
                               </div>
-                            </div>
-                          </td>
-                          <td className="px-5 py-3.5">
-                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-bold border border-purple-100">
-                              <FlaskConical className="w-3.5 h-3.5" />
-                              {fmt(log.carbonEquivalent, 2)} kg
-                            </div>
-                          </td>
-                          <td className="px-5 py-3.5">
-                            <div className="flex flex-col gap-1 w-max">
-                              {log.isRecyclable && <span className="text-[10px] uppercase font-bold tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1"><Recycle className="w-3 h-3" /> Recyclable</span>}
-                              {log.isBiodegradable && <span className="text-[10px] uppercase font-bold tracking-wider text-green-600 bg-green-50 px-2 py-0.5 rounded flex items-center gap-1"><Leaf className="w-3 h-3" /> Biodegradable</span>}
-                              {!log.isRecyclable && !log.isBiodegradable && <span className="text-[10px] uppercase font-bold tracking-wider text-gray-400 bg-gray-100 px-2 py-0.5 rounded">Standard</span>}
-                            </div>
-                          </td>
-                          <td className="px-5 py-3.5 text-right whitespace-nowrap">
-                            <span className="text-xs text-gray-500">
-                              {new Date(log.date).toLocaleString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                            </span>
-                          </td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
+                            </td>
+                            <td className="px-5 py-3.5">
+                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-bold border border-purple-100">
+                                <FlaskConical className="w-3.5 h-3.5" />
+                                {fmt(log.carbonEquivalent, 2)} kg
+                              </div>
+                            </td>
+                            <td className="px-5 py-3.5">
+                              <div className="flex flex-col gap-1 w-max">
+                                {log.isRecyclable && <span className="text-[10px] uppercase font-bold tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1"><Recycle className="w-3 h-3" /> Recyclable</span>}
+                                {log.isBiodegradable && <span className="text-[10px] uppercase font-bold tracking-wider text-green-600 bg-green-50 px-2 py-0.5 rounded flex items-center gap-1"><Leaf className="w-3 h-3" /> Biodegradable</span>}
+                                {!log.isRecyclable && !log.isBiodegradable && <span className="text-[10px] uppercase font-bold tracking-wider text-gray-400 bg-gray-100 px-2 py-0.5 rounded">Standard</span>}
+                              </div>
+                            </td>
+                            <td className="px-5 py-3.5 text-right whitespace-nowrap">
+                              <span className="text-xs text-gray-500">
+                                {new Date(log.date).toLocaleString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                  {/* Toggle to expand/collapse full logs list */}
+                  {filteredLogs.length > 10 && (
+                    <div className="p-4 text-center border-t border-gray-100 bg-white">
+                      <button
+                        onClick={() => setShowAll(prev => !prev)}
+                        className="text-sm font-semibold text-green-600 hover:text-green-700 transition-colors"
+                      >
+                        {showAll ? 'Show less ↑' : `View all ${filteredLogs.length} logs →`}
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
