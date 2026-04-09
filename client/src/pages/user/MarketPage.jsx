@@ -257,10 +257,10 @@ function TxnRow({ txn, isIncoming, onApprove, onReject }) {
 // ─── Stat Card ──────────────────────────────────────────────────────────────
 function StatCard({ label, value, tone = 'default' }) {
   const toneMap = {
-    primary: 'bg-sky-100 border-sky-200',
-    success: 'bg-emerald-100 border-emerald-200',
-    warning: 'bg-amber-100 border-amber-200',
-    secondary: 'bg-violet-100 border-violet-200',
+    primary: 'bg-sky-100 border-sky-300',
+    success: 'bg-emerald-100 border-emerald-300',
+    warning: 'bg-amber-100 border-amber-300',
+    secondary: 'bg-violet-100 border-violet-300',
   }
 
   const iconMap = {
@@ -281,7 +281,7 @@ function StatCard({ label, value, tone = 'default' }) {
   const textColor = textColorMap[tone]
 
   return (
-    <div className={`group relative overflow-hidden rounded-2xl border ${toneMap[tone]} p-5 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5`}>
+    <div className={`group relative overflow-hidden rounded-2xl border-2 ${toneMap[tone]} p-5 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5`}>
       <div className="flex items-center gap-4">
         {/* Icon on Left */}
         <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${toneMap[tone]} ${textColor}`}>
