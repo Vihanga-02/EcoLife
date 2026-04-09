@@ -5,7 +5,7 @@ import { recyclingAPI } from '../../api/api'
 
 const COMMON_MATERIALS = ['Plastic', 'Paper', 'Glass', 'E-waste', 'Organic', 'Metal', 'Textile']
 const MAP_CONTAINER_STYLE = { width: '100%', height: '100%', borderRadius: '0.75rem' }
-const DEFAULT_CENTER = { lat: 7.8731, lng: 80.7718 } // Sri Lanka
+const DEFAULT_CENTER = { lat: 7.8740, lng: 80.7718 } // Sri Lanka
 
 export default function RecycleCenterForm({ center = null, onClose, onSuccess }) {
   const isEdit = Boolean(center)
