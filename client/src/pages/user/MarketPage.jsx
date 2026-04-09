@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import {
   ShoppingBag, Plus, RefreshCw, CheckCircle, XCircle,
   Trash2, Loader2, Package, Tag,
-  ArrowLeftRight, Clock, MessageSquare, Pencil
+  ArrowLeftRight, Clock, MessageSquare, Pencil, Eye, MapPin, Calendar
 } from 'lucide-react'
 import { marketplaceAPI } from '../../api/api'
 import { useAuth } from '../../context/AuthContext'
@@ -73,71 +73,96 @@ function ItemCard({ item, onEdit, onDelete }) {
   const cm = CONDITION_META[item.condition] || CONDITION_META.Good
 
   return (
-    <div className="group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+    <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
 
-      {/* Image */}
-      <div className="relative h-44 overflow-hidden bg-gray-100">
+      {/* Image Section */}
+      <div className="relative h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50">
         {item.imageUrl ? (
           <img
             src={item.imageUrl}
             alt={item.title}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center">
-            <Package className="h-10 w-10 text-gray-300" />
+          <div className="flex h-full w-full flex-col items-center justify-center gap-2">
+            <Package className="h-12 w-12 text-gray-300" />
+            <span className="text-xs text-gray-400">No image</span>
           </div>
         )}
 
-        <div className="absolute left-3 top-3 flex flex-wrap gap-2">
-          <span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${sm.bg} ${sm.color} ${sm.border}`}>
+        {/* Status Badges */}
+        <div className="absolute left-3 top-3 flex flex-col gap-1.5">
+          <span className={`rounded-full border px-2.5 py-1 text-xs font-bold shadow-sm ${sm.bg} ${sm.color} ${sm.border}`}>
             {sm.label}
           </span>
-          <span className="rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-semibold text-gray-600">
-            {item.listingType === 'Free' ? 'Free' : 'Trade'}
+          <span className="rounded-full border border-gray-200 bg-white/90 backdrop-blur-sm px-2.5 py-1 text-xs font-bold text-gray-700 shadow-sm">
+            {item.listingType === 'Free' ? '🎁 Free' : '🔄 Trade'}
           </span>
         </div>
-        {/* Hover overlay + actions */}
 
-        <div className="absolute right-3 top-3 flex gap-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+        {/* Action Buttons - Hover Reveal */}
+        <div className="absolute right-3 top-3 flex gap-2 opacity-0 transition-all duration-300 group-hover:opacity-100">
           <button
             onClick={() => onEdit(item)}
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 shadow-sm transition hover:text-emerald-600"
+            className="flex h-8 w-8 items-center justify-center rounded-xl border border-gray-200 bg-white/90 backdrop-blur-sm text-gray-600 shadow-sm transition-all hover:scale-110 hover:bg-emerald-500 hover:text-white hover:border-emerald-500"
+            title="Edit item"
           >
-            <Pencil className="h-4 w-4" />
+            <Pencil className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => onDelete(item)}
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 shadow-sm transition hover:text-red-500"
+            className="flex h-8 w-8 items-center justify-center rounded-xl border border-gray-200 bg-white/90 backdrop-blur-sm text-gray-600 shadow-sm transition-all hover:scale-110 hover:bg-red-500 hover:text-white hover:border-red-500"
+            title="Delete item"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
 
-      {/* Body */}
+      {/* Content Section */}
       <div className="p-4">
-        <h3 className="mb-1 truncate text-sm font-bold text-gray-900">
+        {/* Title */}
+        <h3 className="mb-2 text-sm font-bold text-gray-900 line-clamp-1">
           {item.title}
         </h3>
 
-        <div className="mb-3 flex items-center gap-2 text-xs text-gray-500">
-          <Tag className="h-3.5 w-3.5" />
-          <span>{item.category}</span>
-        </div>
-
+        {/* Category & Condition Row */}
         <div className="mb-3 flex items-center justify-between gap-2">
-          <span className={`rounded-full border px-2.5 py-1 text-xs font-medium ${cm.bg} ${cm.color} ${cm.border}`}>
+          <div className="flex items-center gap-1.5">
+            <Tag className="h-3 w-3 text-gray-400" />
+            <span className="text-xs font-medium text-gray-500">{item.category}</span>
+          </div>
+          <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${cm.bg} ${cm.color} ${cm.border}`}>
             {item.condition}
           </span>
-          <span className="flex items-center gap-1 text-xs text-gray-400">
-            <Clock className="h-3.5 w-3.5" />
-            {new Date(item.createdAt).toLocaleDateString('en-LK', {
-              day: '2-digit',
-              month: 'short',
-              year: 'numeric',
-            })}
-          </span>
+        </div>
+
+        {/* Description Preview */}
+        {item.description && (
+          <p className="mb-3 text-xs text-gray-400 line-clamp-2">
+            {item.description}
+          </p>
+        )}
+
+        {/* Date & Stats Row */}
+        <div className="flex items-center justify-between border-t border-gray-100 pt-3">
+          <div className="flex items-center gap-1.5">
+            <Calendar className="h-3 w-3 text-gray-400" />
+            <span className="text-[10px] font-medium text-gray-400">
+              {new Date(item.createdAt).toLocaleDateString('en-LK', {
+                day: '2-digit',
+                month: 'short',
+              })}
+            </span>
+          </div>
+
+          {/* Request Count (if available) */}
+          {item.requestCount > 0 && (
+            <div className="flex items-center gap-1">
+              <MessageSquare className="h-3 w-3 text-emerald-500" />
+              <span className="text-[10px] font-bold text-emerald-600">{item.requestCount}</span>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -150,8 +175,8 @@ function TxnRow({ txn, isIncoming, onApprove, onReject }) {
   const isPending = txn.status === 'pending'
 
   return (
-    <div className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:shadow-md">
-      <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gray-100">
+    <div className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md">
+      <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-gray-100 to-gray-50">
         {txn.itemId?.imageUrl ? (
           <img src={txn.itemId.imageUrl} alt="" className="h-full w-full object-cover" />
         ) : (
@@ -179,7 +204,7 @@ function TxnRow({ txn, isIncoming, onApprove, onReject }) {
 
           {txn.itemId?.listingType && (
             <span className="text-xs text-gray-500">
-              {txn.itemId.listingType === 'Free' ? 'Free' : 'Trade'}
+              {txn.itemId.listingType === 'Free' ? '🎁 Free' : '🔄 Trade'}
             </span>
           )}
 
@@ -197,7 +222,7 @@ function TxnRow({ txn, isIncoming, onApprove, onReject }) {
         <div className="flex shrink-0 gap-2">
           <button
             onClick={() => onApprove(txn._id)}
-            className="flex items-center gap-1 rounded-xl bg-emerald-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-emerald-700"
+            className="flex items-center gap-1 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white transition hover:bg-emerald-700 hover:scale-105"
           >
             <CheckCircle className="h-3.5 w-3.5" />
             Approve
@@ -213,8 +238,8 @@ function TxnRow({ txn, isIncoming, onApprove, onReject }) {
       )}
 
       {!isIncoming && txn.status === 'completed' && (
-        <div className="shrink-0 text-xs font-bold text-emerald-700">
-          Completed
+        <div className="shrink-0 rounded-full bg-emerald-100 px-3 py-1.5 text-xs font-bold text-emerald-700">
+          ✓ Completed
         </div>
       )}
     </div>
@@ -224,16 +249,43 @@ function TxnRow({ txn, isIncoming, onApprove, onReject }) {
 // ─── Stat Card ──────────────────────────────────────────────────────────────
 function StatCard({ label, value, tone = 'default' }) {
   const toneMap = {
-    primary: 'bg-sky-50 border-sky-200 text-sky-800',
-    success: 'bg-emerald-50 border-emerald-200 text-emerald-700',
-    warning: 'bg-amber-50 border-amber-200 text-amber-700',
-    secondary: 'bg-violet-50 border-violet-200 text-violet-700',
+    primary: 'bg-sky-100 border-sky-300',
+    success: 'bg-emerald-100 border-emerald-300',
+    warning: 'bg-amber-100 border-amber-300',
+    secondary: 'bg-violet-100 border-violet-300',
   }
 
+  const iconColorMap = {
+    primary: 'text-sky-600',
+    success: 'text-emerald-600',
+    warning: 'text-amber-600',
+    secondary: 'text-violet-600',
+  }
+
+  const iconMap = {
+    primary: Package,
+    success: CheckCircle,
+    warning: Clock,
+    secondary: ShoppingBag,
+  }
+
+  const Icon = iconMap[tone]
+  const iconColor = iconColorMap[tone]
+
   return (
-    <div className={`rounded-2xl border p-4 shadow-sm transition hover:shadow-md ${toneMap[tone]}`}>
-      <p className="text-2xl font-black">{value}</p>
-      <p className="mt-1 text-sm font-semibold text-gray-600">{label}</p>
+    <div className={`group relative overflow-hidden rounded-2xl border ${toneMap[tone]} p-5 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5`}>
+      <div className="flex items-center gap-4">
+        {/* Icon on Left - Using border color */}
+        <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${toneMap[tone]}`}>
+          <Icon className={`h-6 w-6 ${iconColor}`} />
+        </div>
+
+        {/* Content */}
+        <div className="flex-1">
+          <p className={`text-2xl font-black ${iconColor}`}>{value}</p>
+          <p className="text-xs font-semibold text-gray-500">{label}</p>
+        </div>
+      </div>
     </div>
   )
 }
@@ -241,15 +293,15 @@ function StatCard({ label, value, tone = 'default' }) {
 // ─── Empty State ────────────────────────────────────────────────────────────
 function EmptyState({ icon: Icon, title, description, action }) {
   return (
-    <div className="rounded-2xl border border-dashed border-gray-300 bg-white p-14 text-center">
-      <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-50">
-        <Icon className="h-7 w-7 text-gray-300" />
+    <div className="rounded-2xl border-2 border-dashed border-gray-200 bg-white p-16 text-center transition-all duration-300 hover:border-emerald-300">
+      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100">
+        <Icon className="h-8 w-8 text-gray-300" />
       </div>
-      <h3 className="text-base font-bold text-gray-800">{title}</h3>
+      <h3 className="text-lg font-bold text-gray-800">{title}</h3>
       <p className="mx-auto mt-1 max-w-sm text-sm text-gray-400">
         {description}
       </p>
-      {action && <div className="mt-5">{action}</div>}
+      {action && <div className="mt-6">{action}</div>}
     </div>
   )
 }
@@ -318,7 +370,7 @@ export default function MarketPage() {
       showToast(action === 'approve' ? 'Request approved! +10 Green pts 🌿' : 'Request rejected.')
       loadItems()
       loadTxns()
-      if (action === 'approve') await refreshUser() // sync green score in sidebar/profile
+      if (action === 'approve') await refreshUser()
     } catch {
       showToast('Action failed.', 'error')
     }
@@ -347,11 +399,10 @@ export default function MarketPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
-
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       {/* Toast */}
       {toast && (
-        <div className={`fixed right-5 top-5 z-50 flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-medium text-white shadow-xl ${toast.type === 'error' ? 'bg-red-500' : 'bg-emerald-600'
+        <div className={`fixed right-5 top-5 z-50 flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-medium text-white shadow-xl animate-in slide-in-from-top-2 ${toast.type === 'error' ? 'bg-red-500' : 'bg-emerald-600'
           }`}>
           {toast.type === 'error' ? (
             <XCircle className="h-4 w-4" />
@@ -363,32 +414,28 @@ export default function MarketPage() {
       )}
 
       {/* ── Header ── */}
-      <div className="border-b border-gray-200 bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-6 md:px-6">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-            <div className="max-w-2xl">
-              <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-sm">
+      <div className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-40">
+        <div className="mx-auto max-w-7xl px-4 py-5 md:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 via-green-500 to-teal-500 shadow-lg">
                 <ShoppingBag className="h-5 w-5 text-white" />
               </div>
-
-              <h1 className="text-2xl font-black tracking-tight text-gray-900">
-                My Marketplace
-              </h1>
-              <p className="mt-1 text-sm text-gray-500">
-                Manage your listings and track marketplace requests in one place.
-              </p>
+              <div>
+                <h1 className="text-xl font-black text-gray-900">My Marketplace</h1>
+                <p className="text-gray-500 text-sm">Manage your listings and track marketplace requests in one place.</p>
+              </div>
             </div>
 
-            <div className="flex gap-2 self-start">
+            <div className="flex gap-2">
               <button
                 onClick={() => {
                   loadItems()
                   loadTxns()
                 }}
-                className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-500 text-sm transition-colors"
               >
-                <RefreshCw className="h-4 w-4" />
-                Refresh
+                <RefreshCw className="w-3.5 h-3.5" /> Refresh
               </button>
 
               <button
@@ -396,7 +443,7 @@ export default function MarketPage() {
                   setEditTarget(null)
                   setShowForm(true)
                 }}
-                className="flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-700"
+                className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white rounded-xl text-sm font-bold shadow-md transition-all"
               >
                 <Plus className="h-4 w-4" />
                 New Listing
@@ -414,17 +461,17 @@ export default function MarketPage() {
                 <button
                   key={t.id}
                   onClick={() => setTab(t.id)}
-                  className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${isActive
-                    ? 'border border-emerald-200 bg-emerald-50 text-emerald-700'
-                    : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                  className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition-all duration-200 ${isActive
+                    ? 'bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-md'
+                    : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:border-emerald-300'
                     }`}
                 >
                   <Icon className="h-4 w-4" />
                   {t.label}
                   {t.count > 0 && (
                     <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${isActive
-                      ? 'bg-emerald-100 text-emerald-700'
-                      : 'bg-gray-100 text-gray-500'
+                      ? 'bg-white/20 text-white'
+                      : 'bg-emerald-100 text-emerald-700'
                       }`}>
                       {t.count}
                     </span>
@@ -436,22 +483,26 @@ export default function MarketPage() {
         </div>
       </div>
 
-
       {/* ── Content ── */}
-      <div className="mx-auto max-w-6xl px-4 py-6 md:px-6">
+      <div className="mx-auto max-w-7xl px-4 py-8 md:px-8">
 
         {/* LISTINGS TAB */}
         {tab === 'listings' && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="space-y-8">
+            {/* Stats Grid - 4 cards in a row */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {stats.map((s) => (
                 <StatCard key={s.label} {...s} />
               ))}
             </div>
 
+            {/* Items Grid - 4 cards per row on large screens */}
             {loading ? (
-              <div className="flex items-center justify-center py-24">
-                <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+              <div className="flex items-center justify-center py-32">
+                <div className="text-center">
+                  <Loader2 className="h-10 w-10 animate-spin text-emerald-600 mx-auto mb-3" />
+                  <p className="text-sm text-gray-400">Loading your listings...</p>
+                </div>
               </div>
             ) : items.length === 0 ? (
               <EmptyState
@@ -464,7 +515,7 @@ export default function MarketPage() {
                       setEditTarget(null)
                       setShowForm(true)
                     }}
-                    className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-700"
+                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 px-5 py-2.5 text-sm font-bold text-white transition-all hover:from-emerald-700 hover:to-green-700 hover:scale-105 shadow-md"
                   >
                     <Plus className="h-4 w-4" />
                     Create First Listing
@@ -472,32 +523,41 @@ export default function MarketPage() {
                 }
               />
             ) : (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {items.map((item) => (
-                  <ItemCard
-                    key={item._id}
-                    item={item}
-                    onEdit={(i) => {
-                      setEditTarget(i)
+              <>
+                {/* 4 Cards per row grid */}
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {items.map((item) => (
+                    <ItemCard
+                      key={item._id}
+                      item={item}
+                      onEdit={(i) => {
+                        setEditTarget(i)
+                        setShowForm(true)
+                      }}
+                      onDelete={(i) => setDeleteTarget(i)}
+                    />
+                  ))}
+
+                  {/* Add New Card */}
+                  <button
+                    onClick={() => {
+                      setEditTarget(null)
                       setShowForm(true)
                     }}
-                    onDelete={(i) => setDeleteTarget(i)}
-                  />
-                ))}
-
-                <button
-                  onClick={() => {
-                    setEditTarget(null)
-                    setShowForm(true)
-                  }}
-                  className="flex min-h-[220px] flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-gray-300 bg-white text-gray-400 transition hover:border-emerald-300 hover:text-emerald-600"
-                >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-50">
-                    <Plus className="h-6 w-6" />
-                  </div>
-                  <span className="text-sm font-semibold">New Listing</span>
-                </button>
-              </div>
+                    className="group flex min-h-[320px] flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-gray-300 bg-white/50 transition-all duration-300 hover:border-emerald-400 hover:bg-emerald-50/30 hover:scale-[1.02]"
+                  >
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 text-gray-400 transition-all duration-300 group-hover:from-emerald-500 group-hover:to-green-500 group-hover:text-white group-hover:shadow-lg">
+                      <Plus className="h-7 w-7" />
+                    </div>
+                    <span className="text-sm font-bold text-gray-500 group-hover:text-emerald-600">
+                      Add New Item
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      Share something useful
+                    </span>
+                  </button>
+                </div>
+              </>
             )}
           </div>
         )}
@@ -506,8 +566,11 @@ export default function MarketPage() {
         {tab === 'requests' && (
           <div>
             {txnLoading ? (
-              <div className="flex items-center justify-center py-24">
-                <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+              <div className="flex items-center justify-center py-32">
+                <div className="text-center">
+                  <Loader2 className="h-10 w-10 animate-spin text-emerald-600 mx-auto mb-3" />
+                  <p className="text-sm text-gray-400">Loading requests...</p>
+                </div>
               </div>
             ) : incoming.length === 0 ? (
               <EmptyState
@@ -535,8 +598,11 @@ export default function MarketPage() {
         {tab === 'transactions' && (
           <div>
             {txnLoading ? (
-              <div className="flex items-center justify-center py-24">
-                <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+              <div className="flex items-center justify-center py-32">
+                <div className="text-center">
+                  <Loader2 className="h-10 w-10 animate-spin text-emerald-600 mx-auto mb-3" />
+                  <p className="text-sm text-gray-400">Loading your requests...</p>
+                </div>
               </div>
             ) : outgoing.length === 0 ? (
               <EmptyState
