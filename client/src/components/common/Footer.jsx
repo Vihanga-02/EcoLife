@@ -18,10 +18,11 @@ export default function Footer() {
           {/* Brand Section */}
           <div>
             <Link to="/home" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                <Leaf className="text-green-600" />
-              </div>
-              <span className="font-bold text-black text-lg">EcoLife</span>
+              <img
+                src="/ecolife-logo.png"
+                alt="EcoLife"
+                className="h-10 object-contain"
+              />
             </Link>
             <p className="text-gray-700 text-sm">
               Empowering sustainable living through smart technology and community action.
@@ -58,8 +59,8 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Phone size={16} className="text-green-600" />
-                <a href="tel:+1234567890" className="hover:text-green-600 transition-colors">
-                  +94 123 456 7890
+                <a href="tel:+94774567890" className="hover:text-green-600 transition-colors">
+                  +94 77 456 7890
                 </a>
               </li>
             </ul>

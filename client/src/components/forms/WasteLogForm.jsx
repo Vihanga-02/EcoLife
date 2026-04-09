@@ -105,10 +105,10 @@ export default function WasteLogForm({ log = null, onSuccess, onClose }) {
     : null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden max-h-[90vh] flex flex-col">
+      <div className="relative bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl w-full max-w-md max-h-[92dvh] sm:max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="bg-green-600 px-6 py-5 flex items-center justify-between shrink-0 px-6 py-5 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
@@ -244,7 +244,7 @@ export default function WasteLogForm({ log = null, onSuccess, onClose }) {
 
           {error && <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-red-600 text-sm">{error}</div>}
 
-          <div className="flex gap-3 pt-2 shrink-0">
+          <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2 shrink-0">
             <button type="button" onClick={onClose} className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">
               Cancel
             </button>
