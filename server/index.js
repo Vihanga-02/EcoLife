@@ -40,6 +40,14 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get('/', (req, res) => {
+  res.status(200).json({ 
+    success: true, 
+    message: "🌱 EcoLife API is running smoothly!",
+    environment: process.env.NODE_ENV
+  });
+});
+
 // ===== API Routes =====
 app.use('/api/auth', authRoutes);
 app.use('/api/energy', energyRoutes);
