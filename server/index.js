@@ -4,6 +4,8 @@ import cors from 'cors';
 import connectDB from './config/db.js';
 import { initializeFirebase } from './config/firebase.js';
 import { errorHandler } from './middleware/errorMiddleware.js';
+
+//routes imports
 import authRoutes from './routes/authRoutes.js';
 import energyRoutes from './routes/energyRoutes.js';
 import marketplaceRoutes from './routes/marketplaceRoutes.js';
@@ -23,11 +25,17 @@ initializeFirebase();
 
 const app = express();
 
-// ===== Middleware =====
-app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+const corsOptions = {
+  origin: process.env.CLIENT_URL || (process.env.NODE_ENV === 'production' ? false : 'http://localhost:5173'),
   credentials: true,
-}));
+  optionsSuccessStatus: 200
+};
+
+if (process.env.NODE_ENV === 'production' && process.env.CLIENT_URL) {
+  corsOptions.origin = process.env.CLIENT_URL.split(',').map(url => url.trim());
+}
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
