@@ -1,5 +1,5 @@
+import 'dotenv/config';
 import express from 'express';
-import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './config/db.js';
 import { initializeFirebase } from './config/firebase.js';
@@ -13,7 +13,7 @@ import adminRoutes from './routes/adminRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
 
 // Load env vars
-dotenv.config();
+// dotenv.config();
 
 // Connect to MongoDB
 connectDB();
