@@ -1,0 +1,35 @@
+import { test, expect } from '@playwright/test';
+
+test('test', async ({ page }) => {
+  await page.goto('http://localhost:5173/home');
+  await page.getByRole('link', { name: 'Login' }).click();
+  await page.getByRole('textbox', { name: 'you@example.com' }).click();
+  await page.getByRole('textbox', { name: 'you@example.com' }).fill('ama@gmail.com');
+  await page.getByRole('textbox', { name: '••••••••' }).click();
+  await page.getByRole('textbox', { name: '••••••••' }).fill('123456');
+  await page.getByRole('button', { name: 'Sign In' }).click();
+  await page.getByRole('link', { name: 'Waste Tracker Log your waste' }).click();
+  await page.getByRole('button', { name: 'Log Waste' }).click();
+  await page.getByRole('button', { name: '🌿 Organic', exact: true }).click();
+  await page.getByPlaceholder('e.g.').click();
+  await page.getByPlaceholder('e.g.').fill('6');
+  await page.locator('form').getByRole('combobox').selectOption('count');
+  await page.locator('form').getByRole('button', { name: 'Log Waste' }).click();
+  await page.locator('body').press('ArrowDown');
+  await page.locator('body').press('ArrowDown');
+  await page.locator('body').press('ArrowDown');
+  await page.locator('body').press('ArrowDown');
+  await page.locator('body').press('ArrowDown');
+  await page.locator('body').press('ArrowDown');
+  await page.locator('body').press('ArrowDown');
+  await page.locator('body').press('ArrowDown');
+  await page.locator('body').press('ArrowDown');
+  await page.getByText('🌿Organic·6 count·Apr 11,').first().click();
+  await page.getByRole('button').filter({ hasText: /^$/ }).first().click();
+  await page.getByPlaceholder('e.g.').click();
+  await page.getByPlaceholder('e.g.').fill('5');
+  await page.getByRole('button', { name: 'Save Changes' }).click();
+  await page.getByText('🌿Organic·5 count·Apr 11,').click();
+  await page.getByRole('button').filter({ hasText: /^$/ }).nth(1).click();
+  await page.getByRole('button', { name: 'Delete' }).click();
+});
