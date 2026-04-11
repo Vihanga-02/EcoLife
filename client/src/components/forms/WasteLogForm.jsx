@@ -202,6 +202,7 @@ export default function WasteLogForm({ log = null, onSuccess, onClose }) {
               <input
                 type="number" min="0.01" step="0.01" value={form.quantity}
                 onChange={e => { setError(''); setForm(p => ({ ...p, quantity: e.target.value })) }}
+                onWheel={(e) => e.target.blur()}
                 placeholder="e.g. 2.5"
                 className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all"
               />
