@@ -2,13 +2,21 @@
 
 EcoLife is a comprehensive full-stack application designed to promote sustainable living through energy tracking, waste management, recycling, and a marketplace for eco-friendly items.
 
-## 80% Completed For Assignment 01 – Evaluation. (Date-2026.02.26)
+## Live Site
+
+| | URL |
+|---|-----|
+| **Frontend** | [https://eco-life-pi.vercel.app/](https://eco-life-pi.vercel.app/) |
+| **Backend API** | [https://ecolife-server.onrender.com](https://ecolife-server.onrender.com) |
 
 ## Table of Contents
 
+- [Live Site](#live-site)
 - [Tech Stack](#tech-stack)
 - [Prerequisites](#prerequisites)
 - [Project Structure](#project-structure)
+- [Testing](#testing)
+- [Deployment](#deployment)
 - [Backend Setup](#backend-setup)
 - [Frontend Setup](#frontend-setup)
 - [MongoDB Database Setup](#mongodb-database-setup)
@@ -57,18 +65,48 @@ Before you begin, ensure you have the following installed:
 ```
 EcoLife/
 │
+├── client/                 # React (Vite) frontend
+│   ├── public/            # Static assets
+│   ├── src/
+│   │   ├── api/           # API client (Axios)
+│   │   ├── components/    # Reusable UI (common, forms, charts)
+│   │   ├── context/       # React context (e.g. auth)
+│   │   ├── pages/         # Route pages (user, admin, auth)
+│   │   ├── App.jsx        # Root app & routes
+│   │   ├── main.jsx       # Entry point
+│   │   └── index.css      # Global styles
+│   ├── tests/             # Playwright specs
+│   ├── index.html
+│   ├── vite.config.js
+│   ├── playwright.config.js
+│   └── package.json
+│
 ├── server/                 # Node.js backend application
 │   ├── config/            # Configuration files (DB, Firebase)
 │   ├── controllers/       # Route controllers
 │   ├── middleware/        # Custom middleware
 │   ├── models/            # Mongoose models
 │   ├── routes/            # API routes
+│   ├── services/          # Background / domain services
 │   ├── utils/             # Utility functions
 │   ├── index.js           # Server entry point
 │   └── package.json
 │
-└── ReadMe.md              # This file
+└── README.md               # This file
 ```
+
+---
+
+## Testing
+
+Automated checks use **Playwright** in the `client` project. Coverage includes **unit-style** specs (isolated UI or behavior) and **integration** flows that exercise multiple screens and the API against a running app. From `client`, run `npx playwright test` after installing dependencies (`@playwright/test` is listed as a dev dependency).
+
+---
+
+## Deployment
+
+- **Backend:** Hosted on **Render** (Node service, env vars, MongoDB connection as configured there).
+- **Frontend:** Hosted on **Vercel** (Vite build, environment pointing at the deployed API).
 
 ---
 
