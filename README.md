@@ -101,6 +101,8 @@ EcoLife/
 
 Automated checks use **Playwright** in the `client` project. Coverage includes **unit-style** specs (isolated UI or behavior) and **integration** flows that exercise multiple screens and the API against a running app. From `client`, run `npx playwright test` after installing dependencies (`@playwright/test` is listed as a dev dependency).
 
+**Backend API performance** is exercised with **Artillery** (load / stress scenarios against the API) to observe latency and throughput under concurrent traffic.
+
 ---
 
 ## Deployment
